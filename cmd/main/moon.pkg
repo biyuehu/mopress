@@ -1,0 +1,7 @@
+// import {
+//   "himeno/mobook" @lib,
+// }
+
+options(
+  "is-main": true,
+)
