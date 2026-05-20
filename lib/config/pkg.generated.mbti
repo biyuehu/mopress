@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "himeno/mobook/lib/config"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+pub suberror ConfigParseError {
+  ConfigParseError(String)
+} derive(Eq, @debug.Debug)
+
+// Types and methods
+pub(all) struct BookConfig {
+  title : String?
+  authors : Array[String]
+  description : String?
+  src : String
+  language : String?
+  text_direction : TextDirection
+  build : BuildConfig
+} derive(Eq, @debug.Debug)
+pub fn BookConfig::parse(String) -> Self raise ConfigParseError
+pub fn BookConfig::validate(Self) -> Unit raise ConfigParseError
+pub impl Default for BookConfig
+
+pub(all) struct BuildConfig {
+  build_dir : String
+  create_missing : Bool
+} derive(Eq, @debug.Debug)
+pub impl Default for BuildConfig
+
+pub(all) enum TextDirection {
+  LeftToRight
+  RightToLeft
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
