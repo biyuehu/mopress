@@ -1,3 +1,3 @@
 import {
-  "himeno/mobook/lib/config",
+  "himeno/mobook/lib/markdown",
 }
