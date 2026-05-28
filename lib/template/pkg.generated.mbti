@@ -1,0 +1,32 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "himeno/mobook/lib/template"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn parse_template(String) -> Template raise TemplateParseError
+
+// Errors
+pub suberror TemplateParseError {
+  TemplateParseError(String)
+} derive(Eq, @debug.Debug)
+
+// Types and methods
+pub(all) struct Template {
+  nodes : Array[TemplateNode]
+} derive(Eq, @debug.Debug)
+
+pub(all) enum TemplateNode {
+  Text(String)
+  Variable(String)
+  If(String, Array[TemplateNode])
+  For(String, Array[TemplateNode])
+  Partial(String)
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
