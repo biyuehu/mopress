@@ -2,18 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up MoonBit
-      run: curl https://moonbitlang.com/install.sh | sh
-    - name: Run tests
-      run: moon test
-    - name: Build project
-      run: moon build
+      - uses: actions/checkout@v3
+      - name: Set up MoonBit
+        run: curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+      - name: Run tests
+        run: moon test
+      - name: Build project
+        run: moon build
