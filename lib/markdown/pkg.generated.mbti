@@ -1,11 +1,53 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "himeno/mobook/lib/markdown"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
+pub fn[T : Show] parse(T) -> Document
+
+pub fn parse_string(String) -> Document
 
 // Errors
 
 // Types and methods
+pub(all) enum Block {
+  Heading(Int, Array[Inline])
+  Paragraph(Array[Inline])
+  ThematicBreak
+  CodeBlock(String?, String)
+  BlockQuote(Array[Block])
+  List(ListBlock)
+  HtmlBlock(String)
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Document {
+  blocks : Array[Block]
+} derive(Eq, @debug.Debug)
+
+pub(all) enum Inline {
+  Text(String)
+  Emphasis(Array[Inline])
+  Strong(Array[Inline])
+  Code(String)
+  Link(Array[Inline], String, String?)
+  Image(String, String, String?)
+  Html(String)
+  SoftBreak
+  HardBreak
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ListBlock {
+  ordered : Bool
+  start : Int?
+  items : Array[ListItem]
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ListItem {
+  blocks : Array[Block]
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 
