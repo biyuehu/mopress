@@ -16,8 +16,8 @@ jobs:
       - name: Setup Moonbit
         uses: hustcer/setup-moonbit@v1
 
-      - name: Check Moonbit Version
-        run: moon version --all
+      - name: Update Moonbit registry
+        run: moon update
 
       - name: Run tests
         run: moon test
