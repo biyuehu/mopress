@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "himeno/mobook/lib/core"
+package "himeno/mopress/lib/core"
 
 import {
-  "himeno/mobook/lib/markdown",
-  "himeno/mobook/lib/template",
+  "himeno/mopress/lib/markdown",
+  "himeno/mopress/lib/template",
 }
 
 // Values

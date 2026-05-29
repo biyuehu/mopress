@@ -1,43 +1,76 @@
 # himeno/mopress
 
-MoPress is an experimental MoonBit book generator inspired by mdBook and Hakyll.
-The goal is to build a reliable MoonBit-native documentation tool that works
-out of the box for mdBook-style books while also allowing deeper customization
-through a `site.mbt` configuration layer.
+[![wakatime](https://wakatime.com/badge/user/018dc603-712a-4205-a226-d4c9ccd0d02b/project/c6909f20-193d-49a4-b3ab-f9b7732b5d76.svg)](https://wakatime.com/badge/user/018dc603-712a-4205-a226-d4c9ccd0d02b/project/c6909f20-193d-49a4-b3ab-f9b7732b5d76) [![Language](https://img.shields.io/badge/MoonBit-BF2586?style=flat)](https://www.moonbitlang.com/) [![License](https://img.shields.io/badge/License-GPL_v3-007ec6?style=flat)](https://www.gnu.org/licenses/gpl-3.0) [![CI](https://github.com/biyuehu/mopress/actions/workflows/ci.yml/badge.svg)](https://github.com/biyuehu/mopress/actions/workflows/ci.yml)
 
-This is not intended to be a general-purpose static site generator. The focus is
-still book-oriented documentation, but with a more programmable pipeline for
-projects that need custom loading, transformation, routing, rendering, or output
-behavior without relying on mdBook's existing extension model.
+A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll.
 
-The project is still in its foundation stage. Current work focuses on stable
-configuration parsing, core book data structures, and the package boundaries
-needed for summary parsing, Markdown handling, rendering, and future `site.mbt`
-integration.
+## Overview
 
-## Direction
+mopress offers two usage modes:
 
-MoPress is planned around two compatible modes:
+**Book mode** — out-of-the-box experience similar to mdBook. Configure via `press.toml` and write Markdown. No code required.
 
-- A conventional book mode with `book.toml`, `SUMMARY.md`, Markdown chapters,
-  and sensible defaults for users who want an mdBook-like workflow.
-- A programmable `site.mbt` mode for projects that need to describe custom
-  resource loading, transformation, routing, rendering, or asset behavior in
-  MoonBit.
+**Site mode** — declare rules and pipelines in `site.mbt` for full control over how your content is processed and rendered. Inspired by Hakyll's composable compiler design.
 
-The internal architecture should keep these modes close together: the default
-book generator can be expressed as a standard site pipeline, while advanced
-users can replace or extend parts of that pipeline directly.
+## Features
 
-One possible extension path is to preserve raw HTML in Markdown and let custom
-Web Components provide richer client-side behavior. That keeps the Markdown
-pipeline simple while leaving room for MoonBit-authored frontend components via
-the JavaScript backend.
+- Composable pipeline API — chain transforms with `|>`
+- Front matter support
+- Built-in preprocessors: callout blocks, math (LaTeX), file includes
+- External preprocessor protocol (stdin/stdout, language-agnostic)
+- WebComponent-friendly — raw HTML in Markdown is preserved, bring your own components
+- Global CSS/JS injection
+- Lightweight template engine built-in
+- Outputs clean static HTML
 
 ## Development
 
-```sh
-moon info
-moon fmt
+```bash
 moon test
+moon build
 ```
+
+<!-- ## Installation
+
+```bash
+moon add himeno/mopress
+```
+
+## Quick Start
+
+```toml
+# press.toml
+title = "My Book"
+src = "src"
+```
+
+```text
+src/
+├── SUMMARY.md
+└── intro.md
+```
+
+```bash
+mopress build
+``` -->
+
+## Example
+
+```moonbit
+fn main {
+  mopress(config, [
+    rule(All(Glob("src/*.md")),
+      to_string
+      |> to_md
+      |> render_md
+      |> apply_template("page.html", vars)
+      |> to_output
+    ),
+    rule(All(Glob("static/**/*")), copy_asset),
+  ])
+}
+```
+
+## License
+
+Under the terms of the GNU General Public License, version 3 (GPLv3).

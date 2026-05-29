@@ -1,4 +1,4 @@
 import {
-  "himeno/mobook/lib/markdown",
-  "himeno/mobook/lib/template",
+  "himeno/mopress/lib/markdown",
+  "himeno/mopress/lib/template",
 }

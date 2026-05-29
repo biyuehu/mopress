@@ -1,4 +1,4 @@
-name = "himeno/mobook"
+name = "himeno/mopress"
 
 version = "0.1.0"
 

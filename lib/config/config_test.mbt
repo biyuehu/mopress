@@ -14,7 +14,7 @@ test "default config uses mdbook-compatible paths" {
 test "parse book and build sections" {
   let source =
     #|[book]
-    #|title = "MoBook"
+    #|title = "mopress"
     #|authors = ["MoonBit Team", "Contributors"]
     #|description = "A reliable book generator"
     #|src = "docs"
@@ -26,7 +26,7 @@ test "parse book and build sections" {
     #|create-missing = false
     #|
   let config = BookConfig::parse(source)
-  assert_true(config.title is Some("MoBook"))
+  assert_true(config.title is Some("mopress"))
   assert_eq(config.authors.length(), 2)
   assert_eq(config.authors[0], "MoonBit Team")
   assert_eq(config.authors[1], "Contributors")

@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "himeno/mobook/lib/book"
+package "himeno/mopress/lib/book"
 
 import {
-  "himeno/mobook/lib/config",
+  "himeno/mopress/lib/config",
   "moonbitlang/core/debug",
 }
 
