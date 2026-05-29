@@ -215,3 +215,54 @@ fn substring(input : String, start : Int, end : Int) -> String {
 fn char_at(input : String, index : Int) -> Char {
   input.code_unit_at(index).unsafe_to_char()
 }
+
+///|
+pub suberror TemplateRenderError {
+  TemplateRenderError(String)
+  MissingVariableError(String)
+  PartialNotImplementedError(String)
+} derive(Eq, Debug)
+
+///|
+pub fn render_template(
+  template : Template,
+  context : Map[String, String],
+) -> String raise TemplateRenderError {
+  let output = StringBuilder::new()
+  render_nodes(template.nodes, context, output)
+  output.to_string()
+}
+
+///|
+fn render_nodes(
+  nodes : Array[TemplateNode],
+  context : Map[String, String],
+  output : StringBuilder,
+) -> Unit raise TemplateRenderError {
+  for node in nodes {
+    match node {
+      Text(text) => output.write_string(text)
+      Variable(name) =>
+        match context.get(name) {
+          Some(value) => output.write_string(value.to_string())
+          None => raise MissingVariableError("missing variable: " + name)
+        }
+      If(name, children) => {
+        guard context.get(name) is Some(value) && value != ""
+        render_nodes(children, context, output)
+      }
+      For(name, children) =>
+        match context.get(name) {
+          Some(items) =>
+            for item in items {
+              let item_context = context
+              item_context["item"] = item.to_string()
+              render_nodes(children, item_context, output)
+            }
+          _ => raise TemplateRenderError("expected array for loop: " + name)
+        }
+      Partial(path) =>
+        raise PartialNotImplementedError("partial not implemented: " + path)
+    }
+  }
+}

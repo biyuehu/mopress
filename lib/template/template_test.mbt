@@ -64,3 +64,48 @@ test "parse rejects malformed tags" {
   }
   assert_true(message.contains("invalid template identifier"))
 }
+
+///|
+test "render variables and text" {
+  let template = parse_template("<h1>$title$</h1>")
+  let result = render_template(template, { "title": "Hello" })
+  assert_eq(result, "<h1>Hello</h1>")
+}
+
+///|
+test "render if condition" {
+  let template = parse_template("$if(show)$Hello$endif$")
+  assert_eq(render_template(template, { "show": "true" }), "Hello")
+  assert_eq(render_template(template, { "show": "" }), "")
+}
+
+///|
+test "render for loop" {
+  let template = parse_template("$for(items)$$item$$endfor$")
+  let result = render_template(template, { "items": "123" })
+  assert_eq(result, "123")
+}
+
+///|
+test "render reports missing variable" {
+  let template = parse_template("$name$")
+  let message = try render_template(template, {}) catch {
+    TemplateRenderError(msg) => msg
+    _ => abort("expected missing variable error")
+  } noraise {
+    _ => abort("expected missing variable error")
+  }
+  assert_true(message.contains("missing variable: name"))
+}
+
+///|
+test "render reports partial not implemented" {
+  let template = parse_template("$partial(\"footer\")$")
+  let message = try render_template(template, {}) catch {
+    PartialNotImplementedError(msg) => msg
+    _ => abort("expected partial not implemented error")
+  } noraise {
+    _ => abort("expected partial not implemented error")
+  }
+  assert_true(message.contains("partial not implemented"))
+}

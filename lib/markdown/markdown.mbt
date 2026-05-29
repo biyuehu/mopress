@@ -1,7 +1,8 @@
 ///|
-pub(all) struct Document {
-  blocks : Array[Block]
-} derive(Eq, Debug)
+// pub(all) struct MarkdownAst {
+//   blocks : Markdown
+// } derive(Eq, Debug)
+pub type Markdown = Array[Block]
 
 ///|
 pub(all) struct ListBlock {
@@ -12,7 +13,7 @@ pub(all) struct ListBlock {
 
 ///|
 pub(all) struct ListItem {
-  blocks : Array[Block]
+  blocks : Markdown
 } derive(Eq, Debug)
 
 ///|
@@ -21,7 +22,7 @@ pub(all) enum Block {
   Paragraph(Array[Inline])
   ThematicBreak
   CodeBlock(String?, String)
-  BlockQuote(Array[Block])
+  BlockQuote(Markdown)
   List(ListBlock)
   HtmlBlock(String)
 } derive(Eq, Debug)
@@ -40,19 +41,19 @@ pub(all) enum Inline {
 } derive(Eq, Debug)
 
 ///|
-pub fn[T : Show] parse(input : T) -> Document {
+pub fn[T : Show] parse(input : T) -> Markdown {
   parse_string(input.to_string())
 }
 
 ///|
-pub fn parse_string(input : String) -> Document {
+pub fn parse_string(input : String) -> Markdown {
   let lines = normalize_lines(input)
-  { blocks: parse_blocks(lines) }
+  parse_blocks(lines)
 }
 
 ///|
-fn parse_blocks(lines : Array[String]) -> Array[Block] {
-  let blocks : Array[Block] = []
+fn parse_blocks(lines : Array[String]) -> Markdown {
+  let blocks : Markdown = []
   let mut index = 0
   while index < lines.length() {
     let line = lines[index]
