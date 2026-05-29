@@ -1,7 +1,5 @@
 ///|
-pub(all) struct Template {
-  nodes : Array[TemplateNode]
-} derive(Eq, Debug)
+pub type Template = Array[TemplateNode]
 
 ///|
 pub(all) enum TemplateNode {
@@ -25,7 +23,7 @@ pub fn parse_template(input : String) -> Template raise TemplateParseError {
       raise TemplateParseError(
         "unexpected $" + name + "$ at byte " + index.to_string(),
       )
-    None => { nodes, }
+    None => nodes
   }
 }
 
@@ -229,7 +227,7 @@ pub fn render_template(
   context : Map[String, String],
 ) -> String raise TemplateRenderError {
   let output = StringBuilder::new()
-  render_nodes(template.nodes, context, output)
+  render_nodes(template, context, output)
   output.to_string()
 }
 

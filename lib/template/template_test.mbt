@@ -1,7 +1,7 @@
 ///|
 test "parse variables and text" {
   let template = parse_template("<h1>$title$</h1>")
-  guard template.nodes is [Text("<h1>"), Variable("title"), Text("</h1>")] else {
+  guard template is [Text("<h1>"), Variable("title"), Text("</h1>")] else {
     fail("expected text variable text sequence")
   }
 }
@@ -17,7 +17,7 @@ test "parse if for and partial nodes" {
     #|$endif$
     #|$partial("templates/footer.html")$
   let template = parse_template(source)
-  guard template.nodes
+  guard template
     is [
       If("relatedPosts", if_nodes),
       Text("\n"),
