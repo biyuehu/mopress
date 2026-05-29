@@ -41,12 +41,12 @@ pub(all) enum Inline {
 } derive(Eq, Debug)
 
 ///|
-pub fn[T : Show] parse(input : T) -> Markdown {
+pub fn[T : Show] parse_markdown(input : T) -> Markdown {
   parse_string(input.to_string())
 }
 
 ///|
-pub fn parse_string(input : String) -> Markdown {
+fn parse_string(input : String) -> Markdown {
   let lines = normalize_lines(input)
   parse_blocks(lines)
 }
