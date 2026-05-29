@@ -15,7 +15,7 @@ pub(all) enum Rule {
 
 ///|
 pub(all) struct Item[T] {
-  origin : T
+  data : T
   extension : String
 }
 
@@ -27,10 +27,10 @@ pub(all) enum Output {
 }
 
 ///|
-pub type Pipeline[T, R] = (Item[T]) -> Item[R]
+pub type Step[T, R] = (Item[T]) -> Item[R]
 
 ///|
 pub(all) enum Mode {
-  Text(Pipeline[String, Output])
-  Binary(Pipeline[Bytes, Output])
+  Text(Step[String, Output])
+  Binary(Step[Bytes, Output])
 }
