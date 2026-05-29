@@ -6,9 +6,7 @@ import {
 }
 
 // Values
-pub fn[T : Show] parse(T) -> Document
-
-pub fn parse_string(String) -> Document
+pub fn[T : Show] parse_markdown(T) -> Array[Block]
 
 // Errors
 
@@ -21,10 +19,6 @@ pub(all) enum Block {
   BlockQuote(Array[Block])
   List(ListBlock)
   HtmlBlock(String)
-} derive(Eq, @debug.Debug)
-
-pub(all) struct Document {
-  blocks : Array[Block]
 } derive(Eq, @debug.Debug)
 
 pub(all) enum Inline {
@@ -50,6 +44,7 @@ pub(all) struct ListItem {
 } derive(Eq, @debug.Debug)
 
 // Type aliases
+pub type Markdown = Array[Block]
 
 // Traits
 

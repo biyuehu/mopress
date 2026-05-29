@@ -16,7 +16,12 @@ pub suberror TemplateParseError {
 } derive(Eq, Debug)
 
 ///|
-pub fn parse_template(input : String) -> Template raise TemplateParseError {
+pub fn[T : Show] parse_template(input : T) -> Template raise TemplateParseError {
+  parse_string(input.to_string())
+}
+
+///|
+fn parse_string(input : String) -> Template raise TemplateParseError {
   let (nodes, index, terminator) = parse_nodes(input, 0, [])
   match terminator {
     Some(name) =>
