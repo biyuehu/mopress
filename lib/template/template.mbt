@@ -16,6 +16,29 @@ pub suberror TemplateParseError {
 } derive(Eq, Debug)
 
 ///|
+pub type Context = Map[String, Value]
+
+///|
+pub(all) enum Value {
+  String(String)
+  Number(Float)
+  Bool(Bool)
+  Array(Array[Value])
+} derive(Eq, Debug)
+
+// /|
+
+///|
+impl Show for Value with fn to_string(self : Value) -> String {
+  match self {
+    String(s) => s
+    Number(n) => n.to_string()
+    Bool(b) => b.to_string()
+    Array(a) => "[" + a.map(v => v.to_string()).join(", ") + "]"
+  }
+}
+
+///|
 pub fn[T : Show] parse_template(input : T) -> Template raise TemplateParseError {
   parse_string(input.to_string())
 }
@@ -221,25 +244,26 @@ fn char_at(input : String, index : Int) -> Char {
 
 ///|
 pub suberror TemplateRenderError {
-  TemplateRenderError(String)
-  MissingVariableError(String)
-  PartialNotImplementedError(String)
+  UndefinedVariableError(String)
+  NonArrayForLoopError(String)
 } derive(Eq, Debug)
 
 ///|
 pub fn render_template(
   template : Template,
-  context : Map[String, String],
+  context : Context,
+  strict? : Bool = false,
 ) -> String raise TemplateRenderError {
   let output = StringBuilder::new()
-  render_nodes(template, context, output)
+  render_nodes(template, context, strict, output)
   output.to_string()
 }
 
 ///|
 fn render_nodes(
   nodes : Array[TemplateNode],
-  context : Map[String, String],
+  context : Context,
+  strict : Bool,
   output : StringBuilder,
 ) -> Unit raise TemplateRenderError {
   for node in nodes {
@@ -248,24 +272,32 @@ fn render_nodes(
       Variable(name) =>
         match context.get(name) {
           Some(value) => output.write_string(value.to_string())
-          None => raise MissingVariableError("missing variable: " + name)
+          None =>
+            if strict {
+              raise UndefinedVariableError("missing variable: " + name)
+            }
         }
-      If(name, children) => {
-        guard context.get(name) is Some(value) && value != ""
-        render_nodes(children, context, output)
-      }
+      If(name, children) =>
+        if context.get(name) is Some(value) &&
+          value != Bool(false) &&
+          value != String("") &&
+          value != Array([]) {
+          render_nodes(children, context, strict, output)
+        }
       For(name, children) =>
         match context.get(name) {
-          Some(items) =>
+          Some(items) if items is Array(items) =>
             for item in items {
               let item_context = context
-              item_context["item"] = item.to_string()
-              render_nodes(children, item_context, output)
+              item_context["item"] = item
+              render_nodes(children, item_context, strict, output)
             }
-          _ => raise TemplateRenderError("expected array for loop: " + name)
+          _ =>
+            if strict {
+              raise NonArrayForLoopError("expected array for loop: " + name)
+            }
         }
-      Partial(path) =>
-        raise PartialNotImplementedError("partial not implemented: " + path)
+      Partial(_) => ...
     }
   }
 }

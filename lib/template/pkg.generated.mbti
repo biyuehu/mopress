@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "himeno/mobook/lib/template"
+package "himeno/mopress/lib/template"
 
 import {
   "moonbitlang/core/debug",
