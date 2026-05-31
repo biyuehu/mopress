@@ -21,8 +21,9 @@ pub(all) struct Item[T] {
 
 ///|
 pub(all) enum Output {
-  Text(String)
-  Binary(Bytes)
+  Text(String, String)
+  Binary(String, Bytes)
+  Multiple(Array[(String, Output)])
   Empty
 }
 
