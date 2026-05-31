@@ -1,4 +1,5 @@
 import {
   "himeno/mopress/lib/markdown",
   "himeno/mopress/lib/template",
+  "moonbitlang/x/fs",
 }
