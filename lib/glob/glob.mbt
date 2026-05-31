@@ -107,3 +107,33 @@ pub fn glob_match(pattern : String, path : String) -> Bool {
   let tokens = tokenize(pattern)
   match_tokens(tokens, 0, path, 0)
 }
+
+///|
+pub fn scan_files(
+  dir : String,
+  pattern : String,
+) -> Array[String] raise @fs.IOError {
+  let results = []
+  scan_recursive(dir, dir, pattern, results)
+  results
+}
+
+///|
+fn scan_recursive(
+  base : String,
+  current : String,
+  pattern : String,
+  results : Array[String],
+) -> Unit raise @fs.IOError {
+  for entry in @fs.read_dir(current) {
+    let full_path = current + "/" + entry
+    if @fs.path_exists(full_path + "/") {
+      scan_recursive(base, full_path, pattern, results)
+    } else if glob_match(
+        pattern,
+        Show::to_string(full_path[base.length() + 1:]),
+      ) {
+      results.push(full_path)
+    }
+  }
+}
