@@ -94,7 +94,7 @@ test "render for loop" {
 ///|
 test "render reports missing variable" {
   let template = parse_template("$name$")
-  let message = try render_template(template, {}, strict=true) catch {
+  let message = try render_template_strict(template, {}) catch {
     UndefinedVariableError(msg) => msg
     _ => abort("expected missing variable error")
   } noraise {
