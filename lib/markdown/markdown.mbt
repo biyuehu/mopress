@@ -8,12 +8,7 @@ pub type Markdown = Array[Block]
 pub(all) struct ListBlock {
   ordered : Bool
   start : Int?
-  items : Array[ListItem]
-} derive(Eq, Debug)
-
-///|
-pub(all) struct ListItem {
-  blocks : Markdown
+  items : Array[Markdown]
 } derive(Eq, Debug)
 
 ///|
@@ -160,7 +155,7 @@ fn parse_block_quote(lines : Array[String], start : Int) -> (Block, Int) {
 ///|
 fn parse_list(lines : Array[String], start : Int) -> (Block, Int) {
   let first = parse_list_marker(lines[start].trim().to_owned()).unwrap()
-  let items : Array[ListItem] = []
+  let items : Array[Markdown] = []
   let mut index = start
   while index < lines.length() {
     let trimmed = lines[index].trim().to_owned()
@@ -183,7 +178,7 @@ fn parse_list(lines : Array[String], start : Int) -> (Block, Int) {
             break
           }
         }
-        items.push({ blocks: parse_blocks(item_lines) })
+        items.push(parse_blocks(item_lines))
       }
       _ => break
     }
