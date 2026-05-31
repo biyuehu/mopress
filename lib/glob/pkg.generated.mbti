@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "himeno/mopress/lib/glob"
+
+import {
+  "moonbitlang/x/fs",
+}
+
+// Values
+pub fn glob_match(String, String) -> Bool
+
+pub fn scan_files(String, String) -> Array[String] raise @fs.IOError
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

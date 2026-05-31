@@ -7,72 +7,59 @@ import {
 }
 
 // Values
-pub fn apply_template(String, Map[String, String]) -> (Item[Html]) -> Item[Html] raise @template.TemplateParseError
+pub fn apply_template(Item[Html], Array[@template.TemplateNode], Map[String, @template.Value]) -> Item[Html]
 
-pub fn copy_asset(Item[Bytes]) -> Item[Output]
+pub fn apply_template_strict(Item[Html], Array[@template.TemplateNode], Map[String, @template.Value]) -> Item[Html] raise
 
-pub fn[T] discard(Item[T]) -> Item[Output]
+pub fn[T : Thingable] identify(Item[T]) -> Item[Thing]
 
-pub fn import_css(String) -> (Item[Html]) -> Item[Html]
+pub fn import_css(Item[Html], String) -> Item[Html]
 
-pub fn import_js(String) -> (Item[Html]) -> Item[Html]
+pub fn import_js(Item[Html], String) -> Item[Html]
 
-pub fn minify_css(Item[String]) -> Item[String]
+pub fn load_and_apply_template(Item[Html], String, Map[String, @template.Value], strict? : Bool) -> Item[Html] raise
 
-pub fn minify_js(Item[String]) -> Item[String]
+pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
 
-pub fn optimize_image(Item[Bytes]) -> Item[Bytes]
+pub fn[T : Show] to_markdown_doc(Item[T]) -> Item[MarkdownDoc]
 
-pub fn[T : Show] parse_markdown(Item[T]) -> Array[@markdown.Block]
+pub fn use_css(Item[Html], String) -> Item[Html]
 
-pub fn render_md(Item[Md]) -> Item[Html]
+pub fn use_js(Item[Html], String) -> Item[Html]
 
-pub fn to_output(Item[Html]) -> Item[Output]
-
-pub fn to_string(Item[Bytes]) -> Item[String]
-
-pub fn use_css(String) -> (Item[Html]) -> Item[Html]
-
-pub fn use_js(String) -> (Item[Html]) -> Item[Html]
-
-pub fn use_preprocessor(Array[(Item[Md]) -> Item[Md] raise]) -> (Item[Md]) -> Item[Md] raise
+pub fn use_preprocessor(Item[MarkdownDoc], Array[(Item[MarkdownDoc]) -> Item[MarkdownDoc] raise]) -> Item[MarkdownDoc] raise
 
 // Errors
 
 // Types and methods
-pub(all) struct Html {
+pub struct Html {
   html : String
-  meta : Meta
+  meta : Map[String, String]
 }
+pub fn Html::extend(Self, String, meta? : Map[String, String]) -> Self
+pub fn Html::new(String, Map[String, String]) -> Self
 
-pub(all) struct Item[T] {
+pub struct Item[T] {
   data : T
   extension : String
 }
+pub fn[T, R] Item::bind(Self[T], (T) -> R) -> Self[R]
+pub fn[T] Item::new(T, String) -> Self[T]
+
+pub struct MarkdownDoc {
+  source : String
+  meta : Map[String, String]
+}
+pub fn MarkdownDoc::new(String, Map[String, String]) -> Self
 
 pub(all) enum Matcher {
   Glob(String)
   Guard(String, (String) -> Bool)
 }
 
-pub(all) struct Md {
-  ast : Array[@markdown.Block]
-  meta : Meta
-}
-
-pub(all) struct Meta {
-  data : Map[String, String]
-}
-
 pub(all) enum Mode {
-  Text((Item[String]) -> Item[Output])
-  Binary((Item[Bytes]) -> Item[Output])
-}
-
-pub(all) enum Output {
-  Text(String)
-  Binary(Bytes)
-  Empty
+  Text((Item[String]) -> Item[Thing])
+  Binary((Item[Bytes]) -> Item[Thing])
 }
 
 pub(all) enum Rule {
@@ -80,12 +67,26 @@ pub(all) enum Rule {
   All(Matcher, Mode)
 }
 
+pub(all) enum Thing {
+  Doc(String)
+  Asset(Bytes)
+  Multiple(Array[(String, Thing)])
+  Empty
+}
+
 // Type aliases
 pub type Glob = String
 
+pub type Meta = Map[String, String]
+
 pub type Step[T, R] = (Item[T]) -> Item[R]
 
-pub type Vars = Map[String, String]
+pub type Vars = Map[String, @template.Value]
 
 // Traits
+pub trait Thingable {
+  fn to_thing(Self) -> Thing
+}
+pub impl Thingable for String
+pub impl Thingable for Bytes
 

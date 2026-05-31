@@ -36,11 +36,7 @@ pub(all) enum Inline {
 pub(all) struct ListBlock {
   ordered : Bool
   start : Int?
-  items : Array[ListItem]
-} derive(Eq, @debug.Debug)
-
-pub(all) struct ListItem {
-  blocks : Array[Block]
+  items : Array[Array[Block]]
 } derive(Eq, @debug.Debug)
 
 // Type aliases

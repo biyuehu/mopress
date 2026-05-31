@@ -6,9 +6,11 @@ import {
 }
 
 // Values
-pub fn[T : Show] parse_template(T) -> Array[TemplateNode] raise TemplateParseError
+pub fn apply_template(Array[TemplateNode], Map[String, Value]) -> String
 
-pub fn apply_template(Array[TemplateNode], Map[String, String]) -> String raise TemplateRenderError
+pub fn apply_template_strict(Array[TemplateNode], Map[String, Value]) -> String raise TemplateRenderError
+
+pub fn[T : Show] parse_template(T) -> Array[TemplateNode] raise TemplateParseError
 
 // Errors
 pub suberror TemplateParseError {
@@ -16,9 +18,8 @@ pub suberror TemplateParseError {
 } derive(Eq, @debug.Debug)
 
 pub suberror TemplateRenderError {
-  TemplateRenderError(String)
-  MissingVariableError(String)
-  PartialNotImplementedError(String)
+  UndefinedVariableError(String)
+  NonArrayForLoopError(String)
 } derive(Eq, @debug.Debug)
 
 // Types and methods
@@ -30,7 +31,16 @@ pub(all) enum TemplateNode {
   Partial(String)
 } derive(Eq, @debug.Debug)
 
+pub(all) enum Value {
+  String(String)
+  Number(Float)
+  Bool(Bool)
+  Array(Array[Value])
+} derive(Eq, @debug.Debug)
+
 // Type aliases
+pub type Context = Map[String, Value]
+
 pub type Template = Array[TemplateNode]
 
 // Traits
