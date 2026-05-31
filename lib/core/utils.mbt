@@ -19,25 +19,30 @@ fn inject_before_body_end(html : String, tag : String) -> String {
 ///|
 fn parse_frontmatter(content : String) -> (Meta, String) {
   if !content.has_prefix("---\n") {
-    return (Map([]), content)
-  }
-  match Show::to_string(content[4:]).find("\n---\n") {
-    None => (Map([]), content)
-    Some(end_idx) => {
-      let fm_str = content[4:4 + end_idx]
-      let body = content[4 + end_idx + 5:]
-      let data : Map[String, String] = Map([])
-      for line in fm_str.split("\n") {
-        match line.find(":") {
-          None => ()
-          Some(colon) => {
-            let key = Show::to_string(line[:colon].trim())
-            let val = Show::to_string(line[colon + 1:].trim())
-            data[key] = val
-          }
+    (Map([]), content)
+  } else {
+    let rest = Show::to_string(content[4:])
+    let (end_idx, skip) = if rest.has_prefix("---\n") {
+      (0, 4)
+    } else {
+      match rest.find("\n---\n") {
+        None => return (Map([]), content)
+        Some(i) => (i, i + 5)
+      }
+    }
+    let fm_str = content[4:4 + end_idx]
+    let body = Show::to_string(content[4 + skip:])
+    let data : Map[String, String] = Map([])
+    for line in fm_str.split("\n") {
+      match line.find(":") {
+        None => ()
+        Some(colon) => {
+          let key = Show::to_string(line[:colon].trim())
+          let val = Show::to_string(line[colon + 1:].trim())
+          data[key] = val
         }
       }
-      (data, body |> Show::to_string)
     }
+    (data, body)
   }
 }
