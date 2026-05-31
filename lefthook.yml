@@ -1,0 +1,8 @@
+pre-commit:
+  commands:
+    format:
+      run: moon fmt
+    info:
+      run: moon info
+    test:
+      run: moon test

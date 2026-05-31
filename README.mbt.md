@@ -25,7 +25,16 @@ mopress offers two usage modes:
 
 ## Development
 
+### Environment
+
+- MoonBit
+- Just
+- Lefthook
+
+### Build
+
 ```bash
+just init
 moon test
 moon build
 ```
