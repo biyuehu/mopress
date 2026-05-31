@@ -8,7 +8,7 @@ import {
 // Values
 pub fn[T : Show] parse_template(T) -> Array[TemplateNode] raise TemplateParseError
 
-pub fn render_template(Array[TemplateNode], Map[String, String]) -> String raise TemplateRenderError
+pub fn apply_template(Array[TemplateNode], Map[String, String]) -> String raise TemplateRenderError
 
 // Errors
 pub suberror TemplateParseError {

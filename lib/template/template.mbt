@@ -249,7 +249,7 @@ pub suberror TemplateRenderError {
 } derive(Eq, Debug)
 
 ///|
-pub fn render_template(template : Template, context : Context) -> String {
+pub fn apply_template(template : Template, context : Context) -> String {
   let output = StringBuilder::new()
   render_nodes(template, context, false, output) catch {
     _ => panic()
@@ -258,7 +258,7 @@ pub fn render_template(template : Template, context : Context) -> String {
 }
 
 ///|
-pub fn render_template_strict(
+pub fn apply_template_strict(
   template : Template,
   context : Context,
 ) -> String raise TemplateRenderError {

@@ -23,7 +23,7 @@ pub fn apply_template(
   vars : Vars,
 ) -> Item[Html] {
   vars["content"] = content.data.html |> String
-  let rendered = template |> @template.render_template(vars)
+  let rendered = template |> @template.apply_template(vars)
   content.bind(data => data.extend(rendered))
 }
 
@@ -34,7 +34,7 @@ pub fn apply_template_strict(
   vars : Vars,
 ) -> Item[Html] raise {
   vars["content"] = content.data.html |> String
-  let rendered = template |> @template.render_template_strict(vars)
+  let rendered = template |> @template.apply_template_strict(vars)
   content.bind(data => data.extend(rendered))
 }
 

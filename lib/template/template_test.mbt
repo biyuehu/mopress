@@ -68,24 +68,24 @@ test "parse rejects malformed tags" {
 ///|
 test "render variables and text" {
   let template = parse_template("<h1>$title$</h1>")
-  let result = render_template(template, { "title": String("Hello") })
+  let result = apply_template(template, { "title": String("Hello") })
   assert_eq(result, "<h1>Hello</h1>")
 }
 
 ///|
 test "render if condition" {
   let template = parse_template("$if(show)$Hello$endif$")
-  assert_eq(render_template(template, { "show": Bool(true) }), "Hello")
-  assert_eq(render_template(template, { "show": Bool(false) }), "")
-  assert_eq(render_template(template, { "show": String("") }), "")
-  assert_eq(render_template(template, { "show": Array([]) }), "")
-  assert_eq(render_template(template, {}), "")
+  assert_eq(apply_template(template, { "show": Bool(true) }), "Hello")
+  assert_eq(apply_template(template, { "show": Bool(false) }), "")
+  assert_eq(apply_template(template, { "show": String("") }), "")
+  assert_eq(apply_template(template, { "show": Array([]) }), "")
+  assert_eq(apply_template(template, {}), "")
 }
 
 ///|
 test "render for loop" {
   let template = parse_template("$for(items)$$item$$endfor$")
-  let result = render_template(template, {
+  let result = apply_template(template, {
     "items": Array([Number(1), Number(2), Number(3)]),
   })
   assert_eq(result, "123")
@@ -94,7 +94,7 @@ test "render for loop" {
 ///|
 test "render reports missing variable" {
   let template = parse_template("$name$")
-  let message = try render_template_strict(template, {}) catch {
+  let message = try apply_template_strict(template, {}) catch {
     UndefinedVariableError(msg) => msg
     _ => abort("expected missing variable error")
   } noraise {
