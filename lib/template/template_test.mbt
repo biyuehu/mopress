@@ -19,7 +19,7 @@ test "parse if for and partial nodes" {
   let template = parse_template(source)
   guard template
     is [
-      If("relatedPosts", if_nodes),
+      If("relatedPosts", if_nodes, []),
       Text("\n"),
       Partial("templates/footer.html"),
     ] else {
@@ -80,6 +80,34 @@ test "render if condition" {
   assert_eq(apply_template(template, { "show": String("") }), "")
   assert_eq(apply_template(template, { "show": Array([]) }), "")
   assert_eq(apply_template(template, {}), "")
+}
+
+///|
+test "parse if with else branch" {
+  let template = parse_template("$if(show)$yes$else$no$endif$")
+  guard template is [If("show", [Text("yes")], [Text("no")])] else {
+    fail("expected if node with else branch")
+  }
+}
+
+///|
+test "render if else branch" {
+  let template = parse_template("$if(show)$yes$else$no$endif$")
+  assert_eq(apply_template(template, { "show": Bool(true) }), "yes")
+  assert_eq(apply_template(template, { "show": Bool(false) }), "no")
+  assert_eq(apply_template(template, { "show": String("") }), "no")
+  assert_eq(apply_template(template, { "show": Array([]) }), "no")
+  assert_eq(apply_template(template, {}), "no")
+}
+
+///|
+test "parse rejects dangling else" {
+  let message = try parse_template("$else$") catch {
+    TemplateParseError(message) => message
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(message.contains("unexpected $else$"))
 }
 
 ///|

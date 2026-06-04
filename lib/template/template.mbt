@@ -5,7 +5,7 @@ pub type Template = Array[TemplateNode]
 pub(all) enum TemplateNode {
   Text(String)
   Variable(String)
-  If(String, Array[TemplateNode])
+  If(String, Array[TemplateNode], Array[TemplateNode])
   For(String, Array[TemplateNode])
   Partial(String)
 } derive(Eq, Debug)
@@ -76,14 +76,38 @@ fn parse_nodes(
               return (nodes, close + 1, Some(tag))
             } else if tag.has_prefix("if(") && tag.has_suffix(")") {
               let name = trim_tag_argument(tag, "if(")
-              let (children, next, found) = parse_nodes(input, close + 1, [
-                "endif",
+              let (then_children, next, found) = parse_nodes(input, close + 1, [
+                "else", "endif",
               ])
               match found {
-                Some(_) => {
-                  nodes.push(If(name, children))
+                Some("endif") => {
+                  nodes.push(If(name, then_children, []))
                   index = next
                 }
+                Some("else") => {
+                  let (else_children, else_next, else_found) = parse_nodes(
+                    input,
+                    next,
+                    ["endif"],
+                  )
+                  match else_found {
+                    Some(_) => {
+                      nodes.push(If(name, then_children, else_children))
+                      index = else_next
+                    }
+                    None =>
+                      raise TemplateParseError(
+                        "missing $endif$ for $if(" +
+                        name +
+                        ")$ at byte " +
+                        open.to_string(),
+                      )
+                  }
+                }
+                Some(other) =>
+                  raise TemplateParseError(
+                    "unexpected $" + other + "$ at byte " + open.to_string(),
+                  )
                 None =>
                   raise TemplateParseError(
                     "missing $endif$ for $if(" +
@@ -113,7 +137,7 @@ fn parse_nodes(
             } else if tag.has_prefix("partial(") && tag.has_suffix(")") {
               nodes.push(Partial(parse_partial_path(tag, open)))
               index = close + 1
-            } else if tag == "endif" || tag == "endfor" {
+            } else if tag == "else" || tag == "endif" || tag == "endfor" {
               raise TemplateParseError(
                 "unexpected $" + tag + "$ at byte " + open.to_string(),
               )
@@ -285,12 +309,14 @@ fn render_nodes(
               raise UndefinedVariableError("missing variable: " + name)
             }
         }
-      If(name, children) =>
+      If(name, then_children, else_children) =>
         if context.get(name) is Some(value) &&
           value != Bool(false) &&
           value != String("") &&
           value != Array([]) {
-          render_nodes(children, context, strict, output)
+          render_nodes(then_children, context, strict, output)
+        } else {
+          render_nodes(else_children, context, strict, output)
         }
       For(name, children) =>
         match context.get(name) {
