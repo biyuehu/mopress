@@ -270,12 +270,15 @@ fn char_at(input : String, index : Int) -> Char {
 pub suberror TemplateRenderError {
   UndefinedVariableError(String)
   NonArrayForLoopError(String)
+  PartialLoadError(String)
+  PartialParseError(String)
+  RecursivePartialError(String)
 } derive(Eq, Debug)
 
 ///|
 pub fn apply_template(template : Template, context : Context) -> String {
   let output = StringBuilder::new()
-  render_nodes(template, context, false, output) catch {
+  render_nodes(template, context, false, output, []) catch {
     _ => panic()
   }
   output.to_string()
@@ -287,7 +290,7 @@ pub fn apply_template_strict(
   context : Context,
 ) -> String raise TemplateRenderError {
   let output = StringBuilder::new()
-  render_nodes(template, context, true, output)
+  render_nodes(template, context, true, output, [])
   output.to_string()
 }
 
@@ -297,6 +300,7 @@ fn render_nodes(
   context : Context,
   strict : Bool,
   output : StringBuilder,
+  partial_stack : Array[String],
 ) -> Unit raise TemplateRenderError {
   for node in nodes {
     match node {
@@ -314,9 +318,9 @@ fn render_nodes(
           value != Bool(false) &&
           value != String("") &&
           value != Array([]) {
-          render_nodes(then_children, context, strict, output)
+          render_nodes(then_children, context, strict, output, partial_stack)
         } else {
-          render_nodes(else_children, context, strict, output)
+          render_nodes(else_children, context, strict, output, partial_stack)
         }
       For(name, children) =>
         match context.get(name) {
@@ -324,14 +328,45 @@ fn render_nodes(
             for item in items {
               let item_context = context
               item_context["item"] = item
-              render_nodes(children, item_context, strict, output)
+              render_nodes(
+                children, item_context, strict, output, partial_stack,
+              )
             }
           _ =>
             if strict {
               raise NonArrayForLoopError("expected array for loop: " + name)
             }
         }
-      Partial(_) => ...
+      Partial(path) =>
+        render_partial(path, context, strict, output, partial_stack)
     }
   }
+}
+
+///|
+fn render_partial(
+  path : String,
+  context : Context,
+  strict : Bool,
+  output : StringBuilder,
+  partial_stack : Array[String],
+) -> Unit raise TemplateRenderError {
+  if contains_string(partial_stack, path) {
+    raise RecursivePartialError("recursive partial: " + path)
+  }
+  let source = @fs.read_file_to_string(path) catch {
+    @fs.IOError(message) =>
+      raise PartialLoadError(
+        "failed to read partial `" + path + "`: " + message,
+      )
+  }
+  let template = parse_template(source) catch {
+    TemplateParseError(message) =>
+      raise PartialParseError(
+        "failed to parse partial `" + path + "`: " + message,
+      )
+  }
+  let next_stack = partial_stack.copy()
+  next_stack.push(path)
+  render_nodes(template, context, strict, output, next_stack)
 }

@@ -130,3 +130,67 @@ test "render reports missing variable" {
   }
   assert_true(message.contains("missing variable: name"))
 }
+
+///|
+test "render partial from file" {
+  let source =
+    #|<main>$title$</main>
+    #|$partial("lib/template/testdata/footer.html")$
+  let template = parse_template(source)
+  let result = apply_template(template, { "title": String("Hello") })
+  assert_true(result.contains("<main>Hello</main>"))
+  assert_true(result.contains("<footer>Hello</footer>"))
+}
+
+///|
+test "render nested partial from file" {
+  let source =
+    #|$partial("lib/template/testdata/footer.html")$
+    #|$partial("lib/template/testdata/footer.html")$
+  let template = parse_template(source)
+  let result = apply_template(template, { "title": String("Twice") })
+  assert_true(result.contains("<footer>Twice</footer>"))
+  assert_true(result.length() > "<footer>Twice</footer>".length())
+}
+
+///|
+test "render reports missing partial file" {
+  let template = parse_template(
+    "$partial(\"lib/template/testdata/missing.html\")$",
+  )
+  let message = try apply_template_strict(template, {}) catch {
+    PartialLoadError(msg) => msg
+    _ => abort("expected partial load error")
+  } noraise {
+    _ => abort("expected partial load error, but got no error")
+  }
+  assert_true(message.contains("failed to read partial"))
+}
+
+///|
+test "render reports malformed partial" {
+  let template = parse_template(
+    "$partial(\"lib/template/testdata/malformed.html\")$",
+  )
+  let message = try apply_template_strict(template, {}) catch {
+    PartialParseError(msg) => msg
+    _ => abort("expected partial parse error")
+  } noraise {
+    _ => abort("expected partial parse error, but got no error")
+  }
+  assert_true(message.contains("failed to parse partial"))
+}
+
+///|
+test "render detects recursive partials" {
+  let template = parse_template(
+    "$partial(\"lib/template/testdata/recursive.html\")$",
+  )
+  let message = try apply_template_strict(template, {}) catch {
+    RecursivePartialError(msg) => msg
+    _ => abort("expected recursive partial error")
+  } noraise {
+    _ => abort("expected recursive partial error, but got no error")
+  }
+  assert_true(message.contains("recursive partial"))
+}

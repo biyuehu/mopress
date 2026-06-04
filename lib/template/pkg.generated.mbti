@@ -20,6 +20,9 @@ pub suberror TemplateParseError {
 pub suberror TemplateRenderError {
   UndefinedVariableError(String)
   NonArrayForLoopError(String)
+  PartialLoadError(String)
+  PartialParseError(String)
+  RecursivePartialError(String)
 } derive(Eq, @debug.Debug)
 
 // Types and methods
