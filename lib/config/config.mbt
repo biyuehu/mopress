@@ -65,7 +65,7 @@ pub fn BookConfig::validate(self : BookConfig) -> Unit raise ConfigParseError {
 }
 
 ///|
-pub impl Default for BookConfig with default() -> BookConfig {
+pub impl Default for BookConfig with fn default() -> BookConfig {
   {
     title: None,
     authors: [],
@@ -78,7 +78,7 @@ pub impl Default for BookConfig with default() -> BookConfig {
 }
 
 ///|
-pub impl Default for BuildConfig with default() -> BuildConfig {
+pub impl Default for BuildConfig with fn default() -> BuildConfig {
   { build_dir: "build", create_missing: true }
 }
 

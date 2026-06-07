@@ -2,4 +2,4 @@
 
 ## Template
 
-- [ ] Support `$else$` branch in conditional expressions
+- [X] Support `$else$` branch in conditional expressions
