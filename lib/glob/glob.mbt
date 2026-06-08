@@ -109,6 +109,15 @@ pub fn glob_match(pattern : String, path : String) -> Bool {
 }
 
 ///|
+pub fn glob_match_with(
+  pattern : String,
+  path : String,
+  f : (String) -> Bool,
+) -> Bool {
+  glob_match(pattern, path) && f(path)
+}
+
+///|
 pub fn scan_files(
   dir : String,
   pattern : String,
@@ -119,11 +128,23 @@ pub fn scan_files(
 }
 
 ///|
+pub fn scan_files_with(
+  dir : String,
+  pattern : String,
+  f : (String) -> Bool,
+) -> Array[String] raise @fs.IOError {
+  let results = []
+  scan_recursive(dir, dir, pattern, results, f~)
+  results
+}
+
+///|
 fn scan_recursive(
   base : String,
   current : String,
   pattern : String,
   results : Array[String],
+  f? : (String) -> Bool,
 ) -> Unit raise @fs.IOError {
   for entry in @fs.read_dir(current) {
     let full_path = current + "/" + entry
@@ -132,7 +153,8 @@ fn scan_recursive(
     } else if glob_match(
         pattern,
         Show::to_string(full_path[base.length() + 1:]),
-      ) {
+      ) &&
+      ((f is Some(f) && f(full_path)) || f is None) {
       results.push(full_path)
     }
   }
