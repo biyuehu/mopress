@@ -17,7 +17,7 @@ fn inject_before_body_end(html : String, tag : String) -> String {
 }
 
 ///|
-fn parse_frontmatter(content : String) -> (Meta, String) {
+fn parse_frontmatter(content : String) -> (Frontmatter, String) {
   if !content.has_prefix("---\n") {
     (Map([]), content)
   } else {
