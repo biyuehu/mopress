@@ -148,8 +148,10 @@ fn scan_recursive(
 ) -> Unit raise @fs.IOError {
   for entry in @fs.read_dir(current) {
     let full_path = current + "/" + entry
-    if @fs.path_exists(full_path + "/") {
-      scan_recursive(base, full_path, pattern, results)
+    if @fs.is_dir(full_path) {
+      if @fs.path_exists(full_path + "/") {
+        scan_recursive(base, full_path, pattern, results)
+      }
     } else if glob_match(
         pattern,
         Show::to_string(full_path[base.length() + 1:]),
