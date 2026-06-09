@@ -69,7 +69,7 @@ pub(all) enum Mode {
   Text((Item[String]) -> Item[Thing])
   Binary((Item[Bytes]) -> Item[Thing])
 }
-pub fn[T : Show] Mode::run(Self, T, () -> String raise, () -> Bytes raise) -> Item[Thing] raise
+pub fn Mode::run(Self, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing] raise
 
 pub(all) struct Options {
   src : String
@@ -90,6 +90,7 @@ pub(all) enum Thing {
   Multiple(Array[(String, Thing)])
   Empty
 }
+pub fn Thing::write(Self, String, String, handle_string? : (String, String) -> Unit raise, handle_bytes? : (String, Bytes) -> Unit raise) -> Unit raise
 
 // Type aliases
 pub type Meta = Map[String, String]
