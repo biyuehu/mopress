@@ -2,4 +2,7 @@ import {
   "himeno/mopress/lib/markdown",
   "himeno/mopress/lib/template",
   "moonbitlang/x/fs",
+  "moonbitlang/x/path",
+  "moonbitlang/core/env",
+  "himeno/mopress/lib/glob",
 }
