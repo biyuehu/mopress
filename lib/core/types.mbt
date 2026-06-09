@@ -48,6 +48,53 @@ pub fn[T, R] Item::bind(self : Item[T], f : (T) -> R) -> Item[R] {
 }
 
 ///|
+pub(all) enum Thing {
+  Doc(String)
+  Asset(Bytes)
+  Multiple(Array[(String, Thing)])
+  Empty
+}
+
+///|
+pub fn Thing::write(
+  self : Thing,
+  dest : String,
+  target : String,
+  handle_string? : (String, String) -> Unit raise = (path, data) => {
+    @fs.write_string_to_file(path, data)
+  },
+  handle_bytes? : (String, Bytes) -> Unit raise = (path, data) => {
+    @fs.write_bytes_to_file(path, data)
+  },
+) -> Unit raise {
+  let path = @path.Path(dest).join(target).to_string()
+  match self {
+    Doc(doc) => handle_string(path, doc)
+    Asset(asset) => handle_bytes(path, asset)
+    Multiple(multiple) =>
+      for info in multiple {
+        info.1.write(dest, info.0, handle_string~, handle_bytes~)
+      }
+    Empty => ()
+  }
+}
+
+///|
+pub trait Thingable {
+  fn to_thing(self : Self) -> Thing
+}
+
+///|
+pub impl Thingable for String with fn to_thing(self : String) -> Thing {
+  Thing::Doc(self)
+}
+
+///|
+pub impl Thingable for Bytes with fn to_thing(self : Bytes) -> Thing {
+  Thing::Asset(self)
+}
+
+///|
 pub type Step[T, R] = (Item[T]) -> Item[R]
 
 ///|

@@ -22,11 +22,9 @@ pub fn load_and_apply_template(Item[Html], String, Map[String, @template.Value],
 
 pub fn mopress(Options, Array[Rule]) -> Unit raise
 
+pub fn[E] mopress_with(Options, (Options) -> E, (Options, E) -> Array[Rule]) -> Unit raise
+
 pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
-
-pub fn[E] pre_build(() -> E) -> Runner[E]
-
-pub fn setup(Array[Rule]) -> Unit raise
 
 pub fn[T : Show] to_markdown_doc(Item[T]) -> Item[MarkdownDoc]
 
@@ -41,9 +39,9 @@ pub fn use_preprocessor(Item[MarkdownDoc], Array[(Item[MarkdownDoc]) -> Item[Mar
 // Types and methods
 pub struct Html {
   html : String
-  meta : Map[String, String]
+  frontmatter : Map[String, String]
 }
-pub fn Html::extend(Self, String, meta? : Map[String, String]) -> Self
+pub fn Html::extend(Self, String, frontmatter? : Map[String, String]) -> Self
 pub fn Html::new(String, Map[String, String]) -> Self
 
 pub struct Item[T] {
@@ -55,7 +53,7 @@ pub fn[T] Item::new(T, String) -> Self[T]
 
 pub struct MarkdownDoc {
   source : String
-  meta : Map[String, String]
+  frontmatter : Map[String, String]
 }
 pub fn MarkdownDoc::new(String, Map[String, String]) -> Self
 
@@ -81,9 +79,6 @@ pub(all) enum Rule {
   All(Matcher, Mode)
 }
 
-pub struct Runner[E](() -> E)
-pub fn[E] Runner::setup(Self[E], (E) -> Array[Rule]) -> Unit raise
-
 pub(all) enum Thing {
   Doc(String)
   Asset(Bytes)
@@ -93,7 +88,7 @@ pub(all) enum Thing {
 pub fn Thing::write(Self, String, String, handle_string? : (String, String) -> Unit raise, handle_bytes? : (String, Bytes) -> Unit raise) -> Unit raise
 
 // Type aliases
-pub type Meta = Map[String, String]
+pub type Frontmatter = Map[String, String]
 
 pub type Rules = Array[Rule]
 

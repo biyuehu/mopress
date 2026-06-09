@@ -1,28 +1,22 @@
 ///|
-pub fn[E] pre_build(pre_build : () -> E) -> Runner[E] {
-  Runner(pre_build)
-}
-
-///|
-pub fn setup(rules : Rules) -> Unit raise {
-
-}
-
-///|
-pub fn[E] Runner::setup(self : Runner[E], f : (E) -> Rules) -> Unit raise {
-
-}
-
-///|
 pub fn mopress(options : Options, rules : Rules) -> Unit raise {
   let args = @env.args()
   let cmd = if args.length() > 1 { args[1] } else { "help" }
   match cmd {
-    "build" => mo_build(options, rules)
-    "init" => mo_init(options)
-    "serve" => mo_serve(options, rules)
+    "build" => options |> mo_build(rules)
+    "init" => options |> mo_init()
+    "serve" => options |> mo_serve(rules)
     "help" | _ => mo_help()
   }
+}
+
+///|
+pub fn[E] mopress_with(
+  options : Options,
+  init : (Options) -> E,
+  rules : (Options, E) -> Rules,
+) -> Unit raise {
+  options |> mopress(options |> rules(options |> init))
 }
 
 ///|
@@ -77,5 +71,5 @@ fn mo_build(options : Options, rules : Rules) -> Unit raise {
 
 ///|
 test {
-  mo_build({ src: "lib", dest: "build" }, [])
+  mopress({ src: "lib", dest: "build" }, [])
 }
