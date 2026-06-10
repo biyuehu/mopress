@@ -2,7 +2,9 @@ pre-commit:
   commands:
     format:
       run: moon fmt
+      stage_fixed: true
     info:
       run: moon info
+      stage_fixed: true
     test:
       run: moon test
