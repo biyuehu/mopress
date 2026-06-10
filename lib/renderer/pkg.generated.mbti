@@ -1,11 +1,33 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "himeno/mopress/lib/renderer"
 
+import {
+  "himeno/mopress/lib/markdown",
+  "moonbitlang/core/debug",
+}
+
 // Values
+pub fn render_markdown(Array[@markdown.Block], opt? : RenderOptions) -> RenderedMarkdown
 
 // Errors
 
 // Types and methods
+pub(all) struct RenderOptions {
+  heading_anchor_prefix : String
+  allow_raw_html : Bool
+}
+pub impl Default for RenderOptions
+
+pub(all) struct RenderedMarkdown {
+  html : String
+  toc : Array[TocItem]
+}
+
+pub(all) struct TocItem {
+  level : Int
+  title : String
+  anchor : String
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 

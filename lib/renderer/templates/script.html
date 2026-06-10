@@ -1,0 +1,26 @@
+  <script>
+    (() => {
+      const progress = document.querySelector("[data-reading-progress]");
+      const content = document.querySelector("[data-page-content]");
+      if (progress && content) {
+        const updateProgress = () => {
+          const max = content.scrollHeight - content.clientHeight;
+          const pct = max <= 0 ? 0 : Math.min(1, content.scrollTop / max);
+          progress.style.width = (pct * 100) + "%";
+        };
+        content.addEventListener("scroll", updateProgress, { passive: true });
+        updateProgress();
+      }
+      document.addEventListener("click", event => {
+        const button = event.target.closest("[data-copy-button]");
+        if (!button) return;
+        const code = button.closest(".code-block")?.querySelector("code");
+        if (!code || !navigator.clipboard) return;
+        navigator.clipboard.writeText(code.textContent || "").then(() => {
+          const old = button.textContent;
+          button.textContent = "copied";
+          setTimeout(() => { button.textContent = old || "copy"; }, 1200);
+        });
+      });
+    })();
+  </script>

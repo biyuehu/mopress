@@ -1,0 +1,22 @@
+      <article class="content" data-page-content>
+        <div class="page-meta">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+$for(breadcrumb)$
+            <span class="$item.class$">$item.label$</span>$if(item.sep)$<span class="sep">/</span>$endif$
+$endfor$
+          </nav>
+$if(page_badge)$
+          <span class="page-badge">$page_badge$</span>
+$endif$
+        </div>
+        <header class="page-header">
+          <h1>$title$</h1>
+$if(page_desc)$
+          <p class="page-desc">$page_desc$</p>
+$endif$
+        </header>
+        <div class="markdown-body">
+$content_html$
+        </div>
+$pager_html$
+      </article>

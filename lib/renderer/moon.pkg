@@ -1,1 +1,3 @@
-
+import {
+  "himeno/mopress/lib/markdown",
+}
