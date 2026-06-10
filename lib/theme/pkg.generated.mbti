@@ -1,0 +1,77 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "himeno/mopress/lib/theme"
+
+import {
+  "himeno/mopress/lib/renderer",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn apply_default_theme(@renderer.RenderedMarkdown, PageData) -> String raise
+
+pub fn apply_theme(@renderer.RenderedMarkdown, PageData, Theme) -> String raise
+
+pub fn load_default_theme() -> Theme raise
+
+pub fn load_template_set(String) -> TemplateSet raise
+
+pub fn load_theme(String, String) -> Theme raise
+
+pub fn load_theme_assets(String) -> Array[ThemeAsset] raise
+
+// Errors
+
+// Types and methods
+pub(all) struct NavItem {
+  title : String
+  url : String
+  active : Bool
+  sub : Bool
+} derive(Eq, @debug.Debug)
+pub fn NavItem::active(Self) -> Self
+pub fn NavItem::new(String, String) -> Self
+pub fn NavItem::sub(Self) -> Self
+
+pub(all) struct PageData {
+  title : String
+  page_desc : String
+  page_badge : String?
+  breadcrumb : Array[String]
+  sidebar_sections : Array[SidebarSection]
+  prev_title : String?
+  prev_url : String?
+  next_title : String?
+  next_url : String?
+} derive(Eq, @debug.Debug)
+pub fn PageData::new(String) -> Self
+
+pub(all) struct SidebarSection {
+  label : String
+  items : Array[NavItem]
+} derive(Eq, @debug.Debug)
+pub fn SidebarSection::new(String, Array[NavItem]) -> Self
+
+pub(all) struct TemplateSet {
+  layout : String
+  sidebar : String
+  page : String
+  toc : String
+  pager : String
+  script : String
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Theme {
+  templates : TemplateSet
+  assets : Array[ThemeAsset]
+} derive(Eq, @debug.Debug)
+pub fn Theme::asset_content(Self, String) -> String?
+
+pub(all) struct ThemeAsset {
+  path : String
+  content : String
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
