@@ -4,5 +4,10 @@ import {
   "moonbitlang/x/fs",
   "moonbitlang/x/path",
   "moonbitlang/core/env",
+  "moonbitlang/core/debug",
   "himeno/mopress/lib/glob",
+  "moonbitlang/async",
+  "moonbitlang/async/fs" @afs,
+  "moonbitlang/async/http",
+  "moonbitlang/async/socket",
 }

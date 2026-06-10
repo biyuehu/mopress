@@ -17,3 +17,5 @@ license = "GPL-3.0-or-later"
 keywords = [ ]
 
 description = ""
+
+preferred_target = "native"

@@ -1,5 +1,5 @@
 ///|
-pub fn mopress(options : Options, rules : Rules) -> Unit raise {
+pub async fn mopress(options : Options, rules : Rules) -> Unit {
   let args = @env.args()
   let cmd = if args.length() > 1 { args[1] } else { "help" }
   match cmd {
@@ -11,22 +11,24 @@ pub fn mopress(options : Options, rules : Rules) -> Unit raise {
 }
 
 ///|
-pub fn[E] mopress_with(
+pub async fn[E] mopress_with(
   options : Options,
   init : (Options) -> E,
   rules : (Options, E) -> Rules,
-) -> Unit raise {
+) -> Unit {
   options |> mopress(options |> rules(options |> init))
 }
 
 ///|
 fn mo_init(options : Options) -> Unit raise {
-  ...
+  ignore(options)
+  fail("`mopress init` is not implemented yet")
 }
 
 ///|
-fn mo_serve(options : Options, rules : Rules) -> Unit raise {
-  ...
+async fn mo_serve(options : Options, rules : Rules) -> Unit {
+  options |> mo_build(rules)
+  serve_static_dir(options.dest)
 }
 
 ///|
@@ -70,6 +72,6 @@ fn mo_build(options : Options, rules : Rules) -> Unit raise {
 }
 
 ///|
-test {
+async test {
   mopress({ src: "lib", dest: "build" }, [])
 }
