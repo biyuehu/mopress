@@ -39,6 +39,7 @@ pub(all) enum Value {
   Number(Float)
   Bool(Bool)
   Array(Array[Value])
+  Object(Map[String, Value])
 } derive(Eq, @debug.Debug)
 
 // Type aliases

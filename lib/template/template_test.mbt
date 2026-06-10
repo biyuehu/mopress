@@ -120,6 +120,23 @@ test "render for loop" {
 }
 
 ///|
+test "render object fields in variables conditions and loops" {
+  let template = parse_template(
+    "$if(page.badge)$[$page.badge$]$endif$$for(page.items)$$item.title$:$item.url$;$endfor$",
+  )
+  let result = apply_template(template, {
+    "page": Object({
+      "badge": String("stable"),
+      "items": Array([
+        Object({ "title": String("Intro"), "url": String("index.html") }),
+        Object({ "title": String("API"), "url": String("api.html") }),
+      ]),
+    }),
+  })
+  assert_eq(result, "[stable]Intro:index.html;API:api.html;")
+}
+
+///|
 test "render reports missing variable" {
   let template = parse_template("$name$")
   let message = try apply_template_strict(template, {}) catch {

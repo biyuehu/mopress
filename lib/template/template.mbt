@@ -24,6 +24,7 @@ pub(all) enum Value {
   Number(Float)
   Bool(Bool)
   Array(Array[Value])
+  Object(Map[String, Value])
 } derive(Eq, Debug)
 
 // /|
@@ -35,6 +36,7 @@ impl Show for Value with fn to_string(self : Value) -> String {
     Number(n) => n.to_string()
     Bool(b) => b.to_string()
     Array(a) => "[" + a.map(v => v.to_string()).join(", ") + "]"
+    Object(_) => "[object]"
   }
 }
 
@@ -306,7 +308,7 @@ fn render_nodes(
     match node {
       Text(text) => output.write_string(text)
       Variable(name) =>
-        match context.get(name) {
+        match lookup_value(name, context) {
           Some(value) => output.write_string(value.to_string())
           None =>
             if strict {
@@ -314,19 +316,16 @@ fn render_nodes(
             }
         }
       If(name, then_children, else_children) =>
-        if context.get(name) is Some(value) &&
-          value != Bool(false) &&
-          value != String("") &&
-          value != Array([]) {
+        if lookup_value(name, context) is Some(value) && value.is_truthy() {
           render_nodes(then_children, context, strict, output, partial_stack)
         } else {
           render_nodes(else_children, context, strict, output, partial_stack)
         }
       For(name, children) =>
-        match context.get(name) {
+        match lookup_value(name, context) {
           Some(items) if items is Array(items) =>
             for item in items {
-              let item_context = context
+              let item_context = context.copy()
               item_context["item"] = item
               render_nodes(
                 children, item_context, strict, output, partial_stack,
@@ -341,6 +340,60 @@ fn render_nodes(
         render_partial(path, context, strict, output, partial_stack)
     }
   }
+}
+
+///|
+fn Value::is_truthy(self : Value) -> Bool {
+  match self {
+    Bool(false) => false
+    String("") => false
+    Array(items) => items.length() > 0
+    _ => true
+  }
+}
+
+///|
+fn lookup_value(path : String, context : Context) -> Value? {
+  let parts = split_path(path)
+  if parts.length() == 0 || parts[0] == "" {
+    None
+  } else {
+    match context.get(parts[0]) {
+      Some(value) => lookup_value_part(value, parts, 1)
+      None => None
+    }
+  }
+}
+
+///|
+fn lookup_value_part(
+  value : Value,
+  parts : Array[String],
+  index : Int,
+) -> Value? {
+  if index >= parts.length() {
+    Some(value)
+  } else if parts[index] == "" {
+    None
+  } else {
+    match value {
+      Object(fields) =>
+        match fields.get(parts[index]) {
+          Some(next) => lookup_value_part(next, parts, index + 1)
+          None => None
+        }
+      _ => None
+    }
+  }
+}
+
+///|
+fn split_path(path : String) -> Array[String] {
+  let parts : Array[String] = []
+  for part in path.split(".").to_array() {
+    parts.push(part.to_owned())
+  }
+  parts
 }
 
 ///|
