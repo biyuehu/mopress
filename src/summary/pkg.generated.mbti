@@ -1,11 +1,38 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "himeno/mopress/summary"
 
+import {
+  "himeno/mopress/markdown",
+  "moonbitlang/core/debug",
+}
+
 // Values
+pub fn parse_summary(Array[@markdown.Block]) -> Summary
 
 // Errors
 
 // Types and methods
+pub(all) struct Summary {
+  title : Array[@markdown.Inline]
+  prefix_chapters : Array[SummaryLink]
+  parts : Array[SummaryPart]
+  suffix_chapters : Array[SummaryLink]
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SummaryItem {
+  link : SummaryLink?
+  nested : Array[SummaryItem]
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SummaryLink {
+  title : Array[@markdown.Inline]
+  url : String
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SummaryPart {
+  title : Array[@markdown.Inline]?
+  items : Array[SummaryItem]
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 

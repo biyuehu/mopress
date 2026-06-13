@@ -39,7 +39,9 @@ pub fn use_css(Item[Html], String) -> Item[Html]
 
 pub fn use_js(Item[Html], String) -> Item[Html]
 
-pub fn use_preprocessor(Item[MarkdownDoc], Array[(Item[MarkdownDoc]) -> Item[MarkdownDoc] raise]) -> Item[MarkdownDoc] raise
+pub fn use_preprocessor(Item[String], Array[(Item[String]) -> Item[String] raise]) -> Item[String] raise
+
+pub fn use_transformer(Item[Array[@markdown.Block]], Array[(Item[Array[@markdown.Block]]) -> Item[Array[@markdown.Block]] raise]) -> Item[Array[@markdown.Block]] raise
 
 // Errors
 
@@ -61,12 +63,6 @@ pub struct Item[T] {
 }
 pub fn[T, R] Item::map(Self[T], (T) -> R) -> Self[R]
 pub fn[T] Item::new(T, String) -> Self[T]
-
-pub struct MarkdownDoc {
-  ast : Array[@markdown.Block]
-  frontmatter : Map[String, String]
-}
-pub fn MarkdownDoc::new(Array[@markdown.Block], Map[String, String]) -> Self
 
 pub(all) enum Mode {
   Text((Item[String]) -> Item[Thing] raise)

@@ -67,15 +67,23 @@ mopress build
 
 ```moonbit
 fn main {
-  mopress(config, [
-    rule(All(Glob("src/*.md")),
-      to_string
-      |> to_md
-      |> render_md
-      |> apply_template("page.html", vars)
-      |> to_output
+  mopress([
+    Glob(
+      "*.markdown",
+      Text(raw => {
+        raw
+        |> set_extension("html")
+        |> render_markdown_and_frontmatter
+        |> load_and_apply_template("test/src/templates/default.html")
+        |> import_js("./custom.js")
+        |> import_css("./custom.css")
+        |> use_js("console.log('hi, moonbit! hi, mopress!')")
+        |> use_css("some css code")
+        |> identify
+      }),
     ),
-    rule(All(Glob("static/**/*")), copy_asset),
+  Glob("images/*", Binary(raw => raw |> identify)),
+  Glob("css/*", Copy),
   ])
 }
 ```

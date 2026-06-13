@@ -2,5 +2,6 @@
 _build/
 .mooncakes/
 .moonagent/
+test
 
 mdbook-reference
