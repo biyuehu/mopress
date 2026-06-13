@@ -10,12 +10,16 @@ import {
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "https://github.com/biyuehu/mopress"
 
 license = "GPL-3.0-or-later"
 
-keywords = [ ]
+keywords = [ "docs", "utils", "cli", "functional", "site-generator", "website" ]
 
-description = ""
+description = "A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll"
 
 preferred_target = "native"
+
+options(
+  source: "src",
+)

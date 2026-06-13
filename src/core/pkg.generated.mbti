@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "himeno/mopress/lib/core"
+package "himeno/mopress/core"
 
 import {
-  "himeno/mopress/lib/markdown",
-  "himeno/mopress/lib/template",
+  "himeno/mopress/markdown",
+  "himeno/mopress/template",
   "moonbitlang/core/debug",
 }
 
@@ -20,9 +20,9 @@ pub fn import_js(Item[Html], String) -> Item[Html]
 
 pub fn load_and_apply_template(Item[Html], String, Map[String, @template.Value], strict? : Bool) -> Item[Html] raise
 
-pub fn mopress(Options, Array[Rule]) -> Unit raise
+pub async fn mopress(Options, Array[Rule]) -> Unit
 
-pub fn[E] mopress_with(Options, (Options) -> E, (Options, E) -> Array[Rule]) -> Unit raise
+pub async fn[E] mopress_with(Options, (Options) -> E, (Options, E) -> Array[Rule]) -> Unit
 
 pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
 

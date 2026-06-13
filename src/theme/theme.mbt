@@ -48,10 +48,10 @@ pub(all) struct NavItem {
 } derive(Eq, Debug)
 
 ///|
-let default_templates_dir = "lib/renderer/templates"
+let default_templates_dir = "src/renderer/templates"
 
 ///|
-let default_assets_dir = "lib/renderer/styles"
+let default_assets_dir = "src/renderer/styles"
 
 ///|
 pub fn PageData::new(title : String) -> PageData {

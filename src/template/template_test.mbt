@@ -152,7 +152,7 @@ test "render reports missing variable" {
 test "render partial from file" {
   let source =
     #|<main>$title$</main>
-    #|$partial("lib/template/testdata/footer.html")$
+    #|$partial("src/template/testdata/footer.html")$
   let template = parse_template(source)
   let result = apply_template(template, { "title": String("Hello") })
   assert_true(result.contains("<main>Hello</main>"))
@@ -162,8 +162,8 @@ test "render partial from file" {
 ///|
 test "render nested partial from file" {
   let source =
-    #|$partial("lib/template/testdata/footer.html")$
-    #|$partial("lib/template/testdata/footer.html")$
+    #|$partial("src/template/testdata/footer.html")$
+    #|$partial("src/template/testdata/footer.html")$
   let template = parse_template(source)
   let result = apply_template(template, { "title": String("Twice") })
   assert_true(result.contains("<footer>Twice</footer>"))
@@ -173,7 +173,7 @@ test "render nested partial from file" {
 ///|
 test "render reports missing partial file" {
   let template = parse_template(
-    "$partial(\"lib/template/testdata/missing.html\")$",
+    "$partial(\"src/template/testdata/missing.html\")$",
   )
   let message = try apply_template_strict(template, {}) catch {
     PartialLoadError(msg) => msg
@@ -187,7 +187,7 @@ test "render reports missing partial file" {
 ///|
 test "render reports malformed partial" {
   let template = parse_template(
-    "$partial(\"lib/template/testdata/malformed.html\")$",
+    "$partial(\"src/template/testdata/malformed.html\")$",
   )
   let message = try apply_template_strict(template, {}) catch {
     PartialParseError(msg) => msg
@@ -201,7 +201,7 @@ test "render reports malformed partial" {
 ///|
 test "render detects recursive partials" {
   let template = parse_template(
-    "$partial(\"lib/template/testdata/recursive.html\")$",
+    "$partial(\"src/template/testdata/recursive.html\")$",
   )
   let message = try apply_template_strict(template, {}) catch {
     RecursivePartialError(msg) => msg

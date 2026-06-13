@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "himeno/mopress/lib/theme"
+package "himeno/mopress/theme"
 
 import {
-  "himeno/mopress/lib/renderer",
+  "himeno/mopress/renderer",
   "moonbitlang/core/debug",
 }
 
