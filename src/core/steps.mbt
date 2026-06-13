@@ -3,24 +3,6 @@ pub fn[T : Show] parse_markdown(item : Item[T]) -> Item[@markdown.Markdown] {
   item.map(data => data |> @markdown.parse_markdown)
 }
 
-// ///|
-// pub fn[T : Show] to_markdown_doc(item : Item[T]) -> Item[MarkdownDoc] {
-//   item.map(data => {
-//     let (meta, content) = parse_frontmatter(data.to_string())
-//     MarkdownDoc::new(
-//       (content |> Item::new(item.extension) |> parse_markdown).data,
-//       meta,
-//     )
-//   })
-// }
-
-// ///|
-// pub fn render_markdown_doc(item : Item[MarkdownDoc]) -> Item[Html] {
-//   item.map(data => {
-//     Html::new(@renderer.render_markdown(data.ast).html, item.data.frontmatter)
-//   })
-// }
-
 ///|
 pub fn[T : Show] extract_markdown(
   item : Item[T],
@@ -101,7 +83,8 @@ pub fn load_and_apply_template(
 pub fn import_css(item : Item[Html], url : String) -> Item[Html] {
   item.map(data => {
     data.extend(
-      data.html |> inject_into_head("<link rel=\"stylesheet\" href=\"\{url}\">"),
+      data.html
+      |> inject_into_head("<link rel=\"stylesheet\" href=\"\{url}\">\n"),
     )
   })
 }
@@ -109,21 +92,21 @@ pub fn import_css(item : Item[Html], url : String) -> Item[Html] {
 ///|
 pub fn import_js(item : Item[Html], url : String) -> Item[Html] {
   item.map(data => {
-    data.extend(inject_before_body_end(data.html, "<script src=\{url}\">"))
+    data.extend(inject_before_body_end(data.html, "<script src=\"\{url}\"/>\n"))
   })
 }
 
 ///|
 pub fn use_css(item : Item[Html], code : String) -> Item[Html] {
   item.map(data => {
-    data.extend(inject_into_head(data.html, "<style>\{code}</style>"))
+    data.extend(inject_into_head(data.html, "<style>\{code}</style>\n"))
   })
 }
 
 ///|
 pub fn use_js(item : Item[Html], code : String) -> Item[Html] {
   item.map(data => {
-    data.extend(inject_before_body_end(data.html, "<script>\{code}</script>"))
+    data.extend(inject_before_body_end(data.html, "<script>\{code}</script>\n"))
   })
 }
 
@@ -134,9 +117,17 @@ pub fn[T : Thingable] identify(item : Item[T]) -> Item[Thing] {
 
 ///|
 pub fn use_preprocessor(
-  item : Item[MarkdownDoc],
-  handlers : Array[(Item[MarkdownDoc]) -> Item[MarkdownDoc] raise],
-) -> Item[MarkdownDoc] raise {
+  item : Item[String],
+  handlers : Array[(Item[String]) -> Item[String] raise],
+) -> Item[String] raise {
+  handlers.fold(init=item, (cur, h) => h(cur))
+}
+
+///|
+pub fn use_transformer(
+  item : Item[@markdown.Markdown],
+  handlers : Array[(Item[@markdown.Markdown]) -> Item[@markdown.Markdown] raise],
+) -> Item[@markdown.Markdown] raise {
   handlers.fold(init=item, (cur, h) => h(cur))
 }
 

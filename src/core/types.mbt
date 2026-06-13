@@ -134,20 +134,6 @@ pub fn Mode::run(
 pub type Frontmatter = Map[String, String]
 
 ///|
-pub struct MarkdownDoc {
-  ast : @markdown.Markdown
-  frontmatter : Frontmatter
-}
-
-///|
-pub fn MarkdownDoc::new(
-  ast : @markdown.Markdown,
-  frontmatter : Frontmatter,
-) -> MarkdownDoc {
-  { ast, frontmatter }
-}
-
-///|
 pub struct Html {
   html : String
   vars : Vars

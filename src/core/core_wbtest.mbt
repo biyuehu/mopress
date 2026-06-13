@@ -10,6 +10,10 @@ let rules : Rules = [
       |> set_extension("html")
       |> render_markdown_and_frontmatter
       |> load_and_apply_template("test/src/templates/default.html")
+      |> import_js("./custom.js")
+      |> import_css("./custom.css")
+      |> use_js("console.log('hi, moonbit! hi, mopress!')")
+      |> use_css("some css code")
       |> identify
     }),
   ),
