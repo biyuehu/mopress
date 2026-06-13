@@ -2,4 +2,5 @@ import {
   "himeno/mopress/renderer",
   "himeno/mopress/template",
   "moonbitlang/x/fs",
+  "moonbitlang/x/path",
 }

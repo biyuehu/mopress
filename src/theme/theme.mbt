@@ -179,10 +179,10 @@ fn read_theme_file(base_dir : String, name : String) -> String raise {
 
 ///|
 fn join_path(base_dir : String, name : String) -> String {
-  if base_dir.has_suffix("/") || base_dir.has_suffix("\\") {
+  if base_dir.has_suffix(@path.sep.to_string()) {
     base_dir + name
   } else {
-    base_dir + "/" + name
+    (base_dir |> @path.Path).join(name).to_string()
   }
 }
 

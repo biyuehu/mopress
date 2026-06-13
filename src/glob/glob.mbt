@@ -65,16 +65,13 @@ fn match_tokens(
       }
     }
     Question =>
-      // 匹配单个非/字符
       if pi >= path_len || chars[pi] == '/' {
         false
       } else {
         match_tokens(tokens, ti + 1, path, pi + 1)
       }
     Star => {
-      // 贪心尝试所有不含/的位置
       let mut p = pi
-      // 先尝试匹配空字符串
       if match_tokens(tokens, ti + 1, path, p) {
         return true
       }
@@ -104,8 +101,12 @@ fn match_tokens(
 
 ///|
 pub fn glob_match(pattern : String, path : String) -> Bool {
-  let tokens = tokenize(pattern)
-  match_tokens(tokens, 0, path, 0)
+  match_tokens(
+    tokenize(pattern),
+    0,
+    path.replace_all(old=@path.sep.to_string(), new="/"),
+    0,
+  )
 }
 
 ///|
@@ -147,9 +148,9 @@ fn scan_recursive(
   f? : (String) -> Bool,
 ) -> Unit raise @fs.IOError {
   for entry in @fs.read_dir(current) {
-    let full_path = current + "/" + entry
+    let full_path = (current |> @path.Path).join(entry).to_string()
     if @fs.is_dir(full_path) {
-      if @fs.path_exists(full_path + "/") {
+      if @fs.path_exists(full_path + @path.sep.to_string()) {
         scan_recursive(base, full_path, pattern, results)
       }
     } else if glob_match(
