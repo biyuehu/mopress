@@ -126,7 +126,7 @@ fn request_target_to_relative_path(target : String) -> String? {
     if parts.length() == 0 {
       Some("index.html")
     } else {
-      Some(parts.join("/"))
+      Some(parts.join(@path.sep.to_string()))
     }
   }
 }
@@ -231,7 +231,7 @@ test "request_target_to_relative_path normalizes index and rejects traversal" {
   @debug.assert_eq(request_target_to_relative_path("/guide/"), Some("guide"))
   @debug.assert_eq(
     request_target_to_relative_path("/a/b.html?x=1"),
-    Some("a/b.html"),
+    Some(@path.Path("a").join("b.html").to_string()),
   )
   @debug.assert_eq(request_target_to_relative_path("/../secret"), None)
   @debug.assert_eq(request_target_to_relative_path("/a\\b"), None)

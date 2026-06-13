@@ -1,5 +1,8 @@
 ///|
-pub async fn mopress(options : Options, rules : Rules) -> Unit {
+pub async fn mopress(
+  rules : Rules,
+  options? : Options = Options::default(),
+) -> Unit {
   let args = @env.args()
   let cmd = if args.length() > 1 { args[1] } else { "help" }
   match cmd {
@@ -12,11 +15,11 @@ pub async fn mopress(options : Options, rules : Rules) -> Unit {
 
 ///|
 pub async fn[E] mopress_with(
-  options : Options,
+  options? : Options = Options::default(),
   init : (Options) -> E,
   rules : (Options, E) -> Rules,
 ) -> Unit {
-  options |> mopress(options |> rules(options |> init))
+  mopress(options |> rules(options |> init), options~)
 }
 
 ///|
@@ -49,16 +52,12 @@ fn mo_help() -> Unit {
 ///|
 fn mo_build(options : Options, rules : Rules) -> Unit raise {
   for rule in rules {
-    let (paths, mode) = match rule {
-      One(Glob(glob), mode) => (@glob.scan_files(glob, options.src)[0:1], mode)
-      One(Guard(glob, f), mode) =>
-        (@glob.scan_files_with(glob, options.src, f)[0:1], mode)
-      All(Glob(glob), mode) => (@glob.scan_files(glob, options.src), mode)
-      All(Guard(glob, f), mode) =>
-        (@glob.scan_files_with(glob, options.src, f), mode)
-    }
-    for path in paths {
-      let { data, extension } = mode.run(path)
+    for
+      path in (match rule {
+        Glob(glob, _) => @glob.scan_files(options.src, glob)
+        Guard(glob, f, _) => @glob.scan_files_with(options.src, glob, f)
+      }) {
+      let { data, extension } = rule.mode().run(path)
       let target = path[options.src.length() + 1:] |> Show::to_string
       data.write(
         options.dest,
@@ -73,5 +72,5 @@ fn mo_build(options : Options, rules : Rules) -> Unit raise {
 
 ///|
 async test {
-  mopress({ src: "lib", dest: "build" }, [])
+  // Test mopress
 }

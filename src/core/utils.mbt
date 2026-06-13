@@ -46,3 +46,39 @@ fn parse_frontmatter(content : String) -> (Frontmatter, String) {
     (data, body)
   }
 }
+
+///|
+fn ensure_dir(path : String) -> Unit raise @fs.IOError {
+  if ["", ".", @path.sep.to_string()].contains(path) {
+    return
+  }
+
+  let parts = path.split(@path.sep.to_string())
+  let mut current = ""
+
+  for p in parts {
+    if p == "" || p == "." {
+      continue
+    }
+    current = if current == "" {
+      Show::to_string(p)
+    } else {
+      current + @path.sep.to_string() + Show::to_string(p)
+    }
+
+    if !@fs.path_exists(current) {
+      @fs.create_dir(current)
+    } else if !@fs.is_dir(current) {
+      raise @fs.IOError("path exists but is not a directory: " + current)
+    }
+  }
+}
+
+///|
+fn ensure_dir_for_file(filepath : String) -> Unit raise @fs.IOError {
+  let dir = (filepath |> @path.Path).dirname().to_string()
+  println("Ensuring dir for file: " + dir + " || file:  " + filepath)
+  if !["", ".", @path.sep.to_string()].contains(dir) && !@fs.path_exists(dir) {
+    ensure_dir(dir)
+  }
+}

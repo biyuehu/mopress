@@ -5,12 +5,15 @@ import {
   "himeno/mopress/markdown",
   "himeno/mopress/template",
   "moonbitlang/core/debug",
+  "moonbitlang/x/fs",
 }
 
 // Values
-pub fn apply_template(Item[Html], Array[@template.TemplateNode], Map[String, @template.Value]) -> Item[Html]
+pub fn apply_template(Item[Html], Array[@template.TemplateNode]) -> Item[Html]
 
-pub fn apply_template_strict(Item[Html], Array[@template.TemplateNode], Map[String, @template.Value]) -> Item[Html] raise
+pub fn apply_template_strict(Item[Html], Array[@template.TemplateNode]) -> Item[Html] raise
+
+pub fn[T : Show] extract_markdown(Item[T]) -> Item[(Map[String, String], String)]
 
 pub fn[T : Thingable] identify(Item[T]) -> Item[Thing]
 
@@ -18,15 +21,19 @@ pub fn import_css(Item[Html], String) -> Item[Html]
 
 pub fn import_js(Item[Html], String) -> Item[Html]
 
-pub fn load_and_apply_template(Item[Html], String, Map[String, @template.Value], strict? : Bool) -> Item[Html] raise
+pub fn load_and_apply_template(Item[Html], String, strict? : Bool) -> Item[Html] raise
 
-pub async fn mopress(Options, Array[Rule]) -> Unit
+pub async fn mopress(Array[Rule], options? : Options) -> Unit
 
-pub async fn[E] mopress_with(Options, (Options) -> E, (Options, E) -> Array[Rule]) -> Unit
+pub async fn[E] mopress_with(options? : Options, (Options) -> E, (Options, E) -> Array[Rule]) -> Unit
 
 pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
 
-pub fn[T : Show] to_markdown_doc(Item[T]) -> Item[MarkdownDoc]
+pub fn[T : Show] render_markdown(Item[T]) -> Item[Html]
+
+pub fn[T : Show] render_markdown_and_frontmatter(Item[T]) -> Item[Html]
+
+pub fn[T] set_extension(Item[T], String) -> Item[T]
 
 pub fn use_css(Item[Html], String) -> Item[Html]
 
@@ -39,33 +46,32 @@ pub fn use_preprocessor(Item[MarkdownDoc], Array[(Item[MarkdownDoc]) -> Item[Mar
 // Types and methods
 pub struct Html {
   html : String
-  frontmatter : Map[String, String]
+  vars : Map[String, @template.Value]
 }
-pub fn Html::extend(Self, String, frontmatter? : Map[String, String]) -> Self
-pub fn Html::new(String, Map[String, String]) -> Self
+pub fn Html::add_vars(Self, Map[String, @template.Value]) -> Self
+pub fn Html::delete_var(Self, String) -> Self
+pub fn Html::extend(Self, String, vars? : Map[String, @template.Value]) -> Self
+pub fn Html::new(String, Map[String, @template.Value]) -> Self
+pub fn Html::set_var(Self, String, @template.Value) -> Self
+pub impl Thingable for Html
 
 pub struct Item[T] {
   data : T
   extension : String
 }
-pub fn[T, R] Item::bind(Self[T], (T) -> R) -> Self[R]
+pub fn[T, R] Item::map(Self[T], (T) -> R) -> Self[R]
 pub fn[T] Item::new(T, String) -> Self[T]
 
 pub struct MarkdownDoc {
-  source : String
+  ast : Array[@markdown.Block]
   frontmatter : Map[String, String]
 }
-pub fn MarkdownDoc::new(String, Map[String, String]) -> Self
-
-pub(all) enum Matcher {
-  Glob(String)
-  Guard(String, (String) -> Bool)
-}
-pub fn Matcher::check(Self, String) -> Bool
+pub fn MarkdownDoc::new(Array[@markdown.Block], Map[String, String]) -> Self
 
 pub(all) enum Mode {
-  Text((Item[String]) -> Item[Thing])
-  Binary((Item[Bytes]) -> Item[Thing])
+  Text((Item[String]) -> Item[Thing] raise)
+  Binary((Item[Bytes]) -> Item[Thing] raise)
+  Copy
 }
 pub fn Mode::run(Self, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing] raise
 
@@ -73,11 +79,14 @@ pub(all) struct Options {
   src : String
   dest : String
 } derive(Eq, @debug.Debug)
+pub impl Default for Options
 
 pub(all) enum Rule {
-  One(Matcher, Mode)
-  All(Matcher, Mode)
+  Glob(String, Mode)
+  Guard(String, (String) -> Bool, Mode)
 }
+pub fn Rule::check(Self, String) -> Bool
+pub fn Rule::mode(Self) -> Mode
 
 pub(all) enum Thing {
   Doc(String)
@@ -85,14 +94,14 @@ pub(all) enum Thing {
   Multiple(Array[(String, Thing)])
   Empty
 }
-pub fn Thing::write(Self, String, String, handle_string? : (String, String) -> Unit raise, handle_bytes? : (String, Bytes) -> Unit raise) -> Unit raise
+pub fn Thing::write(Self, String, String) -> Unit raise @fs.IOError
 
 // Type aliases
 pub type Frontmatter = Map[String, String]
 
 pub type Rules = Array[Rule]
 
-pub type Step[T, R] = (Item[T]) -> Item[R]
+pub type Step[T, R] = (Item[T]) -> Item[R] raise
 
 pub type Vars = Map[String, @template.Value]
 
