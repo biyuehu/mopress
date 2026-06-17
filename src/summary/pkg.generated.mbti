@@ -13,7 +13,7 @@ pub fn parse_summary(Array[@markdown.Block]) -> Summary
 
 // Types and methods
 pub(all) struct Summary {
-  title : Array[@markdown.Inline]
+  title : String
   prefix_chapters : Array[SummaryLink]
   parts : Array[SummaryPart]
   suffix_chapters : Array[SummaryLink]
@@ -25,12 +25,12 @@ pub(all) struct SummaryItem {
 } derive(Eq, @debug.Debug)
 
 pub(all) struct SummaryLink {
-  title : Array[@markdown.Inline]
+  title : String
   url : String
 } derive(Eq, @debug.Debug)
 
 pub(all) struct SummaryPart {
-  title : Array[@markdown.Inline]?
+  title : String?
   items : Array[SummaryItem]
 } derive(Eq, @debug.Debug)
 

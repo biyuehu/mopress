@@ -1,6 +1,6 @@
 ///|
 pub(all) struct SummaryLink {
-  title : Array[@markdown.Inline]
+  title : String
   url : String
 } derive(Eq, Debug)
 
@@ -12,13 +12,13 @@ pub(all) struct SummaryItem {
 
 ///|
 pub(all) struct SummaryPart {
-  title : Array[@markdown.Inline]?
+  title : String?
   items : Array[SummaryItem]
 } derive(Eq, Debug)
 
 ///|
 pub(all) struct Summary {
-  title : Array[@markdown.Inline]
+  title : String
   prefix_chapters : Array[SummaryLink]
   parts : Array[SummaryPart]
   suffix_chapters : Array[SummaryLink]
@@ -36,7 +36,8 @@ fn extract_item_link(item : Array[@markdown.Block]) -> SummaryLink? {
   match item {
     [Paragraph(inlines), ..] =>
       match inlines {
-        [Link(title, url), ..] => Some({ title, url })
+        [Link(title, url), ..] =>
+          Some({ title: @markdown.Plainable::to_plain(title), url })
         _ => None
       }
     _ => None
@@ -64,7 +65,7 @@ fn parse_list_items(
 
 ///|
 pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
-  let title : Array[@markdown.Inline] = find_title(doc)
+  let title : String = find_title(doc)
 
   let prefix_chapters : Array[SummaryLink] = []
   let parts : Array[SummaryPart] = []
@@ -73,7 +74,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
   let blocks = skip_title(doc)
 
   let mut phase = 0 // 0=prefix, 1=in_parts, 2=suffix
-  let mut current_part_title : Array[@markdown.Inline]? = None
+  let mut current_part_title : String? = None
   let mut current_part_items : Array[SummaryItem] = []
 
   fn flush_part() {
@@ -94,7 +95,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
       (0, ThematicBreak) => phase = 1
       (0, Heading(1, inlines)) => {
         phase = 1
-        current_part_title = Some(inlines)
+        current_part_title = Some(@markdown.Plainable::to_plain(inlines))
       }
       (0, List(lb)) => {
         phase = 1
@@ -102,7 +103,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
       }
       (1, Heading(1, inlines)) => {
         flush_part()
-        current_part_title = Some(inlines)
+        current_part_title = Some(@markdown.Plainable::to_plain(inlines))
       }
       (1, List(lb)) => current_part_items = parse_list_items(lb.items)
       (1, ThematicBreak) => {
@@ -125,14 +126,14 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
 }
 
 ///|
-fn find_title(doc : @markdown.Markdown) -> Array[@markdown.Inline] {
+fn find_title(doc : @markdown.Markdown) -> String {
   for block in doc {
     match block {
-      Heading(1, inlines) => return inlines
+      Heading(1, inlines) => return @markdown.Plainable::to_plain(inlines)
       _ => continue
     }
   } nobreak {
-    [Text("Summary")] // fallback
+    "Summary"
   }
 }
 
@@ -158,11 +159,11 @@ fn skip_title(doc : @markdown.Markdown) -> Array[@markdown.Block] {
 }
 
 ///|
-/// 从 Paragraph 的 inlines 里提取第一个 Link
 fn extract_link_from_inlines(inlines : Array[@markdown.Inline]) -> SummaryLink? {
   for inline in inlines {
     match inline {
-      Link(title, url) => return Some({ title, url })
+      Link(title, url) =>
+        return Some({ title: @markdown.Plainable::to_plain(title), url })
       _ => continue
     }
   } nobreak {

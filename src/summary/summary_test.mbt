@@ -37,38 +37,35 @@ test "parse simple summary" {
   let summary = parse_summary(doc)
 
   // title
-  @debug.assert_eq(summary.title, [Text("Summary")])
+  @debug.assert_eq(summary.title, "Summary")
 
   // prefix
   @debug.assert_eq(summary.prefix_chapters, [
-    { title: [Text("Preface")], url: "preface.md" },
+    { title: "Preface", url: "preface.md" },
   ])
 
   // parts
   assert_eq(summary.parts.length(), 1)
-  @debug.assert_eq(summary.parts[0].title, Some([Text("Part One")]))
+  @debug.assert_eq(summary.parts[0].title, Some("Part One"))
   assert_eq(summary.parts[0].items.length(), 2)
 
   // Chapter 1
   let ch1 = summary.parts[0].items[0]
-  @debug.assert_eq(
-    ch1.link,
-    Some({ title: [Text("Chapter 1")], url: "ch1.md" }),
-  )
+  @debug.assert_eq(ch1.link, Some({ title: "Chapter 1", url: "ch1.md" }))
   assert_eq(ch1.nested.length(), 1)
   @debug.assert_eq(
     ch1.nested[0].link,
-    Some({ title: [Text("Sub 1.1")], url: "ch1/sub.md" }),
+    Some({ title: "Sub 1.1", url: "ch1/sub.md" }),
   )
 
   // Chapter 2
   let ch2 = summary.parts[0].items[1]
-  @debug.assert_eq(ch2.link, Some({ title: [Text("Chapter 2")], url: "" }))
+  @debug.assert_eq(ch2.link, Some({ title: "Chapter 2", url: "" }))
   assert_eq(ch2.nested.length(), 0)
 
   // suffix
   @debug.assert_eq(summary.suffix_chapters, [
-    { title: [Text("Appendix")], url: "appendix.md" },
+    { title: "Appendix", url: "appendix.md" },
   ])
 }
 
@@ -109,5 +106,5 @@ test "parse summary no title fallback" {
   ]
 
   let summary = parse_summary(doc)
-  @debug.assert_eq(summary.title, [Text("Summary")])
+  @debug.assert_eq(summary.title, "Summary")
 }

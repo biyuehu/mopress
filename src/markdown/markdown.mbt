@@ -36,31 +36,36 @@ pub(all) enum Inline {
 } derive(Eq, Debug)
 
 ///|
-fn[T : Show] show_array(array : Array[T], separator? : String = ", ") -> String {
-  array.map(item => item.to_string()).join(separator)
+pub trait Plainable {
+  fn to_plain(self : Self) -> String
 }
 
 ///|
-pub impl Show for Block with fn to_string(self : Block) -> String {
+pub impl[T : Plainable] Plainable for Array[T] with fn to_plain(self : Array[T]) -> String {
+  self.map(item => item.to_plain()).join(" ")
+}
+
+///|
+pub impl Plainable for Block with fn to_plain(self : Block) -> String {
   match self {
-    Heading(_, content) => content |> show_array
-    Paragraph(content) => content |> show_array
+    Heading(_, content) => Plainable::to_plain(content)
+    Paragraph(content) => Plainable::to_plain(content)
     ThematicBreak => "---"
     CodeBlock(_, content) => content
-    BlockQuote(blocks) => blocks |> show_array(separator="\n")
-    List(list) => list.to_string()
+    BlockQuote(blocks) => Plainable::to_plain(blocks)
+    List(list) => list.to_plain()
     HtmlBlock(content) => content
   }
 }
 
 ///|
-pub impl Show for Inline with fn to_string(self : Inline) -> String {
+pub impl Plainable for Inline with fn to_plain(self : Inline) -> String {
   match self {
     Text(text) => text
-    Emphasis(content) => content |> show_array
-    Strong(content) => content |> show_array
+    Emphasis(content) => Plainable::to_plain(content)
+    Strong(content) => Plainable::to_plain(content)
     Code(code) => code
-    Link(content, _) => content |> show_array
+    Link(content, _) => Plainable::to_plain(content)
     Image(_, alt) => alt
     Html(html) => html
     SoftBreak => " "
@@ -69,9 +74,9 @@ pub impl Show for Inline with fn to_string(self : Inline) -> String {
 }
 
 ///|
-pub impl Show for ListBlock with fn to_string(self : ListBlock) -> String {
+pub impl Plainable for ListBlock with fn to_plain(self : ListBlock) -> String {
   (if self.start is Some(start) { start.to_string() + " " } else { "" }) +
-  self.items.map(item => item |> show_array).join("\n")
+  Plainable::to_plain(self.items)
 }
 
 ///|
