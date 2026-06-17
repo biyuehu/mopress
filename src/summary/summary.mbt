@@ -36,7 +36,7 @@ fn extract_item_link(item : Array[@markdown.Block]) -> SummaryLink? {
   match item {
     [Paragraph(inlines), ..] =>
       match inlines {
-        [Link(title, url, _), ..] => Some({ title, url })
+        [Link(title, url), ..] => Some({ title, url })
         _ => None
       }
     _ => None
@@ -162,7 +162,7 @@ fn skip_title(doc : @markdown.Markdown) -> Array[@markdown.Block] {
 fn extract_link_from_inlines(inlines : Array[@markdown.Inline]) -> SummaryLink? {
   for inline in inlines {
     match inline {
-      Link(title, url, _) => return Some({ title, url })
+      Link(title, url) => return Some({ title, url })
       _ => continue
     }
   } nobreak {

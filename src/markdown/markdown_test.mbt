@@ -53,10 +53,10 @@ test "parse links images html and soft breaks" {
     is Paragraph(
       [
         Text("See "),
-        Link([Text("docs")], "guide.md", None),
+        Link([Text("docs")], "guide.md"),
         SoftBreak,
         Text("and "),
-        Image("logo", "logo.png", None),
+        Image("logo", "logo.png"),
         Text(" "),
         Html("<x-demo enabled>"),
         Html("</x-demo>"),

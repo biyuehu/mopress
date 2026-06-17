@@ -135,6 +135,80 @@ pub fn SectionNumber::to_string(self : SectionNumber) -> String {
   result
 }
 
+// ///|
+// fn Chapter::display_title(self : Chapter) -> String {
+//   match self.number {
+//     Some(number) => "\{number.to_string()} \{self.name}"
+//     None => self.name
+//   }
+// }
+
+// ///|
+// fn Chapter::output_path(self : Chapter) -> String {
+//   match self.path {
+//     Some(path) => path.replace(old=".md", new=".html")
+//     None => self.name.to_lower() + ".html"
+//   }
+// }
+
+// ///|
+// fn build_demo_sidebar(
+//   chapters : Array[Chapter],
+//   current_title : String,
+// ) -> Array[@theme.NavItem] {
+//   let items : Array[@theme.NavItem] = []
+//   for chapter in chapters {
+//     let item = if chapter.name == current_title {
+//       @theme.NavItem::new(chapter.display_title(), chapter.output_path()).active()
+//     } else {
+//       @theme.NavItem::new(chapter.display_title(), chapter.output_path())
+//     }
+//     items.push(item)
+//   }
+//   items
+// }
+
+// fn render_demo_page(book : Book, current_index : Int) -> String raise {
+//   let chapters = book.chapters()
+//   let chapter = chapters[current_index]
+//   let rendered = @renderer.render_markdown(
+//     @markdown.parse_markdown(chapter.content),
+//   )
+//   let page : @theme.PageData = {
+//     title: chapter.name,
+//     page_desc: "Generated from the book model",
+//     page_badge: Some("demo"),
+//     breadcrumb: ["Demo book", chapter.name],
+//     sidebar_sections: [
+//       @theme.SidebarSection::new(
+//         "Chapters",
+//         build_demo_sidebar(chapters, chapter.name),
+//       ),
+//     ],
+//     prev_title: if current_index > 0 {
+//       Some(chapters[current_index - 1].name)
+//     } else {
+//       None
+//     },
+//     prev_url: if current_index > 0 {
+//       Some(chapters[current_index - 1].output_path())
+//     } else {
+//       None
+//     },
+//     next_title: if current_index + 1 < chapters.length() {
+//       Some(chapters[current_index + 1].name)
+//     } else {
+//       None
+//     },
+//     next_url: if current_index + 1 < chapters.length() {
+//       Some(chapters[current_index + 1].output_path())
+//     } else {
+//       None
+//     },
+//   }
+//   @theme.apply_theme(rendered, page, @theme.load_default_theme())
+// }
+
 ///|
 fn count_chapters(items : Array[BookItem]) -> Int {
   let mut count = 0

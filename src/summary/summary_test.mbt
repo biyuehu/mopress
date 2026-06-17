@@ -12,7 +12,7 @@ test "parse simple summary" {
 
   let doc : @markdown.Markdown = [
     Heading(1, [Text("Summary")]),
-    Paragraph([Link([Text("Preface")], "preface.md", None)]),
+    Paragraph([Link([Text("Preface")], "preface.md")]),
     ThematicBreak,
     Heading(1, [Text("Part One")]),
     List({
@@ -20,18 +20,18 @@ test "parse simple summary" {
       start: None,
       items: [
         [
-          Paragraph([Link([Text("Chapter 1")], "ch1.md", None)]),
+          Paragraph([Link([Text("Chapter 1")], "ch1.md")]),
           List({
             ordered: false,
             start: None,
-            items: [[Paragraph([Link([Text("Sub 1.1")], "ch1/sub.md", None)])]],
+            items: [[Paragraph([Link([Text("Sub 1.1")], "ch1/sub.md")])]],
           }),
         ],
-        [Paragraph([Link([Text("Chapter 2")], "", None)])],
+        [Paragraph([Link([Text("Chapter 2")], "")])],
       ],
     }),
     ThematicBreak,
-    Paragraph([Link([Text("Appendix")], "appendix.md", None)]),
+    Paragraph([Link([Text("Appendix")], "appendix.md")]),
   ]
 
   let summary = parse_summary(doc)
@@ -84,8 +84,8 @@ test "parse summary no parts just flat list" {
       ordered: false,
       start: None,
       items: [
-        [Paragraph([Link([Text("Intro")], "intro.md", None)])],
-        [Paragraph([Link([Text("Guide")], "guide.md", None)])],
+        [Paragraph([Link([Text("Intro")], "intro.md")])],
+        [Paragraph([Link([Text("Guide")], "guide.md")])],
       ],
     }),
   ]
@@ -104,7 +104,7 @@ test "parse summary no title fallback" {
     List({
       ordered: false,
       start: None,
-      items: [[Paragraph([Link([Text("Page")], "page.md", None)])]],
+      items: [[Paragraph([Link([Text("Page")], "page.md")])]],
     }),
   ]
 

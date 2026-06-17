@@ -28,12 +28,51 @@ pub(all) enum Inline {
   Emphasis(Array[Inline])
   Strong(Array[Inline])
   Code(String)
-  Link(Array[Inline], String, String?)
-  Image(String, String, String?)
+  Link(Array[Inline], String)
+  Image(String, String)
   Html(String)
   SoftBreak
   HardBreak
 } derive(Eq, Debug)
+
+///|
+fn[T : Show] show_array(array : Array[T], separator? : String = ", ") -> String {
+  array.map(item => item.to_string()).join(separator)
+}
+
+///|
+pub impl Show for Block with fn to_string(self : Block) -> String {
+  match self {
+    Heading(_, content) => content |> show_array
+    Paragraph(content) => content |> show_array
+    ThematicBreak => "---"
+    CodeBlock(_, content) => content
+    BlockQuote(blocks) => blocks |> show_array(separator="\n")
+    List(list) => list.to_string()
+    HtmlBlock(content) => content
+  }
+}
+
+///|
+pub impl Show for Inline with fn to_string(self : Inline) -> String {
+  match self {
+    Text(text) => text
+    Emphasis(content) => content |> show_array
+    Strong(content) => content |> show_array
+    Code(code) => code
+    Link(content, _) => content |> show_array
+    Image(_, alt) => alt
+    Html(html) => html
+    SoftBreak => " "
+    HardBreak => "\n"
+  }
+}
+
+///|
+pub impl Show for ListBlock with fn to_string(self : ListBlock) -> String {
+  (if self.start is Some(start) { start.to_string() + " " } else { "" }) +
+  self.items.map(item => item |> show_array).join("\n")
+}
 
 ///|
 pub fn[T : Show] parse_markdown(input : T) -> Markdown {
@@ -329,7 +368,7 @@ fn parse_link(input : String, start : Int) -> (Inline, Int)? {
           let destination = substring(input, label_end + 2, dest_end)
             .trim()
             .to_owned()
-          Some((Link(parse_inlines(label), destination, None), dest_end + 1))
+          Some((Link(parse_inlines(label), destination), dest_end + 1))
         }
         None => None
       }
@@ -348,7 +387,7 @@ fn parse_image(input : String, start : Int) -> (Inline, Int)? {
           let destination = substring(input, label_end + 2, dest_end)
             .trim()
             .to_owned()
-          Some((Image(alt, destination, None), dest_end + 1))
+          Some((Image(alt, destination), dest_end + 1))
         }
         None => None
       }

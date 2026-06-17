@@ -114,8 +114,8 @@ fn render_inline(inline : @markdown.Inline, ctx : RenderContext) -> String {
     @markdown.Emphasis(xs) => "<em>" + render_inlines(xs, ctx) + "</em>"
     @markdown.Strong(xs) => "<strong>" + render_inlines(xs, ctx) + "</strong>"
     @markdown.Code(s) => "<code>" + escape_html(s) + "</code>"
-    @markdown.Link(label, href, title) => render_link(label, href, title, ctx)
-    @markdown.Image(alt, src, title) => render_image(alt, src, title)
+    @markdown.Link(label, href) => render_link(label, href, ctx)
+    @markdown.Image(alt, src) => render_image(alt, src)
     @markdown.Html(raw) =>
       if ctx.opt.allow_raw_html {
         raw
@@ -131,29 +131,19 @@ fn render_inline(inline : @markdown.Inline, ctx : RenderContext) -> String {
 fn render_link(
   label : Array[@markdown.Inline],
   href : String,
-  title : String?,
   ctx : RenderContext,
 ) -> String {
-  let mut attrs = " href=\"" + escape_attr(href) + "\""
-  match title {
-    Some(t) => attrs = attrs + " title=\"" + escape_attr(t) + "\""
-    None => ()
-  }
-  "<a" + attrs + ">" + render_inlines(label, ctx) + "</a>"
+  "<a href=\"" + escape_attr(href) + "\">" + render_inlines(label, ctx) + "</a>"
 }
 
 ///|
-fn render_image(alt : String, src : String, title : String?) -> String {
-  let mut attrs = " src=\"" +
-    escape_attr(src) +
-    "\" alt=\"" +
-    escape_attr(alt) +
-    "\" loading=\"lazy\" decoding=\"async\""
-  match title {
-    Some(t) => attrs = attrs + " title=\"" + escape_attr(t) + "\""
-    None => ()
-  }
-  "<img" + attrs + ">"
+fn render_image(alt : String, src : String) -> String {
+  "<img src=\"" +
+  escape_attr(src) +
+  "\" alt=\"" +
+  escape_attr(alt) +
+  "\" loading=\"lazy\" decoding=\"async\"" +
+  ">"
 }
 
 ///|
@@ -238,8 +228,8 @@ fn plain_text_from_inline(inline : @markdown.Inline) -> String {
     @markdown.Emphasis(xs) => plain_text_from_inlines(xs)
     @markdown.Strong(xs) => plain_text_from_inlines(xs)
     @markdown.Code(s) => s
-    @markdown.Link(xs, _, _) => plain_text_from_inlines(xs)
-    @markdown.Image(alt, _, _) => alt
+    @markdown.Link(xs, _) => plain_text_from_inlines(xs)
+    @markdown.Image(alt, _) => alt
     @markdown.Html(_) => ""
     @markdown.SoftBreak => " "
     @markdown.HardBreak => " "
