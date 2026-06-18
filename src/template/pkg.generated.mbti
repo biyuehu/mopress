@@ -36,11 +36,13 @@ pub(all) enum TemplateNode {
 
 pub(all) enum Value {
   String(String)
-  Number(Float)
+  Number(Double)
   Bool(Bool)
   Array(Array[Value])
   Object(Map[String, Value])
 } derive(Eq, @debug.Debug)
+pub fn Value::from_json(Json) -> Self
+pub impl Show for Value
 
 // Type aliases
 pub type Context = Map[String, Value]

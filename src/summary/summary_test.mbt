@@ -36,36 +36,47 @@ test "parse simple summary" {
 
   let summary = parse_summary(doc)
 
-  // title
   @debug.assert_eq(summary.title, "Summary")
 
-  // prefix
   @debug.assert_eq(summary.prefix_chapters, [
-    { title: "Preface", url: "preface.md" },
+    Link({ title: "Preface", location: Some("preface.md"), nested_items: [] }),
   ])
 
-  // parts
-  assert_eq(summary.parts.length(), 1)
-  @debug.assert_eq(summary.parts[0].title, Some("Part One"))
-  assert_eq(summary.parts[0].items.length(), 2)
+  @debug.assert_eq(summary.numbered_chapters.length(), 4)
 
-  // Chapter 1
-  let ch1 = summary.parts[0].items[0]
-  @debug.assert_eq(ch1.link, Some({ title: "Chapter 1", url: "ch1.md" }))
-  assert_eq(ch1.nested.length(), 1)
-  @debug.assert_eq(
-    ch1.nested[0].link,
-    Some({ title: "Sub 1.1", url: "ch1/sub.md" }),
-  )
+  @debug.assert_eq(summary.numbered_chapters[0], PartTitle("Part One"))
 
-  // Chapter 2
-  let ch2 = summary.parts[0].items[1]
-  @debug.assert_eq(ch2.link, Some({ title: "Chapter 2", url: "" }))
-  assert_eq(ch2.nested.length(), 0)
+  match summary.numbered_chapters[1] {
+    Link(ch1) => {
+      @debug.assert_eq(ch1.title, "Chapter 1")
+      @debug.assert_eq(ch1.location, Some("ch1.md"))
+      @debug.assert_eq(ch1.nested_items.length(), 1)
 
-  // suffix
+      match ch1.nested_items[0] {
+        Link(sub) => {
+          @debug.assert_eq(sub.title, "Sub 1.1")
+          @debug.assert_eq(sub.location, Some("ch1/sub.md"))
+          @debug.assert_eq(sub.nested_items.length(), 0)
+        }
+        _ => panic()
+      }
+    }
+    _ => panic()
+  }
+
+  match summary.numbered_chapters[2] {
+    Link(ch2) => {
+      @debug.assert_eq(ch2.title, "Chapter 2")
+      @debug.assert_eq(ch2.location, Some(""))
+      @debug.assert_eq(ch2.nested_items.length(), 0)
+    }
+    _ => panic()
+  }
+
+  @debug.assert_eq(summary.numbered_chapters[3], Separator)
+
   @debug.assert_eq(summary.suffix_chapters, [
-    { title: "Appendix", url: "appendix.md" },
+    Link({ title: "Appendix", location: Some("appendix.md"), nested_items: [] }),
   ])
 }
 
@@ -88,11 +99,28 @@ test "parse summary no parts just flat list" {
   ]
 
   let summary = parse_summary(doc)
-  assert_eq(summary.prefix_chapters.length(), 0)
-  assert_eq(summary.suffix_chapters.length(), 0)
-  assert_eq(summary.parts.length(), 1)
-  @debug.assert_eq(summary.parts[0].title, None)
-  assert_eq(summary.parts[0].items.length(), 2)
+
+  @debug.assert_eq(summary.prefix_chapters.length(), 0)
+  @debug.assert_eq(summary.suffix_chapters.length(), 0)
+  @debug.assert_eq(summary.numbered_chapters.length(), 2)
+
+  match summary.numbered_chapters[0] {
+    Link(item) => {
+      @debug.assert_eq(item.title, "Intro")
+      @debug.assert_eq(item.location, Some("intro.md"))
+      @debug.assert_eq(item.nested_items.length(), 0)
+    }
+    _ => panic()
+  }
+
+  match summary.numbered_chapters[1] {
+    Link(item) => {
+      @debug.assert_eq(item.title, "Guide")
+      @debug.assert_eq(item.location, Some("guide.md"))
+      @debug.assert_eq(item.nested_items.length(), 0)
+    }
+    _ => panic()
+  }
 }
 
 ///|

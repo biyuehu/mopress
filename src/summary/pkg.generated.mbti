@@ -14,25 +14,22 @@ pub fn parse_summary(Array[@markdown.Block]) -> Summary
 // Types and methods
 pub(all) struct Summary {
   title : String
-  prefix_chapters : Array[SummaryLink]
-  parts : Array[SummaryPart]
-  suffix_chapters : Array[SummaryLink]
-} derive(Eq, @debug.Debug)
+  prefix_chapters : Array[SummaryItem]
+  numbered_chapters : Array[SummaryItem]
+  suffix_chapters : Array[SummaryItem]
+} derive(Eq, ToJson, @debug.Debug)
 
-pub(all) struct SummaryItem {
-  link : SummaryLink?
-  nested : Array[SummaryItem]
-} derive(Eq, @debug.Debug)
+pub(all) enum SummaryItem {
+  Link(SummaryLink)
+  PartTitle(String)
+  Separator
+} derive(Eq, ToJson, @debug.Debug)
 
 pub(all) struct SummaryLink {
   title : String
-  url : String
-} derive(Eq, @debug.Debug)
-
-pub(all) struct SummaryPart {
-  title : String?
-  items : Array[SummaryItem]
-} derive(Eq, @debug.Debug)
+  location : String?
+  nested_items : Array[SummaryItem]
+} derive(Eq, ToJson, @debug.Debug)
 
 // Type aliases
 
