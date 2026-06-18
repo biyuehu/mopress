@@ -21,22 +21,33 @@ pub type Context = Map[String, Value]
 ///|
 pub(all) enum Value {
   String(String)
-  Number(Float)
+  Number(Double)
   Bool(Bool)
   Array(Array[Value])
   Object(Map[String, Value])
 } derive(Eq, Debug)
 
-// /|
-
 ///|
-impl Show for Value with fn to_string(self : Value) -> String {
+pub impl Show for Value with fn to_string(self : Value) -> String {
   match self {
     String(s) => s
     Number(n) => n.to_string()
     Bool(b) => b.to_string()
     Array(a) => "[" + a.map(v => v.to_string()).join(", ") + "]"
     Object(_) => "[object]"
+  }
+}
+
+///|
+pub fn Value::from_json(json : Json) -> Value {
+  match json {
+    String(s) => String(s)
+    Null => String("")
+    Number(n, ..) => Number(n)
+    True => Bool(true)
+    False => Bool(false)
+    Array(a) => Array(a.map(v => Value::from_json(v)))
+    Object(o) => Object(o.map((_, v) => Value::from_json(v)))
   }
 }
 
