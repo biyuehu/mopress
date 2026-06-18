@@ -3,5 +3,6 @@ _build/
 .mooncakes/
 .moonagent/
 test
+local_*.mbt
 
 mdbook-reference
