@@ -9,20 +9,23 @@ pub(all) struct TocItem {
   level : Int
   title : String
   anchor : String
-} derive(Eq, Debug)
+} derive(Eq, Debug, ToJson)
 
 ///|
 priv struct RenderContext {
   slug_counts : Map[String, Int]
-  toc : Array[TocItem]
+  toc : Toc
   opt : RenderOptions
 }
 
 ///|
 pub(all) struct RenderedMarkdown {
   html : String
-  toc : Array[TocItem]
+  toc : Toc
 }
+
+///|
+pub type Toc = Array[TocItem]
 
 ///|
 pub impl Default for RenderOptions with fn default() -> RenderOptions {

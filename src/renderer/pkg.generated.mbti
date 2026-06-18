@@ -27,9 +27,10 @@ pub(all) struct TocItem {
   level : Int
   title : String
   anchor : String
-} derive(Eq, @debug.Debug)
+} derive(Eq, ToJson, @debug.Debug)
 
 // Type aliases
+pub type Toc = Array[TocItem]
 
 // Traits
 
