@@ -24,9 +24,18 @@ pub fn[T : Show] render_markdown(item : Item[T]) -> Item[Html] {
 pub fn[T : Show] render_markdown_and_frontmatter(item : Item[T]) -> Item[Html] {
   item.map(data => {
     let (frontmatter, content) = data.to_string() |> parse_frontmatter
-    Html::new(
-      (content |> @markdown.parse_markdown |> @renderer.render_markdown).html,
-      frontmatter.map((_, v) => v |> String),
+    let rendered = content
+      |> @markdown.parse_markdown
+      |> @renderer.render_markdown
+    Html::new(rendered.html, frontmatter.map((_, v) => v |> String)).add_vars(
+      Map([
+        ("body", rendered.html |> String),
+        (
+          "toc",
+          rendered.toc.map(item => item.to_json() |> @template.Value::from_json)
+          |> Array,
+        ),
+      ]),
     )
   })
 }
@@ -42,12 +51,7 @@ pub fn apply_template(
   template : @template.Template,
 ) -> Item[Html] {
   body.map(data => {
-    data.extend(
-      template
-      |> @template.apply_template(
-        body.data.set_var("body", body.data.html |> String).vars,
-      ),
-    )
+    data.extend(template |> @template.apply_template(body.data.vars))
   })
 }
 
@@ -56,10 +60,7 @@ pub fn apply_template_strict(
   body : Item[Html],
   template : @template.Template,
 ) -> Item[Html] raise {
-  let rendered = template
-    |> @template.apply_template_strict(
-      body.data.set_var("body", body.data.html |> String).vars,
-    )
+  let rendered = template |> @template.apply_template_strict(body.data.vars)
   body.map(data => data.extend(rendered))
 }
 

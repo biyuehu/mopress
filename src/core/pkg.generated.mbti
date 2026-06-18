@@ -51,7 +51,7 @@ pub struct Html {
   vars : Map[String, @template.Value]
 }
 pub fn Html::add_vars(Self, Map[String, @template.Value]) -> Self
-pub fn Html::delete_var(Self, String) -> Self
+pub fn Html::clear_var(Self, String) -> Self
 pub fn Html::extend(Self, String, vars? : Map[String, @template.Value]) -> Self
 pub fn Html::new(String, Map[String, @template.Value]) -> Self
 pub fn Html::set_var(Self, String, @template.Value) -> Self

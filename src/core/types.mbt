@@ -169,7 +169,7 @@ pub fn Html::set_var(
 }
 
 ///|
-pub fn Html::delete_var(self : Html, key : String) -> Html {
+pub fn Html::clear_var(self : Html, key : String) -> Html {
   self.set_var(key, "" |> String)
 }
 
