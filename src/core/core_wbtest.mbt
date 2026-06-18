@@ -33,7 +33,7 @@ async test {
 
 ///|
 test {
-  guard @fs.is_file("test/src/SUMMARY.md")
+  guard @fs.path_exists("test/src/SUMMARY.md")
   let json = (@fs.read_file_to_string("test/src/SUMMARY.md")
   |> @markdown.parse_markdown
   |> @summary.parse_summary).to_json()
