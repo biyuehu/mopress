@@ -29,12 +29,34 @@ pub(all) enum Value {
 
 ///|
 pub impl Show for Value with fn to_string(self : Value) -> String {
+  let to_string_spec = (v : Value) => {
+    match v {
+      String(s) => "\"" + s + "\""
+      _ => v.to_string()
+    }
+  }
   match self {
     String(s) => s
     Number(n) => n.to_string()
     Bool(b) => b.to_string()
-    Array(a) => "[" + a.map(v => v.to_string()).join(", ") + "]"
-    Object(_) => "[object]"
+    Array(a) => "[" + a.map(v => v |> to_string_spec).join(", ") + "]"
+    Object(x) => {
+      let output = StringBuilder::new()
+      output.write_string("{")
+      let mut is_first = true
+      for item in x {
+        if is_first {
+          is_first = false
+        } else {
+          output.write_string(", ")
+        }
+        output.write_string(item.0)
+        output.write_string(": ")
+        output.write_string(item.1 |> to_string_spec)
+      }
+      output.write_string("}")
+      output.to_string()
+    }
   }
 }
 
