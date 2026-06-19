@@ -57,7 +57,7 @@ fn mo_build(options : Options, rules : Rules) -> Unit raise {
         Glob(glob, _) => @glob.scan_files(options.src, glob)
         Guard(glob, f, _) => @glob.scan_files_with(options.src, glob, f)
       }) {
-      let { data, extension } = rule.mode().run(path)
+      let { data, extension, .. } = rule.mode().run(path)
       let target = path[options.src.length() + 1:] |> Show::to_string
       data.write(
         options.dest,

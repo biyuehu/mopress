@@ -9,19 +9,19 @@ import {
 }
 
 // Values
-pub fn apply_template(Item[Html], Array[@template.TemplateNode]) -> Item[Html]
+pub fn apply_template(Item[String], Array[@template.TemplateNode]) -> Item[String]
 
-pub fn apply_template_strict(Item[Html], Array[@template.TemplateNode]) -> Item[Html] raise
+pub fn apply_template_strict(Item[String], Array[@template.TemplateNode]) -> Item[String] raise
 
 pub fn[T : Show] extract_markdown(Item[T]) -> Item[(Map[String, String], String)]
 
 pub fn[T : Thingable] identify(Item[T]) -> Item[Thing]
 
-pub fn import_css(Item[Html], String) -> Item[Html]
+pub fn import_css(Item[String], String) -> Item[String]
 
-pub fn import_js(Item[Html], String) -> Item[Html]
+pub fn import_js(Item[String], String) -> Item[String]
 
-pub fn load_and_apply_template(Item[Html], String, strict? : Bool) -> Item[Html] raise
+pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
 
 pub async fn mopress(Array[Rule], options? : Options) -> Unit
 
@@ -29,15 +29,15 @@ pub async fn[E] mopress_with(options? : Options, (Options) -> E, (Options, E) ->
 
 pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
 
-pub fn[T : Show] render_markdown(Item[T]) -> Item[Html]
+pub fn[T : Show] render_markdown(Item[T]) -> Item[String]
 
-pub fn[T : Show] render_markdown_and_frontmatter(Item[T]) -> Item[Html]
+pub fn[T : Show] render_markdown_and_frontmatter(Item[T]) -> Item[String]
 
 pub fn[T] set_extension(Item[T], String) -> Item[T]
 
-pub fn use_css(Item[Html], String) -> Item[Html]
+pub fn use_css(Item[String], String) -> Item[String]
 
-pub fn use_js(Item[Html], String) -> Item[Html]
+pub fn use_js(Item[String], String) -> Item[String]
 
 pub fn use_preprocessor(Item[String], Array[(Item[String]) -> Item[String] raise]) -> Item[String] raise
 
@@ -46,23 +46,16 @@ pub fn use_transformer(Item[Array[@markdown.Block]], Array[(Item[Array[@markdown
 // Errors
 
 // Types and methods
-pub struct Html {
-  html : String
-  vars : Map[String, @template.Value]
-}
-pub fn Html::add_vars(Self, Map[String, @template.Value]) -> Self
-pub fn Html::clear_var(Self, String) -> Self
-pub fn Html::extend(Self, String, vars? : Map[String, @template.Value]) -> Self
-pub fn Html::new(String, Map[String, @template.Value]) -> Self
-pub fn Html::set_var(Self, String, @template.Value) -> Self
-pub impl Thingable for Html
-
 pub struct Item[T] {
   data : T
   extension : String
+  vars : Map[String, @template.Value]
 }
+pub fn[T] Item::add_vars(Self[T], Map[String, @template.Value]) -> Self[T]
+pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
 pub fn[T, R] Item::map(Self[T], (T) -> R) -> Self[R]
-pub fn[T] Item::new(T, String) -> Self[T]
+pub fn[T] Item::new(T, String, vars? : Map[String, @template.Value]) -> Self[T]
+pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
 
 pub(all) enum Mode {
   Text((Item[String]) -> Item[Thing] raise)
@@ -94,6 +87,8 @@ pub fn Thing::write(Self, String, String) -> Unit raise @fs.IOError
 
 // Type aliases
 pub type Frontmatter = Map[String, String]
+
+pub type Html = String
 
 pub type Rules = Array[Rule]
 

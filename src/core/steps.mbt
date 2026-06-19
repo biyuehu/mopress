@@ -12,32 +12,44 @@ pub fn[T : Show] extract_markdown(
 
 ///|
 pub fn[T : Show] render_markdown(item : Item[T]) -> Item[Html] {
-  item.map(data => {
-    Html::new(
-      (data |> @markdown.parse_markdown |> @renderer.render_markdown).html,
-      Map([]),
-    )
-  })
+  let { html, toc } = item.data
+    |> @markdown.parse_markdown
+    |> @renderer.render_markdown
+  Item::new(
+    html,
+    item.extension,
+    vars=Map([
+      ("body", html |> String),
+      (
+        "toc",
+        toc.map(item => item.to_json() |> @template.Value::from_json) |> Array,
+      ),
+    ]),
+  )
 }
 
 ///|
 pub fn[T : Show] render_markdown_and_frontmatter(item : Item[T]) -> Item[Html] {
-  item.map(data => {
-    let (frontmatter, content) = data.to_string() |> parse_frontmatter
-    let rendered = content
-      |> @markdown.parse_markdown
-      |> @renderer.render_markdown
-    Html::new(rendered.html, frontmatter.map((_, v) => v |> String)).add_vars(
-      Map([
-        ("body", rendered.html |> String),
-        (
-          "toc",
-          rendered.toc.map(item => item.to_json() |> @template.Value::from_json)
-          |> Array,
-        ),
-      ]),
-    )
-  })
+  let (frontmatter, content) = item.data.to_string() |> parse_frontmatter
+  let { html, toc } = content
+    |> @markdown.parse_markdown
+    |> @renderer.render_markdown
+  Item::new(
+    html,
+    item.extension,
+    vars=frontmatter
+      .map((_, v) => v |> @template.String)
+      .merge(
+        Map([
+          ("body", html |> String),
+          (
+            "toc",
+            toc.map(item => item.to_json() |> @template.Value::from_json)
+            |> Array,
+          ),
+        ]),
+      ),
+  )
 }
 
 ///|
@@ -50,9 +62,7 @@ pub fn apply_template(
   body : Item[Html],
   template : @template.Template,
 ) -> Item[Html] {
-  body.map(data => {
-    data.extend(template |> @template.apply_template(body.data.vars))
-  })
+  body.map(_ => template |> @template.apply_template(body.vars))
 }
 
 ///|
@@ -60,8 +70,8 @@ pub fn apply_template_strict(
   body : Item[Html],
   template : @template.Template,
 ) -> Item[Html] raise {
-  let rendered = template |> @template.apply_template_strict(body.data.vars)
-  body.map(data => data.extend(rendered))
+  let rendered = template |> @template.apply_template_strict(body.vars)
+  body.map(_ => rendered)
 }
 
 ///|
@@ -83,32 +93,23 @@ pub fn load_and_apply_template(
 ///|
 pub fn import_css(item : Item[Html], url : String) -> Item[Html] {
   item.map(data => {
-    data.extend(
-      data.html
-      |> inject_into_head("<link rel=\"stylesheet\" href=\"\{url}\">\n"),
-    )
+    data |> inject_into_head("<link rel=\"stylesheet\" href=\"\{url}\">\n")
   })
 }
 
 ///|
 pub fn import_js(item : Item[Html], url : String) -> Item[Html] {
-  item.map(data => {
-    data.extend(inject_before_body_end(data.html, "<script src=\"\{url}\"/>\n"))
-  })
+  item.map(data => inject_before_body_end(data, "<script src=\"\{url}\"/>\n"))
 }
 
 ///|
 pub fn use_css(item : Item[Html], code : String) -> Item[Html] {
-  item.map(data => {
-    data.extend(inject_into_head(data.html, "<style>\{code}</style>\n"))
-  })
+  item.map(data => inject_into_head(data, "<style>\{code}</style>\n"))
 }
 
 ///|
 pub fn use_js(item : Item[Html], code : String) -> Item[Html] {
-  item.map(data => {
-    data.extend(inject_before_body_end(data.html, "<script>\{code}</script>\n"))
-  })
+  item.map(data => inject_before_body_end(data, "<script>\{code}</script>\n"))
 }
 
 ///|

@@ -42,16 +42,44 @@ pub fn Rule::mode(self : Rule) -> Mode {
 pub struct Item[T] {
   data : T
   extension : String
+  vars : Vars
 }
 
 ///|
-pub fn[T] Item::new(data : T, extension : String) -> Item[T] {
-  { data, extension }
+pub fn[T] Item::new(
+  data : T,
+  extension : String,
+  vars? : Vars = Map([]),
+) -> Item[T] {
+  { data, extension, vars }
 }
 
 ///|
 pub fn[T, R] Item::map(self : Item[T], f : (T) -> R) -> Item[R] {
   Item::new(f(self.data), self.extension)
+}
+
+///|
+pub fn[T] Item::add_vars(self : Item[T], vars : Vars) -> Item[T] {
+  Item::new(self.data, self.extension, vars=self.vars.merge(vars))
+}
+
+///|
+pub fn[T] Item::set_var(
+  self : Item[T],
+  key : String,
+  value : @template.Value,
+) -> Item[T] {
+  Item::new(
+    self.data,
+    self.extension,
+    vars=self.vars.merge(Map([(key, value)])),
+  )
+}
+
+///|
+pub fn[T] Item::clear_var(self : Item[T], key : String) -> Item[T] {
+  self.set_var(key, "" |> String)
 }
 
 ///|
@@ -98,11 +126,6 @@ pub impl Thingable for Bytes with fn to_thing(self : Bytes) -> Thing {
 }
 
 ///|
-pub impl Thingable for Html with fn to_thing(self : Html) -> Thing {
-  Thing::Doc(self.html)
-}
-
-///|
 pub type Step[T, R] = (Item[T]) -> Item[R] raise
 
 ///|
@@ -134,46 +157,7 @@ pub fn Mode::run(
 pub type Frontmatter = Map[String, String]
 
 ///|
-pub struct Html {
-  html : String
-  vars : Vars
-}
-
-///|
-pub fn Html::new(html : String, vars : Vars) -> Html {
-  { html, vars }
-}
-
-///|
-pub fn Html::extend(self : Html, html : String, vars? : Vars) -> Html {
-  if vars is Some(vars) {
-    Html::new(html, vars)
-  } else {
-    { ..self, html, }
-  }
-}
-
-///|
-pub fn Html::add_vars(self : Html, vars : Vars) -> Html {
-  { ..self, vars: self.vars.merge(vars) }
-}
-
-///|
-pub fn Html::set_var(
-  self : Html,
-  key : String,
-  value : @template.Value,
-) -> Html {
-  let vars = self.vars.merge(Map([(key, value)]))
-  Html::new(self.html, vars)
-}
-
-///|
-pub fn Html::clear_var(self : Html, key : String) -> Html {
-  self.set_var(key, "" |> String)
-}
-
-//|
+pub type Html = String
 
 ///|
 pub type Vars = Map[String, @template.Value]
