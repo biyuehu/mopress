@@ -3,14 +3,14 @@ pub(all) struct SummaryLink {
   title : String
   location : String?
   nested_items : Array[SummaryItem]
-} derive(Eq, Debug, ToJson)
+} derive(Eq, Debug)
 
 ///|
 pub(all) enum SummaryItem {
   Link(SummaryLink)
   PartTitle(String)
   Separator
-} derive(Eq, Debug, ToJson)
+} derive(Eq, Debug)
 
 ///|
 pub(all) struct Summary {
@@ -18,7 +18,67 @@ pub(all) struct Summary {
   prefix_chapters : Array[SummaryItem]
   numbered_chapters : Array[SummaryItem]
   suffix_chapters : Array[SummaryItem]
-} derive(Eq, Debug, ToJson)
+} derive(Eq, Debug)
+
+///|
+fn flatten_items(
+  items : Array[SummaryItem],
+  depth : Int,
+  current : String,
+) -> Array[Json] {
+  let result : Array[Json] = []
+  for item in items {
+    match item {
+      Separator =>
+        result.push({ "is_separator": true.to_json(), "depth": depth.to_json() })
+      PartTitle(title) =>
+        result.push({
+          "is_part_title": true.to_json(),
+          "title": title.to_json(),
+          "depth": depth.to_json(),
+        })
+      Link(link) => {
+        result.push(
+          match link.location {
+            Some(loc) if loc != "" =>
+              {
+                "is_link": true.to_json(),
+                "title": link.title.to_json(),
+                "location": loc.to_json(),
+                "depth": depth.to_json(),
+                "is_current": (loc == current).to_json(),
+              }
+            _ =>
+              {
+                "is_link": true.to_json(),
+                "title": link.title.to_json(),
+                "depth": depth.to_json(),
+                "is_current": false.to_json(),
+              }
+          },
+        )
+        result.append(flatten_items(link.nested_items, depth + 1, current))
+      }
+    }
+  }
+  result
+}
+
+///|
+pub fn Summary::flatten(self : Summary, current : String) -> Json {
+  {
+    "title": self.title.to_json(),
+    "prefix_chapters": Json::array(
+      flatten_items(self.prefix_chapters, 0, current),
+    ),
+    "numbered_chapters": Json::array(
+      flatten_items(self.numbered_chapters, 0, current),
+    ),
+    "suffix_chapters": Json::array(
+      flatten_items(self.suffix_chapters, 0, current),
+    ),
+  }
+}
 
 ///|
 fn parse_summary_item(item : Array[@markdown.Block]) -> SummaryItem? {

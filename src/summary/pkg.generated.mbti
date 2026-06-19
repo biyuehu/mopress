@@ -17,19 +17,20 @@ pub(all) struct Summary {
   prefix_chapters : Array[SummaryItem]
   numbered_chapters : Array[SummaryItem]
   suffix_chapters : Array[SummaryItem]
-} derive(Eq, ToJson, @debug.Debug)
+} derive(Eq, @debug.Debug)
+pub fn Summary::flatten(Self, String) -> Json
 
 pub(all) enum SummaryItem {
   Link(SummaryLink)
   PartTitle(String)
   Separator
-} derive(Eq, ToJson, @debug.Debug)
+} derive(Eq, @debug.Debug)
 
 pub(all) struct SummaryLink {
   title : String
   location : String?
   nested_items : Array[SummaryItem]
-} derive(Eq, ToJson, @debug.Debug)
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 
