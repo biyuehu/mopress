@@ -42,11 +42,11 @@ test "parse simple summary" {
     Link({ title: "Preface", location: Some("preface.md"), nested_items: [] }),
   ])
 
-  @debug.assert_eq(summary.numbered_chapters.length(), 4)
+  @debug.assert_eq(summary.numbered_chapters.length(), 5)
 
-  @debug.assert_eq(summary.numbered_chapters[0], PartTitle("Part One"))
+  @debug.assert_eq(summary.numbered_chapters[1], PartTitle("Part One"))
 
-  match summary.numbered_chapters[1] {
+  match summary.numbered_chapters[2] {
     Link(ch1) => {
       @debug.assert_eq(ch1.title, "Chapter 1")
       @debug.assert_eq(ch1.location, Some("ch1.md"))
@@ -64,7 +64,7 @@ test "parse simple summary" {
     _ => panic()
   }
 
-  match summary.numbered_chapters[2] {
+  match summary.numbered_chapters[3] {
     Link(ch2) => {
       @debug.assert_eq(ch2.title, "Chapter 2")
       @debug.assert_eq(ch2.location, Some(""))
@@ -73,7 +73,7 @@ test "parse simple summary" {
     _ => panic()
   }
 
-  @debug.assert_eq(summary.numbered_chapters[3], Separator)
+  @debug.assert_eq(summary.numbered_chapters[4], Separator)
 
   @debug.assert_eq(summary.suffix_chapters, [
     Link({ title: "Appendix", location: Some("appendix.md"), nested_items: [] }),

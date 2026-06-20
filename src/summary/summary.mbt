@@ -152,17 +152,11 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
   for block in blocks {
     match (phase, block) {
       (0, Paragraph(inlines)) =>
-        match extract_root_link_item(inlines) {
-          Some(item) => prefix_chapters.push(item)
-          None => ()
+        for item in extract_root_link_items(inlines) {
+          prefix_chapters.push(item)
         }
-
-      // 保持旧行为：这里仅切换到 numbered。
-      // 如果你想把开头的 --- 也保留下来，可以改成：
-      // numbered_chapters.push(Separator)
-      // phase = 1
-      (0, ThematicBreak) => phase = 1
-      (0, Heading(1, inlines)) => {
+      (0, ThematicBreak) => numbered_chapters.push(Separator)
+      (0, Heading(_, inlines)) => {
         phase = 1
         numbered_chapters.push(
           PartTitle(@markdown.Plainable::to_plain(inlines)),
@@ -174,7 +168,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
           numbered_chapters.push(item)
         }
       }
-      (1, Heading(1, inlines)) =>
+      (1, Heading(_, inlines)) =>
         numbered_chapters.push(
           PartTitle(@markdown.Plainable::to_plain(inlines)),
         )
@@ -182,15 +176,21 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
         for item in parse_list_items(lb.items) {
           numbered_chapters.push(item)
         }
-      (1, ThematicBreak) => {
-        numbered_chapters.push(Separator)
-        phase = 2
+      (1, ThematicBreak) => numbered_chapters.push(Separator)
+      (1, Paragraph(inlines)) => {
+        let items = extract_root_link_items(inlines)
+        if items.length() > 0 {
+          phase = 2
+          for item in items {
+            suffix_chapters.push(item)
+          }
+        }
       }
       (2, Paragraph(inlines)) =>
-        match extract_root_link_item(inlines) {
-          Some(item) => suffix_chapters.push(item)
-          None => ()
+        for item in extract_root_link_items(inlines) {
+          suffix_chapters.push(item)
         }
+      (2, ThematicBreak) => suffix_chapters.push(Separator)
       _ => ()
     }
   }
@@ -233,11 +233,14 @@ fn skip_title(doc : @markdown.Markdown) -> Array[@markdown.Block] {
 }
 
 ///|
-fn extract_root_link_item(inlines : Array[@markdown.Inline]) -> SummaryItem? {
+fn extract_root_link_items(
+  inlines : Array[@markdown.Inline],
+) -> Array[SummaryItem] {
+  let result : Array[SummaryItem] = []
   for inline in inlines {
     match inline {
       Link(title, url) =>
-        return Some(
+        result.push(
           Link({
             title: @markdown.Plainable::to_plain(title),
             location: Some(url),
@@ -246,7 +249,6 @@ fn extract_root_link_item(inlines : Array[@markdown.Inline]) -> SummaryItem? {
         )
       _ => continue
     }
-  } nobreak {
-    None
   }
+  result
 }
