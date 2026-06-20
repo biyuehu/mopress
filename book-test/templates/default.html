@@ -37,19 +37,14 @@
             <div class="nav-section-label">$item.title$</div>
           $endif$
           $if(item.is_link)$
-            $if(item.location)$
-              <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
-                <span class="dot"></span>$item.title$
-              </a>
-            $else$
-              <a class="nav-item depth-$item.depth$"><span class="dot"></span>$item.title$</a>
-            $endif$
+            <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
+              <span class="dot"></span>$item.title$
+              $if(item.is_current)$$if(toc)$
+                <span class="chevron"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              $endif$$endif$
+            </a>
           $endif$
         $endfor$
-
-        $if(section.prefix_chapters)$$if(section.numbered_chapters)$
-          <div class="nav-separator"></div>
-        $endif$$endif$
 
         $for(section.numbered_chapters)$
           $if(item.is_separator)$
@@ -59,33 +54,14 @@
             <div class="nav-section-label">$item.title$</div>
           $endif$
           $if(item.is_link)$
-            $if(item.location)$
-              <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="/$item.location$" $if(item.is_current)$data-toc-trigger="toc-$item.location$"$endif$>
-                <span class="dot"></span>$item.title$
-                $if(item.is_current)$
-                  $if(toc)$
-                    <span class="chevron"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                  $endif$
-                $endif$
-              </a>
-            $else$
-              <a class="nav-item depth-$item.depth$"><span class="dot"></span>$item.title$</a>
-            $endif$
-            $if(item.is_current)$
-              $if(toc)$
-                <div class="page-toc open" id="toc-$item.location$">
-                  $for(toc)$
-                    <a class="toc-sub-item indent-$item.level$" data-anchor="$item.anchor$" href="#$item.anchor$">$item.title$</a>
-                  $endfor$
-                </div>
-              $endif$
-            $endif$
+            <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="/$item.location$" $if(item.is_current)$data-toc-trigger="toc-$item.location$"$endif$>
+              <span class="dot"></span><strong>$item.number$</strong>$item.title$
+              $if(item.is_current)$$if(toc)$
+                <span class="chevron"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              $endif$$endif$
+            </a>
           $endif$
         $endfor$
-
-        $if(section.numbered_chapters)$$if(section.suffix_chapters)$
-          <div class="nav-separator"></div>
-        $endif$$endif$
 
         $for(section.suffix_chapters)$
           $if(item.is_separator)$
@@ -95,13 +71,12 @@
             <div class="nav-section-label">$item.title$</div>
           $endif$
           $if(item.is_link)$
-            $if(item.location)$
-              <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
-                <span class="dot"></span>$item.title$
-              </a>
-            $else$
-              <a class="nav-item depth-$item.depth$"><span class="dot"></span>$item.title$</a>
-            $endif$
+            <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
+              <span class="dot"></span>$item.title$
+              $if(item.is_current)$$if(toc)$
+                <span class="chevron"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              $endif$$endif$
+            </a>
           $endif$
         $endfor$
       </div>
