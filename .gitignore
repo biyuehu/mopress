@@ -2,7 +2,5 @@
 _build/
 .mooncakes/
 .moonagent/
-test
+dest
 local_*.mbt
-
-mdbook-reference

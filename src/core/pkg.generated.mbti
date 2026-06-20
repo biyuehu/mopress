@@ -48,13 +48,16 @@ pub fn use_transformer(Item[Array[@markdown.Block]], Array[(Item[Array[@markdown
 // Types and methods
 pub struct Item[T] {
   data : T
-  extension : String
   vars : Map[String, @template.Value]
+  target : String
+  // private fields
 }
 pub fn[T] Item::add_vars(Self[T], Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
-pub fn[T, R] Item::map(Self[T], (T) -> R) -> Self[R]
-pub fn[T] Item::new(T, String, vars? : Map[String, @template.Value]) -> Self[T]
+pub fn[T] Item::extend(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
+pub fn[T] Item::location(Self[T]) -> String
+pub fn[T, R] Item::map(Self[T], (T) -> R, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R]
+pub fn[T] Item::new(T, String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
 
 pub(all) enum Mode {
@@ -62,7 +65,7 @@ pub(all) enum Mode {
   Binary((Item[Bytes]) -> Item[Thing] raise)
   Copy
 }
-pub fn Mode::run(Self, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing] raise
+pub fn Mode::run(Self, Options, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing] raise
 
 pub(all) struct Options {
   src : String
