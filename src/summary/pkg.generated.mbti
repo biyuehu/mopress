@@ -28,7 +28,7 @@ pub(all) enum SummaryItem {
 
 pub(all) struct SummaryLink {
   title : String
-  location : String?
+  location : String
   nested_items : Array[SummaryItem]
 } derive(Eq, @debug.Debug)
 

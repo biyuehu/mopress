@@ -1,7 +1,7 @@
 ///|
 pub(all) struct SummaryLink {
   title : String
-  location : String?
+  location : String
   nested_items : Array[SummaryItem]
 } derive(Eq, Debug)
 
@@ -25,39 +25,61 @@ fn flatten_items(
   items : Array[SummaryItem],
   depth : Int,
   current : String,
+  numbered? : Bool = false,
+  prefix? : String = "",
 ) -> Array[Json] {
   let result : Array[Json] = []
+  let mut counter = 0
   for item in items {
     match item {
-      Separator =>
-        result.push({ "is_separator": true.to_json(), "depth": depth.to_json() })
+      Separator => result.push({ "is_separator": true.to_json() })
       PartTitle(title) =>
         result.push({
           "is_part_title": true.to_json(),
           "title": title.to_json(),
-          "depth": depth.to_json(),
         })
       Link(link) => {
-        result.push(
-          match link.location {
-            Some(loc) if loc != "" =>
-              {
-                "is_link": true.to_json(),
-                "title": link.title.to_json(),
-                "location": loc.to_json(),
-                "depth": depth.to_json(),
-                "is_current": (loc == current).to_json(),
-              }
-            _ =>
-              {
-                "is_link": true.to_json(),
-                "title": link.title.to_json(),
-                "depth": depth.to_json(),
-                "is_current": false.to_json(),
-              }
-          },
+        counter += 1
+        let path = @path.Path(link.location)
+        let basename = Show::to_string(path.basename())
+        let location = path
+          .dirname()
+          .join(
+            basename
+            .rev_find(".")
+            .map(index => Show::to_string(basename[:index]))
+            .unwrap_or(basename) +
+            ".html",
+          )
+          .to_string()
+        let number = prefix + counter.to_string()
+        if numbered {
+          result.push({
+            "is_link": true.to_json(),
+            "title": link.title.to_json(),
+            "location": location,
+            "depth": depth.to_json(),
+            "is_current": (link.location == current).to_json(),
+            "number": number.to_json(),
+          })
+        } else {
+          result.push({
+            "is_link": true.to_json(),
+            "title": link.title.to_json(),
+            "location": location,
+            "depth": depth.to_json(),
+            "is_current": (link.location == current).to_json(),
+          })
+        }
+        result.append(
+          flatten_items(
+            link.nested_items,
+            depth + 1,
+            current,
+            numbered~,
+            prefix=number + ".",
+          ),
         )
-        result.append(flatten_items(link.nested_items, depth + 1, current))
       }
     }
   }
@@ -72,7 +94,7 @@ pub fn Summary::flatten(self : Summary, current : String) -> Json {
       flatten_items(self.prefix_chapters, 0, current),
     ),
     "numbered_chapters": Json::array(
-      flatten_items(self.numbered_chapters, 0, current),
+      flatten_items(self.numbered_chapters, 0, current, numbered=true),
     ),
     "suffix_chapters": Json::array(
       flatten_items(self.suffix_chapters, 0, current),
@@ -102,7 +124,7 @@ fn extract_item_link(item : Array[@markdown.Block]) -> SummaryLink? {
         [Link(title, url), ..] =>
           Some({
             title: @markdown.Plainable::to_plain(title),
-            location: Some(url),
+            location: url,
             nested_items: [],
           })
         _ => None
@@ -148,49 +170,51 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
   let blocks = skip_title(doc)
 
   let mut phase = 0 // 0=prefix, 1=numbered, 2=suffix
+  let pending_headings : Array[String] = []
+
+  fn target() -> Array[SummaryItem] {
+    if phase == 0 {
+      prefix_chapters
+    } else if phase == 1 {
+      numbered_chapters
+    } else {
+      suffix_chapters
+    }
+  }
+
+  fn flush_headings() -> Unit {
+    for h in pending_headings {
+      target().push(PartTitle(h))
+    }
+    pending_headings.clear()
+  }
 
   for block in blocks {
-    match (phase, block) {
-      (0, Paragraph(inlines)) =>
-        for item in extract_root_link_items(inlines) {
-          prefix_chapters.push(item)
-        }
-      (0, ThematicBreak) => numbered_chapters.push(Separator)
-      (0, Heading(_, inlines)) => {
-        phase = 1
-        numbered_chapters.push(
-          PartTitle(@markdown.Plainable::to_plain(inlines)),
-        )
+    match block {
+      Heading(_, inlines) =>
+        pending_headings.push(@markdown.Plainable::to_plain(inlines))
+      ThematicBreak => {
+        flush_headings()
+        target().push(Separator)
       }
-      (0, List(lb)) => {
-        phase = 1
+      List(lb) => {
+        if phase == 0 {
+          phase = 1
+        }
+        flush_headings()
         for item in parse_list_items(lb.items) {
           numbered_chapters.push(item)
         }
       }
-      (1, Heading(_, inlines)) =>
-        numbered_chapters.push(
-          PartTitle(@markdown.Plainable::to_plain(inlines)),
-        )
-      (1, List(lb)) =>
-        for item in parse_list_items(lb.items) {
-          numbered_chapters.push(item)
-        }
-      (1, ThematicBreak) => numbered_chapters.push(Separator)
-      (1, Paragraph(inlines)) => {
-        let items = extract_root_link_items(inlines)
-        if items.length() > 0 {
+      Paragraph(inlines) => {
+        flush_headings()
+        if phase == 1 {
           phase = 2
-          for item in items {
-            suffix_chapters.push(item)
-          }
+        }
+        for item in extract_root_link_items(inlines) {
+          target().push(item)
         }
       }
-      (2, Paragraph(inlines)) =>
-        for item in extract_root_link_items(inlines) {
-          suffix_chapters.push(item)
-        }
-      (2, ThematicBreak) => suffix_chapters.push(Separator)
       _ => ()
     }
   }
@@ -243,7 +267,7 @@ fn extract_root_link_items(
         result.push(
           Link({
             title: @markdown.Plainable::to_plain(title),
-            location: Some(url),
+            location: url,
             nested_items: [],
           }),
         )

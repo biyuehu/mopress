@@ -39,23 +39,24 @@ test "parse simple summary" {
   @debug.assert_eq(summary.title, "Summary")
 
   @debug.assert_eq(summary.prefix_chapters, [
-    Link({ title: "Preface", location: Some("preface.md"), nested_items: [] }),
+    Link({ title: "Preface", location: "preface.md", nested_items: [] }),
+    Separator,
   ])
 
-  @debug.assert_eq(summary.numbered_chapters.length(), 5)
+  @debug.assert_eq(summary.numbered_chapters.length(), 4)
 
-  @debug.assert_eq(summary.numbered_chapters[1], PartTitle("Part One"))
+  @debug.assert_eq(summary.numbered_chapters[0], PartTitle("Part One"))
 
-  match summary.numbered_chapters[2] {
+  match summary.numbered_chapters[1] {
     Link(ch1) => {
       @debug.assert_eq(ch1.title, "Chapter 1")
-      @debug.assert_eq(ch1.location, Some("ch1.md"))
+      @debug.assert_eq(ch1.location, "ch1.md")
       @debug.assert_eq(ch1.nested_items.length(), 1)
 
       match ch1.nested_items[0] {
         Link(sub) => {
           @debug.assert_eq(sub.title, "Sub 1.1")
-          @debug.assert_eq(sub.location, Some("ch1/sub.md"))
+          @debug.assert_eq(sub.location, "ch1/sub.md")
           @debug.assert_eq(sub.nested_items.length(), 0)
         }
         _ => panic()
@@ -64,19 +65,19 @@ test "parse simple summary" {
     _ => panic()
   }
 
-  match summary.numbered_chapters[3] {
+  match summary.numbered_chapters[2] {
     Link(ch2) => {
       @debug.assert_eq(ch2.title, "Chapter 2")
-      @debug.assert_eq(ch2.location, Some(""))
+      @debug.assert_eq(ch2.location, "")
       @debug.assert_eq(ch2.nested_items.length(), 0)
     }
     _ => panic()
   }
 
-  @debug.assert_eq(summary.numbered_chapters[4], Separator)
+  @debug.assert_eq(summary.numbered_chapters[3], Separator)
 
   @debug.assert_eq(summary.suffix_chapters, [
-    Link({ title: "Appendix", location: Some("appendix.md"), nested_items: [] }),
+    Link({ title: "Appendix", location: "appendix.md", nested_items: [] }),
   ])
 }
 
@@ -107,7 +108,7 @@ test "parse summary no parts just flat list" {
   match summary.numbered_chapters[0] {
     Link(item) => {
       @debug.assert_eq(item.title, "Intro")
-      @debug.assert_eq(item.location, Some("intro.md"))
+      @debug.assert_eq(item.location, "intro.md")
       @debug.assert_eq(item.nested_items.length(), 0)
     }
     _ => panic()
@@ -116,7 +117,7 @@ test "parse summary no parts just flat list" {
   match summary.numbered_chapters[1] {
     Link(item) => {
       @debug.assert_eq(item.title, "Guide")
-      @debug.assert_eq(item.location, Some("guide.md"))
+      @debug.assert_eq(item.location, "guide.md")
       @debug.assert_eq(item.nested_items.length(), 0)
     }
     _ => panic()
