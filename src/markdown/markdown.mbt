@@ -213,11 +213,11 @@ fn parse_list(lines : Array[String], start : Int) -> (Block, Int) {
           if next_trimmed == "" {
             item_lines.push("")
             index = index + 1
-          } else if is_list_item(next_trimmed) {
-            break
           } else if count_leading_spaces(next) >= 2 {
             item_lines.push(strip_leading_spaces(next, 2))
             index = index + 1
+          } else if is_list_item(next_trimmed) {
+            break
           } else {
             break
           }

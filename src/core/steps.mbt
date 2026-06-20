@@ -15,9 +15,8 @@ pub fn[T : Show] render_markdown(item : Item[T]) -> Item[Html] {
   let { html, toc } = item.data
     |> @markdown.parse_markdown
     |> @renderer.render_markdown
-  Item::new(
-    html,
-    item.extension,
+  item.map(
+    _ => html,
     vars=Map([
       ("body", html |> String),
       (
@@ -34,9 +33,8 @@ pub fn[T : Show] render_markdown_and_frontmatter(item : Item[T]) -> Item[Html] {
   let { html, toc } = content
     |> @markdown.parse_markdown
     |> @renderer.render_markdown
-  Item::new(
-    html,
-    item.extension,
+  item.map(
+    _ => html,
     vars=frontmatter
       .map((_, v) => v |> @template.String)
       .merge(
@@ -54,7 +52,7 @@ pub fn[T : Show] render_markdown_and_frontmatter(item : Item[T]) -> Item[Html] {
 
 ///|
 pub fn[T] set_extension(item : Item[T], extension : String) -> Item[T] {
-  { ..item, extension: if extension.is_empty() { "" } else { "." + extension } }
+  item.extend(extension~)
 }
 
 ///|

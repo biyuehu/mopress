@@ -41,27 +41,96 @@ pub fn Rule::mode(self : Rule) -> Mode {
 ///|
 pub struct Item[T] {
   data : T
-  extension : String
+  priv extension : String
   vars : Vars
+  target : String
 }
 
 ///|
 pub fn[T] Item::new(
   data : T,
-  extension : String,
+  target : String,
+  extension? : String,
   vars? : Vars = Map([]),
 ) -> Item[T] {
-  { data, extension, vars }
+  {
+    data,
+    extension: if extension is Some(extension) && !extension.is_empty() {
+      extension
+    } else {
+      @path.Path(target).extname() |> Show::to_string
+    },
+    vars,
+    target,
+  }
 }
 
 ///|
-pub fn[T, R] Item::map(self : Item[T], f : (T) -> R) -> Item[R] {
-  Item::new(f(self.data), self.extension)
+pub fn[T] Item::location(self : Item[T]) -> String {
+  let path = @path.Path(self.target)
+  let basename = Show::to_string(path.basename())
+  path
+  .dirname()
+  .join(
+    basename
+    .rev_find(".")
+    .map(index => Show::to_string(basename[:index]))
+    .unwrap_or(basename) +
+    self.extension,
+  )
+  .to_string()
+}
+
+///|
+pub fn[T, R] Item::map(
+  self : Item[T],
+  f : (T) -> R,
+  target? : String,
+  extension? : String,
+  vars? : Vars,
+) -> Item[R] {
+  Item::new(
+    f(self.data),
+    if target is Some(target) {
+      target
+    } else {
+      self.target
+    },
+    extension=if extension is Some(extension) {
+      extension
+    } else {
+      self.extension
+    },
+    vars=if vars is Some(vars) { vars } else { self.vars },
+  )
+}
+
+///|
+pub fn[T] Item::extend(
+  self : Item[T],
+  target? : String,
+  extension? : String,
+  vars? : Vars,
+) -> Item[T] {
+  Item::new(
+    self.data,
+    if target is Some(target) {
+      target
+    } else {
+      self.target
+    },
+    extension=if extension is Some(extension) {
+      extension
+    } else {
+      self.extension
+    },
+    vars=if vars is Some(vars) { vars } else { self.vars },
+  )
 }
 
 ///|
 pub fn[T] Item::add_vars(self : Item[T], vars : Vars) -> Item[T] {
-  Item::new(self.data, self.extension, vars=self.vars.merge(vars))
+  self.extend(vars=self.vars.merge(vars))
 }
 
 ///|
@@ -70,11 +139,7 @@ pub fn[T] Item::set_var(
   key : String,
   value : @template.Value,
 ) -> Item[T] {
-  Item::new(
-    self.data,
-    self.extension,
-    vars=self.vars.merge(Map([(key, value)])),
-  )
+  self.extend(vars=self.vars.merge(Map([(key, value)])))
 }
 
 ///|
@@ -97,7 +162,6 @@ pub fn Thing::write(
   target : String,
 ) -> Unit raise @fs.IOError {
   let path = @path.Path(dest).join(target).to_string()
-  println("path:" + path)
   ensure_dir_for_file(path)
   match self {
     Doc(doc) => @fs.write_string_to_file(path, doc)
@@ -138,6 +202,7 @@ pub(all) enum Mode {
 ///|
 pub fn Mode::run(
   self : Mode,
+  options : Options,
   path : String,
   read_string? : (String) -> String raise = path => {
     @fs.read_file_to_string(path)
@@ -145,11 +210,11 @@ pub fn Mode::run(
   read_bytes? : (String) -> Bytes raise = path => @fs.read_file_to_bytes(path),
 ) -> Item[Thing] raise {
   let extension = @path.Path(path).extname() |> Show::to_string
-  println("path:" + path + " extension:" + extension)
+  let target = path[options.src.length() + 1:] |> Show::to_string
   match self {
-    Text(f) => read_string(path) |> Item::new(extension) |> f
-    Binary(f) => read_bytes(path) |> Item::new(extension) |> f
-    Copy => read_bytes(path) |> Item::new(extension) |> identify
+    Text(f) => read_string(path) |> Item::new(target, extension~) |> f
+    Binary(f) => read_bytes(path) |> Item::new(target, extension~) |> f
+    Copy => read_bytes(path) |> Item::new(target, extension~) |> identify
   }
 }
 

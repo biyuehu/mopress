@@ -77,7 +77,6 @@ fn ensure_dir(path : String) -> Unit raise @fs.IOError {
 ///|
 fn ensure_dir_for_file(filepath : String) -> Unit raise @fs.IOError {
   let dir = (filepath |> @path.Path).dirname().to_string()
-  println("Ensuring dir for file: " + dir + " || file:  " + filepath)
   if !["", ".", @path.sep.to_string()].contains(dir) && !@fs.path_exists(dir) {
     ensure_dir(dir)
   }
