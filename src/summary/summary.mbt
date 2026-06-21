@@ -42,16 +42,23 @@ fn flatten_items(
         counter += 1
         let path = @path.Path(link.location)
         let basename = Show::to_string(path.basename())
-        let location = path
-          .dirname()
-          .join(
-            basename
-            .rev_find(".")
-            .map(index => Show::to_string(basename[:index]))
-            .unwrap_or(basename) +
-            ".html",
-          )
-          .to_string()
+        let location = {
+          let location = path
+            .dirname()
+            .join(
+              basename
+              .rev_find(".")
+              .map(index => Show::to_string(basename[:index]))
+              .unwrap_or(basename) +
+              ".html",
+            )
+            .to_string()
+          if location.length() > 2 && location[0:2] == "./" {
+            location[2:]
+          } else {
+            location
+          }
+        }
         let number = prefix + counter.to_string()
         if numbered {
           result.push({
@@ -59,7 +66,7 @@ fn flatten_items(
             "title": link.title.to_json(),
             "location": location,
             "depth": depth.to_json(),
-            "is_current": (link.location == current).to_json(),
+            "is_current": (location == current).to_json(),
             "number": number.to_json(),
           })
         } else {
@@ -68,7 +75,7 @@ fn flatten_items(
             "title": link.title.to_json(),
             "location": location,
             "depth": depth.to_json(),
-            "is_current": (link.location == current).to_json(),
+            "is_current": (location == current).to_json(),
           })
         }
         result.append(
