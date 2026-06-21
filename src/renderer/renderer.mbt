@@ -66,9 +66,7 @@ fn render_block(block : @markdown.Block, ctx : RenderContext) -> String {
       if ctx.opt.allow_raw_html {
         raw
       } else {
-        "<pre class=\"html-block-escaped\"><code>" +
-        escape_html(raw) +
-        "</code></pre>"
+        "<pre><code>" + escape_html(raw) + "</code></pre>"
       }
   }
 }
@@ -89,11 +87,11 @@ fn render_heading(
   " id=\"" +
   escape_attr(full_anchor) +
   "\">" +
-  "<a class=\"heading-anchor\" href=\"#" +
+  "<a href=\"#" +
   escape_attr(full_anchor) +
-  "\" aria-hidden=\"true\">#</a>" +
+  "\" aria-hidden=\"true\">" +
   render_inlines(inlines, ctx) +
-  "</" +
+  "</a></" +
   tag +
   ">"
 }
