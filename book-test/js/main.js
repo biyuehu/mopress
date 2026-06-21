@@ -16,9 +16,7 @@ function togglePageToc(navItem, toc) {
 
 function initMobileSidebar() {
 	if (!docRoot) return;
-	const update = () => {
-		if (window.innerWidth < MOBILE_WIDTH) setSidebar(true);
-	};
+	const update = () => window.innerWidth < MOBILE_WIDTH && setSidebar(true);
 	window.addEventListener("resize", update, { passive: true });
 	update();
 }
@@ -36,28 +34,25 @@ function initCodeCopyButtons() {
 		try {
 			await navigator.clipboard.writeText(target.innerText);
 			const old = btn.textContent;
-			btn.textContent = "✓ copied";
-			setTimeout(() => {
-				btn.textContent = old;
-			}, 1400);
+			btn.textContent = "✓";
+			setTimeout(() => (btn.textContent = old), 1200);
 		} catch {}
 	});
 }
 
 function initProgressBar() {
 	const content = $(".content");
-	if (!content || !docRoot) return;
+	if (!content) return;
 
 	const update = () => {
 		const max = content.scrollHeight - content.clientHeight;
-		docRoot.style.setProperty(
+		docRoot?.style.setProperty(
 			"--progress",
 			`${max > 0 ? (content.scrollTop / max) * 100 : 0}%`,
 		);
 	};
-	content.addEventListener("scroll", update, {
-		passive: true,
-	});
+
+	content.addEventListener("scroll", update, { passive: true });
 	update();
 }
 
@@ -68,29 +63,81 @@ function initTocScrollSpy() {
 
 	const map = Object.fromEntries(links.map((l) => [l.dataset.anchor, l]));
 	let active = null;
+
 	const observer = new IntersectionObserver(
 		(entries) => {
-			const visible = entries.find((e) => e.isIntersecting);
-			if (!visible) return;
+			const v = entries.find((e) => e.isIntersecting);
+			if (!v) return;
 			active?.classList.remove("active");
-			active = map[visible.target.id];
+			active = map[v.target.id];
 			active?.classList.add("active");
 		},
 		{ rootMargin: "0px 0px -70% 0px" },
 	);
 
-	for (const h of headings) observer.observe(h);
+	headings.forEach((h) => observer.observe(h));
 }
 
 function initPageToc() {
-	$$("[data-toc-trigger]").forEach((trigger) => {
-		const toc = document.getElementById(trigger.dataset.tocTrigger);
+	$$("[data-toc-trigger]").forEach((t) => {
+		const toc = document.getElementById(t.dataset.tocTrigger);
 		if (!toc) return;
-
-		trigger.addEventListener("click", (e) => {
+		t.addEventListener("click", (e) => {
 			e.preventDefault();
-			togglePageToc(trigger, toc);
+			togglePageToc(t, toc);
 		});
+	});
+}
+
+function initSearch() {
+	const overlay = $("#searchOverlay");
+	const input = $("#searchInput");
+	const results = $("#searchResults");
+
+	const data = [
+		["Getting Started", "/getting-started.html"],
+		["Configuration", "/config.html"],
+		["Navigation", "/navigation.html"],
+		["Search", "/search.html"],
+		["Code Blocks", "/code.html"],
+		["Changelog", "/CHANGELOG.html"],
+	];
+
+	const render = (list) => {
+		results.innerHTML = list.length
+			? list
+					.map((i) => `<a class="search-result" href="${i[1]}">${i[0]}</a>`)
+					.join("")
+			: `<div class="search-empty">No result</div>`;
+	};
+
+	const open = () => {
+		overlay.hidden = false;
+		input.value = "";
+		render(data);
+		input.focus();
+	};
+
+	const close = () => (overlay.hidden = true);
+
+	$("#searchOpen")?.addEventListener("click", open);
+	$("#searchClose")?.addEventListener("click", close);
+
+	overlay?.addEventListener("click", (e) => {
+		if (e.target === overlay) close();
+	});
+
+	input?.addEventListener("input", () => {
+		const q = input.value.trim().toLowerCase();
+		render(data.filter((i) => i[0].toLowerCase().includes(q)));
+	});
+
+	document.addEventListener("keydown", (e) => {
+		if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+			e.preventDefault();
+			overlay.hidden ? open() : close();
+		}
+		if (e.key === "Escape") close();
 	});
 }
 
@@ -100,6 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	initProgressBar();
 	initTocScrollSpy();
 	initPageToc();
+	initSearch();
 
 	$("#navToggle")?.addEventListener("click", toggleSidebar);
 });

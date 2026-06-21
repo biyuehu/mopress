@@ -25,7 +25,7 @@ and TeX support, including syntax highlighting and other goodies.
 
 ![Write your rules](/images/hakyll-system-2.png)
 
-## Compile it to HTML and upload it!
+## Compile it to HTML and upload it
 
 ![Compile it](/images/hakyll-system-3.png)
 
