@@ -1,24 +1,25 @@
 ///|
 pub(all) struct BookConfig {
-  title : String?
+  title : String
+  description : String
+  keywords : String
+  favicon : String
+  logo : String
   authors : Array[String]
-  description : String?
+  language : String
   src : String
-  language : String?
-  text_direction : TextDirection
-  build : BuildConfig
+  dest : String
+  repository : String?
+  extension : ExtensionConfig
 } derive(Eq, Debug)
 
 ///|
-pub(all) struct BuildConfig {
-  build_dir : String
-  create_missing : Bool
-} derive(Eq, Debug)
-
-///|
-pub(all) enum TextDirection {
-  LeftToRight
-  RightToLeft
+pub(all) struct ExtensionConfig {
+  template : String
+  extra_css : Array[String]
+  extra_js : Array[String]
+  preprocessors : Array[String]
+  transformers : Array[String]
 } derive(Eq, Debug)
 
 ///|
@@ -36,50 +37,55 @@ pub fn BookConfig::parse(
     is @toml.TomlTable(root) else {
     raise ConfigParseError("Config root must be a TOML table")
   }
-  let book = read_table(root, "book", true)
-  let build = read_table(root, "build", true)
-  let config = {
-    title: read_optional_string(book, "title"),
-    authors: read_string_array(book, "authors"),
-    description: read_optional_string(book, "description"),
-    src: read_string(book, "src", "src"),
-    language: read_optional_string(book, "language"),
-    text_direction: read_text_direction(book),
-    build: {
-      build_dir: read_string(build, "build-dir", "build"),
-      create_missing: read_bool(build, "create-missing", true),
+  let extension = read_table(root, "extension", true)
+  let default = BookConfig::default()
+  {
+    title: read_string_nonempty(root, "title"),
+    authors: read_string_array(root, "authors"),
+    description: read_string(root, "description", default.description),
+    keywords: read_string(root, "keywords", default.keywords),
+    favicon: read_string(root, "favicon", default.favicon),
+    logo: read_string(root, "logo", default.logo),
+    language: read_string(root, "language", default.language),
+    src: read_string(root, "src", default.src),
+    dest: read_string(root, "dest", default.dest),
+    repository: read_optional_string(root, "repository"),
+    extension: {
+      template: read_string(extension, "template", default.extension.template),
+      extra_css: read_string_array(extension, "extra-css"),
+      extra_js: read_string_array(extension, "extra-js"),
+      preprocessors: read_string_array(extension, "preprocessors"),
+      transformers: read_string_array(extension, "transformers"),
     },
   }
-  config.validate()
-  config
-}
-
-///|
-pub fn BookConfig::validate(self : BookConfig) -> Unit raise ConfigParseError {
-  validate_optional_non_empty("book.title", self.title)
-  validate_string_array("book.authors", self.authors)
-  validate_optional_non_empty("book.description", self.description)
-  validate_non_empty("book.src", self.src)
-  validate_optional_non_empty("book.language", self.language)
-  validate_non_empty("build.build-dir", self.build.build_dir)
 }
 
 ///|
 pub impl Default for BookConfig with fn default() -> BookConfig {
   {
-    title: None,
+    title: "MoPress Doc",
+    description: "A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll",
+    keywords: "Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll",
+    favicon: "https://himeno-sena.com/favicon.ico",
+    logo: "https://himeno-sena.com/favicon.ico",
     authors: [],
-    description: None,
-    src: "src",
-    language: Some("en"),
-    text_direction: LeftToRight,
-    build: BuildConfig::default(),
+    language: "en",
+    src: "",
+    dest: "dest",
+    repository: None,
+    extension: ExtensionConfig::default(),
   }
 }
 
 ///|
-pub impl Default for BuildConfig with fn default() -> BuildConfig {
-  { build_dir: "build", create_missing: true }
+pub impl Default for ExtensionConfig with fn default() -> ExtensionConfig {
+  {
+    template: "templates/default.html",
+    extra_css: [],
+    extra_js: [],
+    preprocessors: [],
+    transformers: [],
+  }
 }
 
 ///|
@@ -125,15 +131,18 @@ fn read_string(
 }
 
 ///|
-fn read_bool(
+fn read_string_nonempty(
   table : Map[String, @toml.TomlValue],
   key : String,
-  default : Bool,
-) -> Bool raise ConfigParseError {
-  match table.get(key) {
-    Some(@toml.TomlBoolean(b)) => b
-    Some(_) => raise ConfigParseError("`" + key + "` must be a boolean")
-    None => default
+) -> String raise ConfigParseError {
+  match read_optional_string(table, key) {
+    Some(s) =>
+      if s == "" {
+        raise ConfigParseError("`" + key + "` must be a non-empty string")
+      } else {
+        s
+      }
+    None => raise ConfigParseError("Missing required string `" + key + "`")
   }
 }
 
@@ -156,51 +165,5 @@ fn read_string_array(
     }
     Some(_) => raise ConfigParseError("`" + key + "` must be an array")
     None => []
-  }
-}
-
-///|
-fn read_text_direction(
-  book : Map[String, @toml.TomlValue],
-) -> TextDirection raise ConfigParseError {
-  match book.get("text-direction") {
-    Some(@toml.TomlString("ltr")) | None => LeftToRight
-    Some(@toml.TomlString("rtl")) => RightToLeft
-    Some(@toml.TomlString(s)) =>
-      raise ConfigParseError(
-        "`text-direction` must be \"ltr\" or \"rtl\", got: " + s,
-      )
-    Some(_) => raise ConfigParseError("`text-direction` must be a string")
-  }
-}
-
-///|
-fn validate_optional_non_empty(
-  key : String,
-  value : String?,
-) -> Unit raise ConfigParseError {
-  match value {
-    Some(s) => validate_non_empty(key, s)
-    None => ()
-  }
-}
-
-///|
-fn validate_string_array(
-  key : String,
-  values : Array[String],
-) -> Unit raise ConfigParseError {
-  for value in values {
-    validate_non_empty(key, value)
-  }
-}
-
-///|
-fn validate_non_empty(
-  key : String,
-  value : String,
-) -> Unit raise ConfigParseError {
-  if value.trim() == "" {
-    raise ConfigParseError("`" + key + "` must not be empty")
   }
 }

@@ -14,28 +14,29 @@ pub suberror ConfigParseError {
 
 // Types and methods
 pub(all) struct BookConfig {
-  title : String?
+  title : String
+  description : String
+  keywords : String
+  favicon : String
+  logo : String
   authors : Array[String]
-  description : String?
+  language : String
   src : String
-  language : String?
-  text_direction : TextDirection
-  build : BuildConfig
+  dest : String
+  repository : String?
+  extension : ExtensionConfig
 } derive(Eq, @debug.Debug)
 pub fn BookConfig::parse(String) -> Self raise ConfigParseError
-pub fn BookConfig::validate(Self) -> Unit raise ConfigParseError
 pub impl Default for BookConfig
 
-pub(all) struct BuildConfig {
-  build_dir : String
-  create_missing : Bool
+pub(all) struct ExtensionConfig {
+  template : String
+  extra_css : Array[String]
+  extra_js : Array[String]
+  preprocessors : Array[String]
+  transformers : Array[String]
 } derive(Eq, @debug.Debug)
-pub impl Default for BuildConfig
-
-pub(all) enum TextDirection {
-  LeftToRight
-  RightToLeft
-} derive(Eq, @debug.Debug)
+pub impl Default for ExtensionConfig
 
 // Type aliases
 
