@@ -62,6 +62,7 @@ fn render_block(block : @markdown.Block, ctx : RenderContext) -> String {
     @markdown.BlockQuote(inner) =>
       "<blockquote>\n" + render_blocks(inner, ctx) + "</blockquote>"
     @markdown.List(list) => render_list(list, ctx)
+    @markdown.Table(table) => render_table(table, ctx)
     @markdown.HtmlBlock(raw) =>
       if ctx.opt.allow_raw_html {
         raw
@@ -151,23 +152,15 @@ fn render_image(alt : String, src : String) -> String {
 fn render_code_block(lang : String?, code : String) -> String {
   let lang_text = option_string(lang)
   let lang_label = if lang_text == "" { "text" } else { lang_text }
-  let code_attrs = if lang_text == "" {
-    ""
-  } else {
-    " class=\"language-" + escape_attr(slugify(lang_text)) + "\""
-  }
   let out = StringBuilder::new()
   out.write_string("<div class=\"code-block\">")
   out.write_string("<div class=\"code-header\">")
-  out.write_string(
-    "<span class=\"code-lang\">" + escape_html(lang_label) + "</span>",
-  )
+  out.write_string("<span>" + escape_html(lang_label) + "</span>")
   out.write_string(
     "<button class=\"code-copy\" type=\"button\" data-copy-button>copy</button>",
   )
   out.write_string("</div>")
-  out.write_string("<pre class=\"code-body\"><code")
-  out.write_string(code_attrs)
+  out.write_string("<pre><code")
   out.write_string(">")
   out.write_string(escape_html(code))
   out.write_string("</code></pre>")
@@ -193,6 +186,28 @@ fn render_list(list : @markdown.ListBlock, ctx : RenderContext) -> String {
     out.write_string("</li>")
   }
   out.write_string("</" + tag + ">")
+  out.to_string()
+}
+
+///|
+fn render_table(table : @markdown.TableBlock, ctx : RenderContext) -> String {
+  let out = StringBuilder::new()
+  out.write_string("<table>")
+  out.write_string("<thead><tr>")
+  for header in table.headers {
+    out.write_string("<th>" + render_inlines(header, ctx) + "</th>")
+  }
+  out.write_string("</tr></thead>")
+  out.write_string("<tbody>")
+  for row in table.rows {
+    out.write_string("<tr>")
+    for cell in row {
+      out.write_string("<td>" + render_inlines(cell, ctx) + "</td>")
+    }
+    out.write_string("</tr>")
+  }
+  out.write_string("</tbody>")
+  out.write_string("</table>")
   out.to_string()
 }
 

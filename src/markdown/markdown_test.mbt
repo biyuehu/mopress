@@ -89,3 +89,56 @@ test "parse block quotes lists and thematic breaks" {
   assert_eq(items.length(), 2)
   assert_true(doc[2] is ThematicBreak)
 }
+
+///|
+test "parse table" {
+  let basic = parse_markdown(
+    (
+      #|| A | B |
+      #|| - | - |
+      #|| 1 | 2 |
+      #|| 3 | 4 |
+    ),
+  )
+  @debug.assert_eq(basic, [
+    Block::Table({
+      headers: [[Inline::Text("A")], [Inline::Text("B")]],
+      rows: [
+        [[Inline::Text("1")], [Inline::Text("2")]],
+        [[Inline::Text("3")], [Inline::Text("4")]],
+      ],
+    }),
+  ])
+
+  let inline_content = parse_markdown(
+    (
+      #|| **bold** | `code` |
+      #|| -------- | ------ |
+      #|| normal   | *em*   |
+    ),
+  )
+  @debug.assert_eq(inline_content, [
+    Block::Table({
+      headers: [
+        [Inline::Strong([Inline::Text("bold")])],
+        [Inline::Code("code")],
+      ],
+      rows: [
+        [[Inline::Text("normal")], [Inline::Emphasis([Inline::Text("em")])]],
+      ],
+    }),
+  ])
+
+  let no_body = parse_markdown(
+    (
+      #|| H1 | H2 |
+      #||:--:|:--:|
+    ),
+  )
+  @debug.assert_eq(no_body, [
+    Block::Table({
+      headers: [[Inline::Text("H1")], [Inline::Text("H2")]],
+      rows: [],
+    }),
+  ])
+}

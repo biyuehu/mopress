@@ -19,6 +19,7 @@ pub(all) enum Block {
   BlockQuote(Array[Block])
   List(ListBlock)
   HtmlBlock(String)
+  Table(TableBlock)
 } derive(Eq, @debug.Debug)
 pub impl Plainable for Block
 
@@ -41,6 +42,11 @@ pub(all) struct ListBlock {
   items : Array[Array[Block]]
 } derive(Eq, @debug.Debug)
 pub impl Plainable for ListBlock
+
+pub(all) struct TableBlock {
+  headers : Array[Array[Inline]]
+  rows : Array[Array[Array[Inline]]]
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 pub type Markdown = Array[Block]

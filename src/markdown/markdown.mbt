@@ -20,6 +20,7 @@ pub(all) enum Block {
   BlockQuote(Markdown)
   List(ListBlock)
   HtmlBlock(String)
+  Table(TableBlock)
 } derive(Eq, Debug)
 
 ///|
@@ -33,6 +34,12 @@ pub(all) enum Inline {
   Html(String)
   SoftBreak
   HardBreak
+} derive(Eq, Debug)
+
+///|
+pub(all) struct TableBlock {
+  headers : Array[Array[Inline]]
+  rows : Array[Array[Array[Inline]]]
 } derive(Eq, Debug)
 
 ///|
@@ -55,6 +62,10 @@ pub impl Plainable for Block with fn to_plain(self : Block) -> String {
     BlockQuote(blocks) => Plainable::to_plain(blocks)
     List(list) => list.to_plain()
     HtmlBlock(content) => content
+    Table(table) =>
+      Plainable::to_plain(table.headers) +
+      " " +
+      table.rows.map(row => Plainable::to_plain(row)).join(" ")
   }
 }
 
@@ -115,6 +126,10 @@ fn parse_blocks(lines : Array[String]) -> Markdown {
       index = next
     } else if is_list_item(trimmed) {
       let (block, next) = parse_list(lines, index)
+      blocks.push(block)
+      index = next
+    } else if is_table(lines, index) {
+      let (block, next) = parse_table(lines, index)
       blocks.push(block)
       index = next
     } else if is_html_block_start(trimmed) {
@@ -560,6 +575,77 @@ fn parse_list_marker(line : String) -> ListMarker? {
       None
     }
   }
+}
+
+///|
+fn is_table(lines : Array[String], index : Int) -> Bool {
+  if index + 1 >= lines.length() {
+    return false
+  }
+  let first = lines[index].trim().to_owned()
+  let second = lines[index + 1].trim().to_owned()
+  is_table_row(first) && is_separator_row(second)
+}
+
+///|
+fn is_table_row(line : String) -> Bool {
+  line.has_prefix("|") && line.has_suffix("|")
+}
+
+///|
+fn is_separator_row(line : String) -> Bool {
+  if !is_table_row(line) {
+    return false
+  }
+  let inner = substring(line, 1, line.length() - 1)
+  for cell in inner.split("|") {
+    let t = cell.trim().to_owned()
+    if t == "" {
+      return false
+    }
+    let stripped = if t.has_prefix(":") {
+      substring(t, 1, t.length())
+    } else {
+      t
+    }
+    let stripped = if stripped.has_suffix(":") {
+      substring(stripped, 0, stripped.length() - 1)
+    } else {
+      stripped
+    }
+    for ch in stripped {
+      if ch != '-' {
+        return false
+      }
+    }
+  }
+  true
+}
+
+///|
+fn parse_table_row(line : String) -> Array[Array[Inline]] {
+  let inner = substring(line, 1, line.length() - 1)
+  inner
+  .split("|")
+  .to_array()
+  .map(fn(cell) { parse_inlines(cell.trim().to_owned()) })
+}
+
+///|
+fn parse_table(lines : Array[String], start : Int) -> (Block, Int) {
+  let headers = parse_table_row(lines[start].trim().to_owned())
+  let mut index = start + 2
+  let rows : Array[Array[Array[Inline]]] = []
+  while index < lines.length() {
+    let trimmed = lines[index].trim().to_owned()
+    if is_table_row(trimmed) {
+      rows.push(parse_table_row(trimmed))
+      index = index + 1
+    } else {
+      break
+    }
+  }
+  (Table({ headers, rows }), index)
 }
 
 ///|
