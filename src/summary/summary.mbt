@@ -283,3 +283,82 @@ fn extract_root_link_items(
   }
   result
 }
+
+///|
+pub fn Summary::breadcrumb(self : Summary, current : String) -> String {
+  fn find(items : Array[SummaryItem], path : Array[String]) -> Array[String]? {
+    for item in items {
+      match item {
+        SummaryItem::Link(link) => {
+          let new_path = path + [link.title]
+          if link.location == current {
+            return Some(new_path)
+          }
+          match find(link.nested_items, new_path) {
+            Some(p) => return Some(p)
+            None => ()
+          }
+        }
+        _ => ()
+      }
+    }
+    None
+  }
+
+  let path = match find(self.prefix_chapters, []) {
+    Some(p) => p
+    None =>
+      match find(self.numbered_chapters, []) {
+        Some(p) => p
+        None =>
+          match find(self.suffix_chapters, []) {
+            Some(p) => p
+            None => return "/"
+          }
+      }
+  }
+  "/ " + path.join(" / ")
+}
+
+///|
+pub fn Summary::prev_next(
+  self : Summary,
+  current : String,
+) -> ((String, String)?, (String, String)?) {
+  let flat : Array[SummaryLink] = []
+  fn collect(items : Array[SummaryItem]) -> Unit {
+    for item in items {
+      match item {
+        SummaryItem::Link(link) => {
+          flat.push(link)
+          collect(link.nested_items)
+        }
+        _ => ()
+      }
+    }
+  }
+  collect(self.prefix_chapters)
+  collect(self.numbered_chapters)
+  collect(self.suffix_chapters)
+
+  fn to_val(link : SummaryLink) -> (String, String) {
+    (link.title, link.location)
+  }
+
+  match flat.search_by(fn(link) { link.location == current }) {
+    None => (None, None)
+    Some(i) =>
+      (
+        if i > 0 {
+          Some(to_val(flat[i - 1]))
+        } else {
+          None
+        },
+        if i < flat.length() - 1 {
+          Some(to_val(flat[i + 1]))
+        } else {
+          None
+        },
+      )
+  }
+}

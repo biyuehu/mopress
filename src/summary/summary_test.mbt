@@ -137,3 +137,60 @@ test "parse summary no title fallback" {
   let summary = parse_summary(doc)
   @debug.assert_eq(summary.title, "Summary")
 }
+
+///|
+test "breadcrumb" {
+  let s : Summary = {
+    title: "",
+    prefix_chapters: [
+      SummaryItem::Link({
+        title: "说明",
+        location: "./intro.html",
+        nested_items: [],
+      }),
+    ],
+    numbered_chapters: [
+      SummaryItem::Link({
+        title: "指南",
+        location: "./guide.html",
+        nested_items: [
+          SummaryItem::Link({
+            title: "命令",
+            location: "./cmd.html",
+            nested_items: [],
+          }),
+        ],
+      }),
+    ],
+    suffix_chapters: [],
+  }
+  assert_eq(s.breadcrumb("./intro.html"), "/ 说明")
+  assert_eq(s.breadcrumb("./guide.html"), "/ 指南")
+  assert_eq(s.breadcrumb("./cmd.html"), "/ 指南 / 命令")
+  assert_eq(s.breadcrumb("./ghost.html"), "/")
+}
+
+///|
+test "prev_next" {
+  let s : Summary = {
+    title: "",
+    prefix_chapters: [
+      SummaryItem::Link({ title: "A", location: "./a.html", nested_items: [] }),
+    ],
+    numbered_chapters: [
+      SummaryItem::PartTitle("x"),
+      SummaryItem::Link({ title: "B", location: "./b.html", nested_items: [] }),
+      SummaryItem::Link({ title: "C", location: "./c.html", nested_items: [] }),
+    ],
+    suffix_chapters: [],
+  }
+  @debug.assert_eq(s.prev_next("./ghost.html"), (None, None))
+  let (p, n) = s.prev_next("./b.html")
+  match (p, n) {
+    (Some((prev, _)), Some((next, _))) => {
+      assert_eq(prev, "A")
+      assert_eq(next, "C")
+    }
+    _ => fail("expected prev=A next=C")
+  }
+}
