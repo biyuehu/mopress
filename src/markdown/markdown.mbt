@@ -57,7 +57,7 @@ pub impl Plainable for Block with fn to_plain(self : Block) -> String {
   match self {
     Heading(_, content) => Plainable::to_plain(content)
     Paragraph(content) => Plainable::to_plain(content)
-    ThematicBreak => "---"
+    ThematicBreak => ""
     CodeBlock(_, content) => content
     BlockQuote(blocks) => Plainable::to_plain(blocks)
     List(list) => list.to_plain()

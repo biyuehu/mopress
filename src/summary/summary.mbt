@@ -2,6 +2,7 @@
 pub(all) struct SummaryLink {
   title : String
   location : String
+  source : String
   nested_items : Array[SummaryItem]
 } derive(Eq, Debug)
 
@@ -19,6 +20,13 @@ pub(all) struct Summary {
   numbered_chapters : Array[SummaryItem]
   suffix_chapters : Array[SummaryItem]
 } derive(Eq, Debug)
+
+///|
+pub(all) struct ArticleIndex {
+  title : String
+  location : String
+  content : String
+} derive(Eq, Debug, ToJson)
 
 ///|
 fn flatten_items(
@@ -46,6 +54,7 @@ fn flatten_items(
             "is_link": true.to_json(),
             "title": link.title.to_json(),
             "location": link.location,
+            "source": link.source,
             "depth": depth.to_json(),
             "is_current": (link.location == current).to_json(),
             "number": number.to_json(),
@@ -55,6 +64,7 @@ fn flatten_items(
             "is_link": true.to_json(),
             "title": link.title.to_json(),
             "location": link.location,
+            "source": link.source,
             "depth": depth.to_json(),
             "is_current": (link.location == current).to_json(),
           })
@@ -102,7 +112,12 @@ fn parse_summary_item(item : Array[@markdown.Block]) -> SummaryItem? {
         link.location,
       )
     }
-    Link({ title: link.title, location: link.location, nested_items: nested })
+    Link({
+      title: link.title,
+      location: link.location,
+      source: link.source,
+      nested_items: nested,
+    })
   })
 }
 
@@ -115,6 +130,7 @@ fn extract_item_link(item : Array[@markdown.Block]) -> SummaryLink? {
           Some({
             title: @markdown.Plainable::to_plain(title),
             location: handle_location(url),
+            source: url,
             nested_items: [],
           })
         _ => None
@@ -280,6 +296,7 @@ fn extract_root_link_items(
           Link({
             title: @markdown.Plainable::to_plain(title),
             location: handle_location(url),
+            source: url,
             nested_items: [],
           }),
         )
@@ -287,6 +304,114 @@ fn extract_root_link_items(
     }
   }
   result
+}
+
+///|
+pub fn md_to_plain(input : String) -> String {
+  let out = StringBuilder::new()
+  let mut i = 0
+  while i < input.length() {
+    let ch = input[i]
+    if ch == '#' {
+      while i < input.length() && input[i] == '#' {
+        i = i + 1
+      }
+      while i < input.length() && input[i] == ' ' {
+        i = i + 1
+      }
+    } else if ch == '*' || ch == '_' {
+      let marker = ch
+      if i + 1 < input.length() && input[i + 1] == marker {
+        i = i + 2
+      } else {
+        i = i + 1
+      }
+    } else if ch == '`' {
+      i = i + 1
+    } else if ch == '!' && i + 1 < input.length() && input[i + 1] == '[' {
+      i = i + 2
+      while i < input.length() && input[i] != ']' {
+        i = i + 1
+      }
+      i = i + 1
+      if i < input.length() && input[i] == '(' {
+        while i < input.length() && input[i] != ')' {
+          i = i + 1
+        }
+        i = i + 1
+      }
+    } else if ch == '[' {
+      i = i + 1
+      while i < input.length() && input[i] != ']' {
+        if input[i].to_char() is Some(ch) {
+          out.write_char(ch)
+        }
+        i = i + 1
+      }
+      i = i + 1
+      if i < input.length() && input[i] == '(' {
+        while i < input.length() && input[i] != ')' {
+          i = i + 1
+        }
+        i = i + 1
+      }
+    } else if ch == '<' {
+      while i < input.length() && input[i] != '>' {
+        i = i + 1
+      }
+      i = i + 1
+    } else if ch == '>' && (i == 0 || input[i - 1] == '\n') {
+      i = i + 1
+      if i < input.length() && input[i] == ' ' {
+        i = i + 1
+      }
+    } else if ch == '|' {
+      out.write_char(' ')
+      i = i + 1
+    } else {
+      if ch.to_char() is Some(ch) {
+        out.write_char(ch)
+      }
+      i = i + 1
+    }
+  }
+  out
+  .to_string()
+  .replace_all(old="\n", new=" ")
+  .replace_all(old="---", new=" ")
+  .to_lower()
+  .trim()
+  .to_owned()
+}
+
+///|
+pub fn Summary::index_articles(
+  self : Summary,
+  src : String,
+) -> Array[ArticleIndex] raise {
+  let articles : Array[ArticleIndex] = []
+
+  fn collect(items : Array[SummaryItem]) -> Unit raise {
+    for item in items {
+      match item {
+        SummaryItem::Link(link) => {
+          let path = @path.Path(src).join(link.source) |> Show::to_string
+          articles.push({
+            title: link.title,
+            location: link.location,
+            content: path |> @fs.read_file_to_string |> md_to_plain,
+          })
+          collect(link.nested_items)
+        }
+        _ => ()
+      }
+    }
+  }
+
+  collect(
+    [..self.prefix_chapters, ..self.numbered_chapters, ..self.suffix_chapters],
+  )
+  articles
 }
 
 ///|
@@ -318,7 +443,7 @@ pub fn Summary::breadcrumb(self : Summary, current : String) -> String {
         None =>
           match find(self.suffix_chapters, []) {
             Some(p) => p
-            None => return "/"
+            None => return "/ ???"
           }
       }
   }

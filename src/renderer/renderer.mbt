@@ -150,7 +150,7 @@ fn render_code_block(lang : String?, code : String) -> String {
   //   $|  <button class="code-copy" type="button" data-copy-button>copy</button>
   //   $|</div>
   (
-    $|<pre><code>\{escape_html(code)}</code></pre>
+    $|<pre><code\{if lang is Some(lang) { " class=\"language-\{lang.to_lower().trim()}\"" } else {""}}>\{escape_html(code)}</code></pre>
   )
 }
 
@@ -291,14 +291,6 @@ fn escape_html(input : String) -> String {
 ///|
 fn escape_attr(input : String) -> String {
   escape_html(input)
-}
-
-///|
-fn option_string(input : String?) -> String {
-  match input {
-    Some(s) => s
-    None => ""
-  }
 }
 
 ///|

@@ -10,8 +10,11 @@ test "parse full config" {
     #|dest = "public"
     #|
     #|[extension]
-    #|extra-css = ["style.css", "custom.css"]
-    #|extra-js = ["app.js"]
+    #|template = "template.html"
+    #|use-css = ["// ..."]
+    #|use-js = ["console.log('hello')"]
+    #|import-css = ["style.css", "custom.css"]
+    #|import-js = ["app.js"]
     #|preprocessors = ["katex"]
     #|transformers = ["highlight"]
   let config = BookConfig::parse(toml)
@@ -22,8 +25,11 @@ test "parse full config" {
   assert_eq(config.language, "zh")
   assert_eq(config.src, "src")
   assert_eq(config.dest, "public")
-  @debug.assert_eq(config.extension.extra_css, ["style.css", "custom.css"])
-  @debug.assert_eq(config.extension.extra_js, ["app.js"])
+  assert_eq(config.extension.template, "template.html")
+  @debug.assert_eq(config.extension.use_css, ["// ..."])
+  @debug.assert_eq(config.extension.use_js, ["console.log('hello')"])
+  @debug.assert_eq(config.extension.import_css, ["style.css", "custom.css"])
+  @debug.assert_eq(config.extension.import_js, ["app.js"])
   @debug.assert_eq(config.extension.preprocessors, ["katex"])
 }
 
@@ -48,8 +54,8 @@ test "parse missing extension section" {
     ),
   )
   @debug.assert_eq(config.title, "NoExt")
-  @debug.assert_eq(config.extension.extra_css, [])
-  @debug.assert_eq(config.extension.extra_js, [])
+  @debug.assert_eq(config.extension.import_css, [])
+  @debug.assert_eq(config.extension.import_js, [])
   @debug.assert_eq(config.extension.preprocessors, [])
   @debug.assert_eq(config.extension.transformers, [])
 }
@@ -96,14 +102,14 @@ test "parse extension is not table" {
 }
 
 ///|
-test "parse extra-css is not array" {
+test "parse import-css is not array" {
   let result : Result[BookConfig, ConfigParseError] = Ok(
     BookConfig::parse(
       (
         #|title = "sena!"
         #|[extension]
         #|template = ""
-        #|extra-css = "not_an_array"
+        #|import-css = "not_an_array"
       ),
     ),
   ) catch {
@@ -111,20 +117,20 @@ test "parse extra-css is not array" {
   }
   match result {
     Err(ConfigParseError(msg)) =>
-      @debug.assert_eq(msg.has_prefix("`extra-css` must be an array"), true)
-    Ok(_) => fail("Expected error for non-array extra-css")
+      @debug.assert_eq(msg.has_prefix("`import-css` must be an array"), true)
+    Ok(_) => fail("Expected error for non-array import-css")
   }
 }
 
 ///|
-test "parse extra-js array contains non-string" {
+test "parse import-js array contains non-string" {
   let result : Result[BookConfig, ConfigParseError] = Ok(
     BookConfig::parse(
       (
         #|title = "sena!"
         #|[extension]
         #|template = ""
-        #|extra-js = ["ok.js", 42]
+        #|import-js = ["ok.js", 42]
       ),
     ),
   ) catch {
@@ -133,10 +139,10 @@ test "parse extra-js array contains non-string" {
   match result {
     Err(ConfigParseError(msg)) =>
       @debug.assert_eq(
-        msg.has_prefix("`extra-js` must be an array of strings"),
+        msg.has_prefix("`import-js` must be an array of strings"),
         true,
       )
-    Ok(_) => fail("Expected error for non-string in extra-js")
+    Ok(_) => fail("Expected error for non-string in import-js")
   }
 }
 

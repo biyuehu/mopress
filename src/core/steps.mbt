@@ -68,8 +68,7 @@ pub fn apply_template_strict(
   body : Item[Html],
   template : @template.Template,
 ) -> Item[Html] raise {
-  let rendered = template |> @template.apply_template_strict(body.vars)
-  body.map(_ => rendered)
+  body.map_with_eff(_ => template |> @template.apply_template_strict(body.vars))
 }
 
 ///|
@@ -89,25 +88,55 @@ pub fn load_and_apply_template(
 }
 
 ///|
-pub fn import_css(item : Item[Html], url : String) -> Item[Html] {
-  item.map(data => {
-    data |> inject_into_head("<link rel=\"stylesheet\" href=\"\{url}\">\n")
-  })
+pub fn import_css(item : Item[Html], urls : Array[String]) -> Item[Html] {
+  let mut item = item
+  for url in urls {
+    item = item.map(data => {
+      data |> inject_into_head("<link rel=\"stylesheet\" href=\"\{url}\">\n")
+    })
+  }
+  item
 }
 
 ///|
-pub fn import_js(item : Item[Html], url : String) -> Item[Html] {
-  item.map(data => inject_before_body_end(data, "<script src=\"\{url}\"/>\n"))
+pub fn import_js(item : Item[Html], urls : Array[String]) -> Item[Html] {
+  let mut item = item
+  for url in urls {
+    item = item.map(data => {
+      data |> inject_before_body_end("<script src=\"\{url}\"></script>\n")
+    })
+  }
+  item
 }
 
 ///|
-pub fn use_css(item : Item[Html], code : String) -> Item[Html] {
-  item.map(data => inject_into_head(data, "<style>\{code}</style>\n"))
+pub fn use_css(item : Item[Html], codes : Array[String]) -> Item[Html] {
+  let mut item = item
+  for code in codes {
+    item = item.map(data => data |> inject_into_head("<style>\{code}</style>\n"))
+  }
+  item
 }
 
 ///|
-pub fn use_js(item : Item[Html], code : String) -> Item[Html] {
-  item.map(data => inject_before_body_end(data, "<script>\{code}</script>\n"))
+pub fn use_js(item : Item[Html], codes : Array[String]) -> Item[Html] {
+  let mut item = item
+  for code in codes {
+    item = item.map(data => {
+      data |> inject_before_body_end("<script>\{code}</script>\n")
+    })
+  }
+  item
+}
+
+///|
+pub fn inject_head(item : Item[Html], code : String) -> Item[Html] {
+  item.map(data => data |> inject_into_head(code))
+}
+
+///|
+pub fn inject_body(item : Item[Html], code : String) -> Item[Html] {
+  item.map(data => data |> inject_before_body_end(code))
 }
 
 ///|

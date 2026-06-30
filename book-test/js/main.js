@@ -1,11 +1,8 @@
-if (typeof MOPRESS_SITEDATA === "undefined") globalThis.MOPRESS_SITEDATA = [];
-// 		["Code Blocks", "/code.html"],
-// ["Changelog", "/CHANGELOG.html"],
+globalThis.MOPRESS_INDEX_DATA = [];
 
 const docRoot = document.getElementById("docRoot");
 
 const $ = (s, root = document) => root.querySelector(s);
-const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 
 const getMode = () => localStorage.getItem("theme") || "system";
 
@@ -13,7 +10,9 @@ const MOBILE_WIDTH = 768;
 
 function initMobileSidebar() {
 	if (!docRoot) return;
-	const update = () => window.innerWidth < MOBILE_WIDTH && !!docRoot?.classList.toggle("nav-collapsed", true);
+	const update = () =>
+		window.innerWidth < MOBILE_WIDTH &&
+		!!docRoot?.classList.toggle("nav-collapsed", true);
 	window.addEventListener("resize", update, { passive: true });
 	update();
 }
@@ -94,15 +93,18 @@ function initSearch() {
 	const render = (list) => {
 		results.innerHTML = list.length
 			? list
-				.map((i) => `<a class="search-result" href="${i[1]}">${i[0]}</a>`)
-				.join("")
+					.map(
+						(i) =>
+							/* html */ `<a class="search-result" href="${i.location}"><strong>${i.title}</strong><br>${i.content.substring(0, 40)}...</a>`,
+					)
+					.join("")
 			: `<div class="search-empty">No result</div>`;
 	};
 
 	const open = () => {
 		overlay.hidden = false;
 		input.value = "";
-		render(MOPRESS_SITEDATA);
+		render([]);
 		input.focus();
 	};
 
@@ -117,7 +119,13 @@ function initSearch() {
 
 	input?.addEventListener("input", () => {
 		const q = input.value.trim().toLowerCase();
-		render(MOPRESS_SITEDATA.filter((i) => i[0].toLowerCase().includes(q)));
+		render(
+			q === ""
+				? []
+				: MOPRESS_INDEX_DATA.filter(
+						(i) => i.title.includes(q) || i.content.includes(q),
+					),
+		);
 	});
 
 	document.addEventListener("keydown", (e) => {
@@ -127,18 +135,34 @@ function initSearch() {
 		}
 		if (e.key === "Escape") close();
 	});
+
+	fetch("/index.json")
+		.then((res) => res.json())
+		.then((data) => {
+			if (!Array.isArray(data))
+				throw new Error("Data structure is not a array");
+			globalThis.MOPRESS_INDEX_DATA = data;
+		})
+		.catch((e) => console.error("Failed to load indexs data:", e));
 }
 
 function initThemeRender() {
 	const mode = getMode();
-	docRoot.classList.toggle("dark", mode === "system" ? window.matchMedia("(prefers-color-scheme: dark)").matches : mode === "dark")
+	docRoot.classList.toggle(
+		"dark",
+		mode === "system"
+			? window.matchMedia("(prefers-color-scheme: dark)").matches
+			: mode === "dark",
+	);
 	$("#themeToggle").textContent =
 		mode === "system" ? "🌓" : mode === "dark" ? "🌑" : "🌕";
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
-	$("#navToggle")?.addEventListener("click", () => !!docRoot?.classList.toggle("nav-collapsed"));
+	$("#navToggle")?.addEventListener(
+		"click",
+		() => !!docRoot?.classList.toggle("nav-collapsed"),
+	);
 	$("#themeToggle")?.addEventListener("click", () => {
 		const cur = getMode();
 		const next =
@@ -149,11 +173,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 	matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
 		if (getMode() === "system") initThemeRender();
-	})
+	});
 
 	initMobileSidebar();
 	initProgressBar();
-	// initTocScrollSpy();
 	initSearch();
 	initThemeRender();
 });

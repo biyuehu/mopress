@@ -2,6 +2,8 @@
 title: Home
 ---
 
+$\beta$ + $\alpha$
+
 # Overview
 
 Static sites are fast, secure, easy to deploy, and manageable using version

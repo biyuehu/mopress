@@ -106,6 +106,30 @@ pub fn[T, R] Item::map(
 }
 
 ///|
+pub fn[T, R] Item::map_with_eff(
+  self : Item[T],
+  f : (T) -> R raise,
+  target? : String,
+  extension? : String,
+  vars? : Vars,
+) -> Item[R] raise {
+  Item::new(
+    f(self.data),
+    if target is Some(target) {
+      target
+    } else {
+      self.target
+    },
+    extension=if extension is Some(extension) {
+      extension
+    } else {
+      self.extension
+    },
+    vars=if vars is Some(vars) { vars } else { self.vars },
+  )
+}
+
+///|
 pub fn[T] Item::extend(
   self : Item[T],
   target? : String,
@@ -181,12 +205,17 @@ pub trait Thingable {
 
 ///|
 pub impl Thingable for String with fn to_thing(self : String) -> Thing {
-  Thing::Doc(self)
+  Doc(self)
 }
 
 ///|
 pub impl Thingable for Bytes with fn to_thing(self : Bytes) -> Thing {
-  Thing::Asset(self)
+  Asset(self)
+}
+
+///|
+pub impl Thingable for Json with fn to_thing(self : Json) -> Thing {
+  Doc(self.stringify())
 }
 
 ///|

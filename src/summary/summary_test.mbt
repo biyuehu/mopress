@@ -12,7 +12,7 @@ test "parse simple summary" {
 
   let doc : @markdown.Markdown = [
     Heading(1, [Text("Summary")]),
-    Paragraph([Link([Text("Preface")], "preface.html")]),
+    Paragraph([Link([Text("Preface")], "preface.md")]),
     ThematicBreak,
     Heading(1, [Text("Part One")]),
     List({
@@ -20,18 +20,18 @@ test "parse simple summary" {
       start: None,
       items: [
         [
-          Paragraph([Link([Text("Chapter 1")], "ch1.html")]),
+          Paragraph([Link([Text("Chapter 1")], "ch1.md")]),
           List({
             ordered: false,
             start: None,
-            items: [[Paragraph([Link([Text("Sub 1.1")], "ch1/sub.html")])]],
+            items: [[Paragraph([Link([Text("Sub 1.1")], "ch1/sub.md")])]],
           }),
         ],
-        [Paragraph([Link([Text("Chapter 2")], "ch2.html")])],
+        [Paragraph([Link([Text("Chapter 2")], "ch2.md")])],
       ],
     }),
     ThematicBreak,
-    Paragraph([Link([Text("Appendix")], "appendix.html")]),
+    Paragraph([Link([Text("Appendix")], "appendix.md")]),
   ]
 
   let summary = parse_summary(doc)
@@ -39,7 +39,12 @@ test "parse simple summary" {
   @debug.assert_eq(summary.title, "Summary")
 
   @debug.assert_eq(summary.prefix_chapters, [
-    Link({ title: "Preface", location: "preface.html", nested_items: [] }),
+    Link({
+      title: "Preface",
+      location: "preface.html",
+      source: "preface.md",
+      nested_items: [],
+    }),
     Separator,
   ])
 
@@ -77,7 +82,12 @@ test "parse simple summary" {
   @debug.assert_eq(summary.numbered_chapters[3], Separator)
 
   @debug.assert_eq(summary.suffix_chapters, [
-    Link({ title: "Appendix", location: "appendix.html", nested_items: [] }),
+    Link({
+      title: "Appendix",
+      location: "appendix.html",
+      source: "appendix.md",
+      nested_items: [],
+    }),
   ])
 }
 
@@ -93,8 +103,8 @@ test "parse summary no parts just flat list" {
       ordered: false,
       start: None,
       items: [
-        [Paragraph([Link([Text("Intro")], "intro.html")])],
-        [Paragraph([Link([Text("Guide")], "guide.html")])],
+        [Paragraph([Link([Text("Intro")], "intro.md")])],
+        [Paragraph([Link([Text("Guide")], "guide.md")])],
       ],
     }),
   ]
@@ -146,6 +156,7 @@ test "breadcrumb" {
       SummaryItem::Link({
         title: "说明",
         location: "./intro.html",
+        source: "./intro.md",
         nested_items: [],
       }),
     ],
@@ -153,10 +164,12 @@ test "breadcrumb" {
       SummaryItem::Link({
         title: "指南",
         location: "./guide.html",
+        source: "./guide.md",
         nested_items: [
           SummaryItem::Link({
             title: "命令",
             location: "./cmd.html",
+            source: "./cmd.md",
             nested_items: [],
           }),
         ],
@@ -167,7 +180,7 @@ test "breadcrumb" {
   assert_eq(s.breadcrumb("./intro.html"), "/ 说明")
   assert_eq(s.breadcrumb("./guide.html"), "/ 指南")
   assert_eq(s.breadcrumb("./cmd.html"), "/ 指南 / 命令")
-  assert_eq(s.breadcrumb("./ghost.html"), "/")
+  assert_eq(s.breadcrumb("./ghost.html"), "/ ???")
 }
 
 ///|
@@ -175,12 +188,27 @@ test "prev_next" {
   let s : Summary = {
     title: "",
     prefix_chapters: [
-      SummaryItem::Link({ title: "A", location: "./a.html", nested_items: [] }),
+      SummaryItem::Link({
+        title: "A",
+        location: "./a.html",
+        source: "./a.md",
+        nested_items: [],
+      }),
     ],
     numbered_chapters: [
       SummaryItem::PartTitle("x"),
-      SummaryItem::Link({ title: "B", location: "./b.html", nested_items: [] }),
-      SummaryItem::Link({ title: "C", location: "./c.html", nested_items: [] }),
+      SummaryItem::Link({
+        title: "B",
+        location: "./b.html",
+        source: "./b.md",
+        nested_items: [],
+      }),
+      SummaryItem::Link({
+        title: "C",
+        location: "./c.html",
+        source: "./c.md",
+        nested_items: [],
+      }),
     ],
     suffix_chapters: [],
   }

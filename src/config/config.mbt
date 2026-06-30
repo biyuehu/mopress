@@ -10,14 +10,26 @@ pub(all) struct BookConfig {
   src : String
   dest : String
   repository : String?
+  features : FeaturesConfig
   extension : ExtensionConfig
+} derive(Eq, Debug)
+
+///|
+pub(all) struct FeaturesConfig {
+  highlight_enabled : Bool
+  highlight_theme : String
+  mathjax_enabled : Bool
 } derive(Eq, Debug)
 
 ///|
 pub(all) struct ExtensionConfig {
   template : String
-  extra_css : Array[String]
-  extra_js : Array[String]
+  inject_head : Array[String]
+  inject_body : Array[String]
+  use_js : Array[String]
+  use_css : Array[String]
+  import_css : Array[String]
+  import_js : Array[String]
   preprocessors : Array[String]
   transformers : Array[String]
 } derive(Eq, Debug)
@@ -26,6 +38,28 @@ pub(all) struct ExtensionConfig {
 pub suberror ConfigParseError {
   ConfigParseError(String)
 } derive(Eq, Debug)
+
+///|
+pub fn BookConfig::extract_features(self : BookConfig) -> BookConfig {
+  if self.features.highlight_enabled {
+    self.extension.import_css.push(
+      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/\{self.features.highlight_theme}.min.css",
+    )
+    self.extension.import_js.push(
+      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js",
+    )
+    self.extension.use_js.push("hljs.highlightAll()")
+  }
+  if self.features.mathjax_enabled {
+    self.extension.inject_head.push(
+      (
+        #|<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+        #|<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script>
+      ),
+    )
+  }
+  self
+}
 
 ///|
 pub fn BookConfig::parse(
@@ -37,6 +71,7 @@ pub fn BookConfig::parse(
     is @toml.TomlTable(root) else {
     raise ConfigParseError("Config root must be a TOML table")
   }
+  let features = read_table(root, "features", true)
   let extension = read_table(root, "extension", true)
   let default = BookConfig::default()
   {
@@ -50,14 +85,27 @@ pub fn BookConfig::parse(
     src: read_string(root, "src", default.src),
     dest: read_string(root, "dest", default.dest),
     repository: read_optional_string(root, "repository"),
+    features: {
+      highlight_enabled: read_bool(features, "highlight-enabled"),
+      highlight_theme: read_string(
+        features,
+        "highlight-theme",
+        default.features.highlight_theme,
+      ),
+      mathjax_enabled: read_bool(features, "mathjax-enabled"),
+    },
     extension: {
       template: read_string(extension, "template", default.extension.template),
-      extra_css: read_string_array(extension, "extra-css"),
-      extra_js: read_string_array(extension, "extra-js"),
+      inject_head: read_string_array(extension, "inject-head"),
+      inject_body: read_string_array(extension, "inject-body"),
+      use_js: read_string_array(extension, "use-js"),
+      use_css: read_string_array(extension, "use-css"),
+      import_css: read_string_array(extension, "import-css"),
+      import_js: read_string_array(extension, "import-js"),
       preprocessors: read_string_array(extension, "preprocessors"),
       transformers: read_string_array(extension, "transformers"),
     },
-  }
+  }.extract_features()
 }
 
 ///|
@@ -73,7 +121,17 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     src: "",
     dest: "dest",
     repository: None,
+    features: FeaturesConfig::default(),
     extension: ExtensionConfig::default(),
+  }
+}
+
+///|
+pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
+  {
+    highlight_enabled: false,
+    highlight_theme: "github",
+    mathjax_enabled: false,
   }
 }
 
@@ -81,8 +139,12 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
 pub impl Default for ExtensionConfig with fn default() -> ExtensionConfig {
   {
     template: "templates/default.html",
-    extra_css: [],
-    extra_js: [],
+    inject_head: [],
+    inject_body: [],
+    use_js: [],
+    use_css: [],
+    import_css: [],
+    import_js: [],
     preprocessors: [],
     transformers: [],
   }
@@ -127,6 +189,24 @@ fn read_string(
   match read_optional_string(table, key) {
     Some(s) => s
     None => default
+  }
+}
+
+///|
+fn read_bool(
+  table : Map[String, @toml.TomlValue],
+  key : String,
+) -> Bool raise ConfigParseError {
+  match read_optional_string(table, key) {
+    Some(s) =>
+      if s == "true" {
+        true
+      } else if s == "false" {
+        false
+      } else {
+        raise ConfigParseError("`\{key}` must be a boolean")
+      }
+    None => false
   }
 }
 

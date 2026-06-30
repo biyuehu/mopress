@@ -1,27 +1,16 @@
 <!DOCTYPE html>
-<html lang="$language$">
+<!-- biome-ignore lint: lint/a11y/useValidLang -->
+<html lang="$if(language)$$language$$else$$site_language$$endif$">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  $if(title)$
-  <title>$title$ - $site_title$</title>
-  $else$
-  <title>$site_title$</title>
-  $endif$
+  <title>$if(title)$$title$ - $site_title$$else$$site_title$$endif$</title>
   <link rel="icon" href="$favicon$" type="image/x-icon">
   <link rel="stylesheet" href="/css/default.css">
-  $if(description)$
-  <meta name="description" content="$site_description$,$description$">
-  $else$
-  <meta name="description" content="$site_description$">
-  $endif$
-  $if(keywords)$
-  <meta name="keywords" content="$site_keywords$,$keywords$">
-  $else$
-  <meta name="keywords" content="$site_keywords$">
-  $endif$
+  <meta name="description" content="$if(description)$$site_description$,$description$$else$$site_description$$endif$">
+  <meta name="keywords" content="$if(keywords)$$site_keywords$,$keywords$$else$$site_keywords$$endif$">
+  <meta name="authors" content="$if(authors)$$site_authors$,$authors$$else$$site_authors$$endif$">
 </head>
 
 <body>
@@ -32,64 +21,39 @@
           <img class="logo-mark" src="$logo$" alt="Logo" />
           <span class="logo-name">$site_title$</span>
         </div>
-        <!-- <div class="sidebar-search">
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <span>Search docs...</span>
-          <span class="kbd">⌘K</span>
-        </div> -->
       </div>
       <div class="nav-scroll">
         $for(section.prefix_chapters)$
-        $if(item.is_separator)$
-        <li class="nav-separator"></li>
-        <div class="progress-bar"></div>
-
-        $endif$
-        $if(item.is_part_title)$
-        <div class="nav-section-label">$item.title$</div>
-        $endif$
+        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
+        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
         $if(item.is_link)$
         <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
           <span class="dot"></span>$item.title$
         </a>
         $endif$
         $endfor$
-
         $for(section.numbered_chapters)$
-        $if(item.is_separator)$
-        <li class="nav-separator"></li>
-        $endif$
-        $if(item.is_part_title)$
-        <div class="nav-section-label">$item.title$</div>
-        $endif$
+        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
+        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
         $if(item.is_link)$
         <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="/$item.location$">
           <span class="dot"></span><strong>$item.number$</strong>$item.title$
-          <!-- $if(item.is_current)$$if(toc)$
-                <span class="chevron"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              $endif$$endif$ -->
         </a>
         $endif$
         $endfor$
-
         $for(section.suffix_chapters)$
-        $if(item.is_separator)$
-        <li class="nav-separator"></li>
-        $endif$
-        $if(item.is_part_title)$
-        <div class="nav-section-label">$item.title$</div>
-        $endif$
+        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
+        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
         $if(item.is_link)$
         <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
-          <span class="dot"></span>$item.title$
-        </a>
+          <span class="dot"></span>$item.title$</a>
         $endif$
         $endfor$
       </div>
       <div class="nav-footer">
         <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
             rel="noopener noreferrer">MoPress</a>
-          <span class="nav-version">v1.0.0</span>
+          <span class="nav-version">$version$</span>
         </span>
       </div>
     </nav>
@@ -97,13 +61,15 @@
     <div class="main">
       <div class="topbar">
         <div class="topbar-left">
-          <button id="navToggle" aria-label="Toggle sidebar">
+          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>toggle</title>
               <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
             </svg>
           </button>
-          <button id="searchOpen" aria-label="Search">
+          <button type="button" title="Search" id="searchOpen" aria-label="Search">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>search</title>
               <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
               <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
             </svg>
@@ -113,9 +79,10 @@
         <div class="topbar-title" id="topbarTitle">$breadcrumb$</div>
 
         <div class="topbar-right">
-          <button id="themeToggle" class="icon-btn">◐</button>
-          <a class="topbar-link" href="$repository$" target="_blank" rel="noreferrer noopener">
+          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
+          <a class="topbar-link" title="Open GitHub" href="$repository$" target="_blank" rel="noreferrer noopener">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>github</title>
               <path
                 d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
                 fill="currentColor" opacity=".6" />
@@ -151,7 +118,8 @@
           <div class="search-head-hint">Ctrl / ⌘ + K</div>
         </div>
 
-        <button class="search-close" id="searchClose" aria-label="Close search">Esc</button>
+        <button type="button" title="Close Search" class="search-close" id="searchClose"
+          aria-label="Close search">Esc</button>
       </div>
 
       <div class="search-input-row">
