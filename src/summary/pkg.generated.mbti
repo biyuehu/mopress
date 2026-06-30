@@ -7,11 +7,19 @@ import {
 }
 
 // Values
+pub fn md_to_plain(String) -> String
+
 pub fn parse_summary(Array[@markdown.Block]) -> Summary
 
 // Errors
 
 // Types and methods
+pub(all) struct ArticleIndex {
+  title : String
+  location : String
+  content : String
+} derive(Eq, ToJson, @debug.Debug)
+
 pub(all) struct Summary {
   title : String
   prefix_chapters : Array[SummaryItem]
@@ -20,6 +28,7 @@ pub(all) struct Summary {
 } derive(Eq, @debug.Debug)
 pub fn Summary::breadcrumb(Self, String) -> String
 pub fn Summary::flatten(Self, String) -> Json
+pub fn Summary::index_articles(Self, String) -> Array[ArticleIndex] raise
 pub fn Summary::prev_next(Self, String) -> ((String, String)?, (String, String)?)
 
 pub(all) enum SummaryItem {
@@ -31,6 +40,7 @@ pub(all) enum SummaryItem {
 pub(all) struct SummaryLink {
   title : String
   location : String
+  source : String
   nested_items : Array[SummaryItem]
 } derive(Eq, @debug.Debug)
 

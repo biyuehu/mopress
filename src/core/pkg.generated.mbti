@@ -17,9 +17,13 @@ pub fn[T : Show] extract_markdown(Item[T]) -> Item[(Map[String, String], String)
 
 pub fn[T : Thingable] identify(Item[T]) -> Item[Thing]
 
-pub fn import_css(Item[String], String) -> Item[String]
+pub fn import_css(Item[String], Array[String]) -> Item[String]
 
-pub fn import_js(Item[String], String) -> Item[String]
+pub fn import_js(Item[String], Array[String]) -> Item[String]
+
+pub fn inject_body(Item[String], String) -> Item[String]
+
+pub fn inject_head(Item[String], String) -> Item[String]
 
 pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
 
@@ -35,9 +39,9 @@ pub fn[T : Show] render_markdown_and_frontmatter(Item[T]) -> Item[String]
 
 pub fn[T] set_extension(Item[T], String) -> Item[T]
 
-pub fn use_css(Item[String], String) -> Item[String]
+pub fn use_css(Item[String], Array[String]) -> Item[String]
 
-pub fn use_js(Item[String], String) -> Item[String]
+pub fn use_js(Item[String], Array[String]) -> Item[String]
 
 pub fn use_preprocessor(Item[String], Array[(Item[String]) -> Item[String] raise]) -> Item[String] raise
 
@@ -57,6 +61,7 @@ pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
 pub fn[T] Item::extend(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::location(Self[T]) -> String
 pub fn[T, R] Item::map(Self[T], (T) -> R, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R]
+pub fn[T, R] Item::map_with_eff(Self[T], (T) -> R raise, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R] raise
 pub fn[T] Item::new(T, String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
 
@@ -105,4 +110,5 @@ pub trait Thingable {
 }
 pub impl Thingable for String
 pub impl Thingable for Bytes
+pub impl Thingable for Json
 

@@ -24,19 +24,33 @@ pub(all) struct BookConfig {
   src : String
   dest : String
   repository : String?
+  features : FeaturesConfig
   extension : ExtensionConfig
 } derive(Eq, @debug.Debug)
+pub fn BookConfig::extract_features(Self) -> Self
 pub fn BookConfig::parse(String) -> Self raise ConfigParseError
 pub impl Default for BookConfig
 
 pub(all) struct ExtensionConfig {
   template : String
-  extra_css : Array[String]
-  extra_js : Array[String]
+  assets : Array[String]
+  inject_head : Array[String]
+  inject_body : Array[String]
+  use_js : Array[String]
+  use_css : Array[String]
+  import_css : Array[String]
+  import_js : Array[String]
   preprocessors : Array[String]
   transformers : Array[String]
 } derive(Eq, @debug.Debug)
 pub impl Default for ExtensionConfig
+
+pub(all) struct FeaturesConfig {
+  highlight_enabled : Bool
+  highlight_theme : String
+  mathjax_enabled : Bool
+} derive(Eq, @debug.Debug)
+pub impl Default for FeaturesConfig
 
 // Type aliases
 

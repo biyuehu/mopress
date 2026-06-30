@@ -24,6 +24,7 @@ pub(all) struct FeaturesConfig {
 ///|
 pub(all) struct ExtensionConfig {
   template : String
+  assets : Array[String]
   inject_head : Array[String]
   inject_body : Array[String]
   use_js : Array[String]
@@ -96,6 +97,7 @@ pub fn BookConfig::parse(
     },
     extension: {
       template: read_string(extension, "template", default.extension.template),
+      assets: read_string_array(extension, "assets"),
       inject_head: read_string_array(extension, "inject-head"),
       inject_body: read_string_array(extension, "inject-body"),
       use_js: read_string_array(extension, "use-js"),
@@ -116,7 +118,7 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     keywords: "Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll",
     favicon: "https://himeno-sena.com/favicon.ico",
     logo: "https://himeno-sena.com/favicon.ico",
-    authors: [],
+    authors: ["Himeno Sena"],
     language: "en",
     src: "",
     dest: "dest",
@@ -139,10 +141,11 @@ pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
 pub impl Default for ExtensionConfig with fn default() -> ExtensionConfig {
   {
     template: "templates/default.html",
+    assets: ["images/*", "styles/*", "scripts/*"],
     inject_head: [],
     inject_body: [],
     use_js: [],
-    use_css: [],
+    use_css: ["console.log('Hello, MoPress!');"],
     import_css: [],
     import_js: [],
     preprocessors: [],
