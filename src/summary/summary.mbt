@@ -40,42 +40,23 @@ fn flatten_items(
         })
       Link(link) => {
         counter += 1
-        let path = @path.Path(link.location)
-        let basename = Show::to_string(path.basename())
-        let location = {
-          let location = path
-            .dirname()
-            .join(
-              basename
-              .rev_find(".")
-              .map(index => Show::to_string(basename[:index]))
-              .unwrap_or(basename) +
-              ".html",
-            )
-            .to_string()
-          if location.length() > 2 && location[0:2] == "./" {
-            location[2:]
-          } else {
-            location
-          }
-        }
         let number = prefix + counter.to_string()
         if numbered {
           result.push({
             "is_link": true.to_json(),
             "title": link.title.to_json(),
-            "location": location,
+            "location": link.location,
             "depth": depth.to_json(),
-            "is_current": (location == current).to_json(),
+            "is_current": (link.location == current).to_json(),
             "number": number.to_json(),
           })
         } else {
           result.push({
             "is_link": true.to_json(),
             "title": link.title.to_json(),
-            "location": location,
+            "location": link.location,
             "depth": depth.to_json(),
-            "is_current": (location == current).to_json(),
+            "is_current": (link.location == current).to_json(),
           })
         }
         result.append(
@@ -114,13 +95,15 @@ fn parse_summary_item(item : Array[@markdown.Block]) -> SummaryItem? {
   let link : SummaryLink? = extract_item_link(item)
   let nested : Array[SummaryItem] = extract_nested_items(item)
 
-  match link {
-    Some(lnk) =>
-      Some(
-        Link({ title: lnk.title, location: lnk.location, nested_items: nested }),
+  link.map(link => {
+    if link.location.contains(".md") {
+      debug(
+        "Warning: Summary link location should be .html, not .md: " +
+        link.location,
       )
-    None => None
-  }
+    }
+    Link({ title: link.title, location: link.location, nested_items: nested })
+  })
 }
 
 ///|
@@ -131,7 +114,7 @@ fn extract_item_link(item : Array[@markdown.Block]) -> SummaryLink? {
         [Link(title, url), ..] =>
           Some({
             title: @markdown.Plainable::to_plain(title),
-            location: url,
+            location: handle_location(url),
             nested_items: [],
           })
         _ => None
@@ -230,6 +213,28 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
 }
 
 ///|
+fn handle_location(url : String) -> String {
+  let path = @path.Path(url)
+  let basename = Show::to_string(path.basename())
+
+  let location = path
+    .dirname()
+    .join(
+      basename
+      .rev_find(".")
+      .map(index => Show::to_string(basename[:index]))
+      .unwrap_or(basename) +
+      ".html",
+    )
+    .to_string()
+  if location.length() > 2 && location[0:2] == "./" {
+    location[2:] |> Show::to_string
+  } else {
+    location
+  }
+}
+
+///|
 fn find_title(doc : @markdown.Markdown) -> String {
   for block in doc {
     match block {
@@ -274,7 +279,7 @@ fn extract_root_link_items(
         result.push(
           Link({
             title: @markdown.Plainable::to_plain(title),
-            location: url,
+            location: handle_location(url),
             nested_items: [],
           }),
         )
@@ -345,7 +350,7 @@ pub fn Summary::prev_next(
     (link.title, link.location)
   }
 
-  match flat.search_by(fn(link) { link.location == current }) {
+  match flat.search_by(link => link.location == current) {
     None => (None, None)
     Some(i) =>
       (

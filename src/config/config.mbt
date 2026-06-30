@@ -96,12 +96,12 @@ fn read_table(
 ) -> Map[String, @toml.TomlValue] raise ConfigParseError {
   match root.get(key) {
     Some(@toml.TomlTable(t)) => t
-    Some(_) => raise ConfigParseError("[" + key + "] must be a table")
+    Some(_) => raise ConfigParseError("[\{key}] must be a table")
     None =>
       if optional {
         Map([])
       } else {
-        raise ConfigParseError("Missing required table [" + key + "]")
+        raise ConfigParseError("Missing required table [\{key}]")
       }
   }
 }
@@ -113,7 +113,7 @@ fn read_optional_string(
 ) -> String? raise ConfigParseError {
   match table.get(key) {
     Some(@toml.TomlString(s)) => Some(s)
-    Some(_) => raise ConfigParseError("`" + key + "` must be a string")
+    Some(_) => raise ConfigParseError("`\{key}` must be a string")
     None => None
   }
 }
@@ -138,11 +138,11 @@ fn read_string_nonempty(
   match read_optional_string(table, key) {
     Some(s) =>
       if s == "" {
-        raise ConfigParseError("`" + key + "` must be a non-empty string")
+        raise ConfigParseError("`\{key}` must be a non-empty string")
       } else {
         s
       }
-    None => raise ConfigParseError("Missing required string `" + key + "`")
+    None => raise ConfigParseError("Missing required string `\{key}`")
   }
 }
 
@@ -157,13 +157,12 @@ fn read_string_array(
       for item in arr {
         match item {
           @toml.TomlString(s) => result.push(s)
-          _ =>
-            raise ConfigParseError("`" + key + "` must be an array of strings")
+          _ => raise ConfigParseError("`\{key}` must be an array of strings")
         }
       }
       result
     }
-    Some(_) => raise ConfigParseError("`" + key + "` must be an array")
+    Some(_) => raise ConfigParseError("`\{key}` must be an array")
     None => []
   }
 }

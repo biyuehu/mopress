@@ -41,7 +41,7 @@
 
 # 原文
 
-- [en](index.md)
+- [en](index——en.md)
   - [Introduction](en/README.md)
   - [Command Line Tool](en/cli/README.md)
     - [init](en/cli/init.md)

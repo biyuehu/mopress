@@ -131,11 +131,6 @@ pub fn use_transformer(
   handlers.fold(init=item, (cur, h) => h(cur))
 }
 
-///|
-// pub fn generate_tocs(item : Item[MarkdownDoc]) -> Item[Tocs] {
-//   ...
-// }
-
 // pub fn minify_css(item : Item[String]) -> Item[String] {
 //   ...
 // }

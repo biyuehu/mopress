@@ -55,19 +55,18 @@ fn render_blocks(blocks : @markdown.Markdown, ctx : RenderContext) -> String {
 fn render_block(block : @markdown.Block, ctx : RenderContext) -> String {
   match block {
     @markdown.Heading(level, inlines) => render_heading(level, inlines, ctx)
-    @markdown.Paragraph(inlines) =>
-      "<p>" + render_inlines(inlines, ctx) + "</p>"
+    @markdown.Paragraph(inlines) => "<p>\{render_inlines(inlines, ctx)}</p>"
     @markdown.ThematicBreak => "<hr>"
     @markdown.CodeBlock(lang, code) => render_code_block(lang, code)
     @markdown.BlockQuote(inner) =>
-      "<blockquote>\n" + render_blocks(inner, ctx) + "</blockquote>"
+      "<blockquote>\n\{render_blocks(inner, ctx)}</blockquote>"
     @markdown.List(list) => render_list(list, ctx)
     @markdown.Table(table) => render_table(table, ctx)
     @markdown.HtmlBlock(raw) =>
       if ctx.opt.allow_raw_html {
         raw
       } else {
-        "<pre><code>" + escape_html(raw) + "</code></pre>"
+        "<pre><code>\{escape_html(raw)}</code></pre>"
       }
   }
 }
@@ -113,9 +112,9 @@ fn render_inlines(
 fn render_inline(inline : @markdown.Inline, ctx : RenderContext) -> String {
   match inline {
     @markdown.Text(s) => escape_html(s)
-    @markdown.Emphasis(xs) => "<em>" + render_inlines(xs, ctx) + "</em>"
-    @markdown.Strong(xs) => "<strong>" + render_inlines(xs, ctx) + "</strong>"
-    @markdown.Code(s) => "<code>" + escape_html(s) + "</code>"
+    @markdown.Emphasis(xs) => "<em>\{render_inlines(xs, ctx)}</em>"
+    @markdown.Strong(xs) => "<strong>\{render_inlines(xs, ctx)}</strong>"
+    @markdown.Code(s) => "<code>\{escape_html(s)}</code>"
     @markdown.Link(label, href) => render_link(label, href, ctx)
     @markdown.Image(alt, src) => render_image(alt, src)
     @markdown.Html(raw) =>
@@ -135,37 +134,24 @@ fn render_link(
   href : String,
   ctx : RenderContext,
 ) -> String {
-  "<a href=\"" + escape_attr(href) + "\">" + render_inlines(label, ctx) + "</a>"
+  "<a href=\"\{escape_attr(href)}\" target=\"_blank\" rel=\"noopener noreferrer\">\{render_inlines(label, ctx)}</a>"
 }
 
 ///|
 fn render_image(alt : String, src : String) -> String {
-  "<img src=\"" +
-  escape_attr(src) +
-  "\" alt=\"" +
-  escape_attr(alt) +
-  "\" loading=\"lazy\" decoding=\"async\"" +
-  ">"
+  "<img src=\"\{escape_attr(src)}\" alt=\"\{escape_attr(alt)}\" loading=\"lazy\" decoding=\"async\">"
 }
 
 ///|
 fn render_code_block(lang : String?, code : String) -> String {
-  let lang_text = option_string(lang)
-  let lang_label = if lang_text == "" { "text" } else { lang_text }
-  let out = StringBuilder::new()
-  out.write_string("<div class=\"code-block\">")
-  out.write_string("<div class=\"code-header\">")
-  out.write_string("<span>" + escape_html(lang_label) + "</span>")
-  out.write_string(
-    "<button class=\"code-copy\" type=\"button\" data-copy-button>copy</button>",
+  // let lang_text = option_string(lang)
+  //   $|<div class="code-header">
+  //   $|  <span>\{escape_html(if lang_text == "" { "text" } else { lang_text })}</span>
+  //   $|  <button class="code-copy" type="button" data-copy-button>copy</button>
+  //   $|</div>
+  (
+    $|<pre><code>\{escape_html(code)}</code></pre>
   )
-  out.write_string("</div>")
-  out.write_string("<pre><code")
-  out.write_string(">")
-  out.write_string(escape_html(code))
-  out.write_string("</code></pre>")
-  out.write_string("</div>")
-  out.to_string()
 }
 
 ///|
@@ -174,18 +160,16 @@ fn render_list(list : @markdown.ListBlock, ctx : RenderContext) -> String {
   let mut attrs = ""
   if list.ordered {
     match list.start {
-      Some(start) => attrs = " start=\"" + start.to_string() + "\""
+      Some(start) => attrs = " start=\"\{start.to_string()}\""
       None => ()
     }
   }
   let out = StringBuilder::new()
-  out.write_string("<" + tag + attrs + ">")
+  out.write_string("<\{tag + attrs}>")
   for item in list.items {
-    out.write_string("<li>")
-    out.write_string(render_blocks(item, ctx))
-    out.write_string("</li>")
+    out.write_string("<li>\{render_blocks(item, ctx)}</li>")
   }
-  out.write_string("</" + tag + ">")
+  out.write_string("</\{tag}>")
   out.to_string()
 }
 
@@ -195,14 +179,14 @@ fn render_table(table : @markdown.TableBlock, ctx : RenderContext) -> String {
   out.write_string("<table>")
   out.write_string("<thead><tr>")
   for header in table.headers {
-    out.write_string("<th>" + render_inlines(header, ctx) + "</th>")
+    out.write_string("<th>\{render_inlines(header, ctx)}</th>")
   }
   out.write_string("</tr></thead>")
   out.write_string("<tbody>")
   for row in table.rows {
     out.write_string("<tr>")
     for cell in row {
-      out.write_string("<td>" + render_inlines(cell, ctx) + "</td>")
+      out.write_string("<td>\{render_inlines(cell, ctx)}</td>")
     }
     out.write_string("</tr>")
   }

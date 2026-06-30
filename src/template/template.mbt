@@ -31,7 +31,7 @@ pub(all) enum Value {
 pub impl Show for Value with fn to_string(self : Value) -> String {
   let to_string_spec = (v : Value) => {
     match v {
-      String(s) => "\"" + s + "\""
+      String(s) => "\"\{s}\""
       _ => v.to_string()
     }
   }
@@ -39,7 +39,7 @@ pub impl Show for Value with fn to_string(self : Value) -> String {
     String(s) => s
     Number(n) => n.to_string()
     Bool(b) => b.to_string()
-    Array(a) => "[" + a.map(v => v |> to_string_spec).join(", ") + "]"
+    Array(a) => "[\{a.map(v => v |> to_string_spec).join(", ")}]"
     Object(x) => {
       let output = StringBuilder::new()
       output.write_string("{")
@@ -84,7 +84,7 @@ fn parse_string(input : String) -> Template raise TemplateParseError {
   match terminator {
     Some(name) =>
       raise TemplateParseError(
-        "unexpected $" + name + "$ at byte " + index.to_string(),
+        "unexpected $\{name}$ at byte " + index.to_string(),
       )
     None => nodes
   }
@@ -141,7 +141,7 @@ fn parse_nodes(
                 }
                 Some(other) =>
                   raise TemplateParseError(
-                    "unexpected $" + other + "$ at byte " + open.to_string(),
+                    "unexpected $\{other}$ at byte " + open.to_string(),
                   )
                 None =>
                   raise TemplateParseError(
@@ -174,14 +174,14 @@ fn parse_nodes(
               index = close + 1
             } else if tag == "else" || tag == "endif" || tag == "endfor" {
               raise TemplateParseError(
-                "unexpected $" + tag + "$ at byte " + open.to_string(),
+                "unexpected $\{tag}$ at byte " + open.to_string(),
               )
             } else if is_identifier(tag) {
               nodes.push(Variable(tag))
               index = close + 1
             } else {
               raise TemplateParseError(
-                "invalid template tag $" + tag + "$ at byte " + open.to_string(),
+                "invalid template tag $\{tag}$ at byte " + open.to_string(),
               )
             }
           }
@@ -209,7 +209,7 @@ fn trim_tag_argument(
   if is_identifier(name) {
     name
   } else {
-    raise TemplateParseError("invalid template identifier `" + name + "`")
+    raise TemplateParseError("invalid template identifier `\{name}`")
   }
 }
 
@@ -442,15 +442,11 @@ fn render_partial(
   }
   let source = @fs.read_file_to_string(path) catch {
     @fs.IOError(message) =>
-      raise PartialLoadError(
-        "failed to read partial `" + path + "`: " + message,
-      )
+      raise PartialLoadError("failed to read partial `\{path}`: " + message)
   }
   let template = parse_template(source) catch {
     TemplateParseError(message) =>
-      raise PartialParseError(
-        "failed to parse partial `" + path + "`: " + message,
-      )
+      raise PartialParseError("failed to parse partial `\{path}`: " + message)
   }
   let next_stack = partial_stack.copy()
   next_stack.push(path)

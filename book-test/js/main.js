@@ -1,44 +1,41 @@
+if (typeof MOPRESS_SITEDATA === "undefined") globalThis.MOPRESS_SITEDATA = [];
+// 		["Code Blocks", "/code.html"],
+// ["Changelog", "/CHANGELOG.html"],
+
 const docRoot = document.getElementById("docRoot");
 
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 
+const getMode = () => localStorage.getItem("theme") || "system";
+
 const MOBILE_WIDTH = 768;
-
-const setSidebar = (collapsed) =>
-	docRoot?.classList.toggle("nav-collapsed", collapsed);
-
-const toggleSidebar = () => docRoot?.classList.toggle("nav-collapsed");
-
-function togglePageToc(navItem, toc) {
-	navItem.classList.toggle("page-expanded", toc.classList.toggle("open"));
-}
 
 function initMobileSidebar() {
 	if (!docRoot) return;
-	const update = () => window.innerWidth < MOBILE_WIDTH && setSidebar(true);
+	const update = () => window.innerWidth < MOBILE_WIDTH && !!docRoot?.classList.toggle("nav-collapsed", true);
 	window.addEventListener("resize", update, { passive: true });
 	update();
 }
 
-function initCodeCopyButtons() {
-	document.addEventListener("click", async (e) => {
-		const btn = e.target.closest(".code-copy");
-		if (!btn) return;
+// function initCodeCopyButtons() {
+// 	document.addEventListener("click", async (e) => {
+// 		const btn = e.target.closest(".code-copy");
+// 		if (!btn) return;
 
-		const target = btn.dataset.copyTarget
-			? $(btn.dataset.copyTarget)
-			: btn.closest(".code-block")?.querySelector("code");
-		if (!target) return;
+// 		const target = btn.dataset.copyTarget
+// 			? $(btn.dataset.copyTarget)
+// 			: btn.closest(".code-block")?.querySelector("code");
+// 		if (!target) return;
 
-		try {
-			await navigator.clipboard.writeText(target.innerText);
-			const old = btn.textContent;
-			btn.textContent = "✓";
-			setTimeout(() => (btn.textContent = old), 1200);
-		} catch {}
-	});
-}
+// 		try {
+// 			await navigator.clipboard.writeText(target.innerText);
+// 			const old = btn.textContent;
+// 			btn.textContent = "✓";
+// 			setTimeout(() => (btn.textContent = old), 1200);
+// 		} catch { }
+// 	});
+// }
 
 function initProgressBar() {
 	const content = $(".content");
@@ -56,65 +53,56 @@ function initProgressBar() {
 	update();
 }
 
-function initTocScrollSpy() {
-	const links = $$(".toc-sub-item[data-anchor]");
-	const headings = $$(".content [id]");
-	if (!links.length || !headings.length) return;
+// function initTocScrollSpy() {
+// 	const links = $$(".toc-sub-item[data-anchor]");
+// 	const headings = $$(".content [id]");
+// 	if (!links.length || !headings.length) return;
 
-	const map = Object.fromEntries(links.map((l) => [l.dataset.anchor, l]));
-	let active = null;
+// 	const map = Object.fromEntries(links.map((l) => [l.dataset.anchor, l]));
+// 	let active = null;
 
-	const observer = new IntersectionObserver(
-		(entries) => {
-			const v = entries.find((e) => e.isIntersecting);
-			if (!v) return;
-			active?.classList.remove("active");
-			active = map[v.target.id];
-			active?.classList.add("active");
-		},
-		{ rootMargin: "0px 0px -70% 0px" },
-	);
+// 	const observer = new IntersectionObserver(
+// 		(entries) => {
+// 			const v = entries.find((e) => e.isIntersecting);
+// 			if (!v) return;
+// 			active?.classList.remove("active");
+// 			active = map[v.target.id];
+// 			active?.classList.add("active");
+// 		},
+// 		{ rootMargin: "0px 0px -70% 0px" },
+// 	);
 
-	headings.forEach((h) => observer.observe(h));
-}
+// 	headings.forEach((h) => observer.observe(h));
+// }
 
-function initPageToc() {
-	$$("[data-toc-trigger]").forEach((t) => {
-		const toc = document.getElementById(t.dataset.tocTrigger);
-		if (!toc) return;
-		t.addEventListener("click", (e) => {
-			e.preventDefault();
-			togglePageToc(t, toc);
-		});
-	});
-}
+// function initPageToc() {
+// 	$$("[data-toc-trigger]").forEach((t) => {
+// 		const toc = document.getElementById(t.dataset.tocTrigger);
+// 		if (!toc) return;
+// 		t.addEventListener("click", (e) => {
+// 			e.preventDefault();
+// 			t.classList.toggle("page-expanded", toc.classList.toggle("open"));
+// 		});
+// 	});
+// }
 
 function initSearch() {
 	const overlay = $("#searchOverlay");
 	const input = $("#searchInput");
 	const results = $("#searchResults");
 
-	const data = [
-		["Getting Started", "/getting-started.html"],
-		["Configuration", "/config.html"],
-		["Navigation", "/navigation.html"],
-		["Search", "/search.html"],
-		["Code Blocks", "/code.html"],
-		["Changelog", "/CHANGELOG.html"],
-	];
-
 	const render = (list) => {
 		results.innerHTML = list.length
 			? list
-					.map((i) => `<a class="search-result" href="${i[1]}">${i[0]}</a>`)
-					.join("")
+				.map((i) => `<a class="search-result" href="${i[1]}">${i[0]}</a>`)
+				.join("")
 			: `<div class="search-empty">No result</div>`;
 	};
 
 	const open = () => {
 		overlay.hidden = false;
 		input.value = "";
-		render(data);
+		render(MOPRESS_SITEDATA);
 		input.focus();
 	};
 
@@ -129,7 +117,7 @@ function initSearch() {
 
 	input?.addEventListener("input", () => {
 		const q = input.value.trim().toLowerCase();
-		render(data.filter((i) => i[0].toLowerCase().includes(q)));
+		render(MOPRESS_SITEDATA.filter((i) => i[0].toLowerCase().includes(q)));
 	});
 
 	document.addEventListener("keydown", (e) => {
@@ -141,13 +129,31 @@ function initSearch() {
 	});
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-	initMobileSidebar();
-	initCodeCopyButtons();
-	initProgressBar();
-	initTocScrollSpy();
-	initPageToc();
-	initSearch();
+function initThemeRender() {
+	const mode = getMode();
+	docRoot.classList.toggle("dark", mode === "system" ? window.matchMedia("(prefers-color-scheme: dark)").matches : mode === "dark")
+	$("#themeToggle").textContent =
+		mode === "system" ? "🌓" : mode === "dark" ? "🌑" : "🌕";
+}
 
-	$("#navToggle")?.addEventListener("click", toggleSidebar);
+
+document.addEventListener("DOMContentLoaded", () => {
+	$("#navToggle")?.addEventListener("click", () => !!docRoot?.classList.toggle("nav-collapsed"));
+	$("#themeToggle")?.addEventListener("click", () => {
+		const cur = getMode();
+		const next =
+			cur === "system" ? "light" : cur === "light" ? "dark" : "system";
+
+		localStorage.setItem("theme", next);
+		initThemeRender();
+	});
+	matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+		if (getMode() === "system") initThemeRender();
+	})
+
+	initMobileSidebar();
+	initProgressBar();
+	// initTocScrollSpy();
+	initSearch();
+	initThemeRender();
 });

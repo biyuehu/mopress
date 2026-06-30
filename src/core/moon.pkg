@@ -4,6 +4,7 @@ import {
   "himeno/mopress/renderer",
   "himeno/mopress/glob",
   "himeno/mopress/summary",
+  "himeno/mopress/config",
   "moonbitlang/x/fs",
   "moonbitlang/x/path",
   "moonbitlang/core/env",

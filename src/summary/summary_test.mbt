@@ -12,7 +12,7 @@ test "parse simple summary" {
 
   let doc : @markdown.Markdown = [
     Heading(1, [Text("Summary")]),
-    Paragraph([Link([Text("Preface")], "preface.md")]),
+    Paragraph([Link([Text("Preface")], "preface.html")]),
     ThematicBreak,
     Heading(1, [Text("Part One")]),
     List({
@@ -20,18 +20,18 @@ test "parse simple summary" {
       start: None,
       items: [
         [
-          Paragraph([Link([Text("Chapter 1")], "ch1.md")]),
+          Paragraph([Link([Text("Chapter 1")], "ch1.html")]),
           List({
             ordered: false,
             start: None,
-            items: [[Paragraph([Link([Text("Sub 1.1")], "ch1/sub.md")])]],
+            items: [[Paragraph([Link([Text("Sub 1.1")], "ch1/sub.html")])]],
           }),
         ],
-        [Paragraph([Link([Text("Chapter 2")], "")])],
+        [Paragraph([Link([Text("Chapter 2")], "ch2.html")])],
       ],
     }),
     ThematicBreak,
-    Paragraph([Link([Text("Appendix")], "appendix.md")]),
+    Paragraph([Link([Text("Appendix")], "appendix.html")]),
   ]
 
   let summary = parse_summary(doc)
@@ -39,7 +39,7 @@ test "parse simple summary" {
   @debug.assert_eq(summary.title, "Summary")
 
   @debug.assert_eq(summary.prefix_chapters, [
-    Link({ title: "Preface", location: "preface.md", nested_items: [] }),
+    Link({ title: "Preface", location: "preface.html", nested_items: [] }),
     Separator,
   ])
 
@@ -50,13 +50,13 @@ test "parse simple summary" {
   match summary.numbered_chapters[1] {
     Link(ch1) => {
       @debug.assert_eq(ch1.title, "Chapter 1")
-      @debug.assert_eq(ch1.location, "ch1.md")
+      @debug.assert_eq(ch1.location, "ch1.html")
       @debug.assert_eq(ch1.nested_items.length(), 1)
 
       match ch1.nested_items[0] {
         Link(sub) => {
           @debug.assert_eq(sub.title, "Sub 1.1")
-          @debug.assert_eq(sub.location, "ch1/sub.md")
+          @debug.assert_eq(sub.location, "ch1/sub.html")
           @debug.assert_eq(sub.nested_items.length(), 0)
         }
         _ => panic()
@@ -68,7 +68,7 @@ test "parse simple summary" {
   match summary.numbered_chapters[2] {
     Link(ch2) => {
       @debug.assert_eq(ch2.title, "Chapter 2")
-      @debug.assert_eq(ch2.location, "")
+      @debug.assert_eq(ch2.location, "ch2.html")
       @debug.assert_eq(ch2.nested_items.length(), 0)
     }
     _ => panic()
@@ -77,7 +77,7 @@ test "parse simple summary" {
   @debug.assert_eq(summary.numbered_chapters[3], Separator)
 
   @debug.assert_eq(summary.suffix_chapters, [
-    Link({ title: "Appendix", location: "appendix.md", nested_items: [] }),
+    Link({ title: "Appendix", location: "appendix.html", nested_items: [] }),
   ])
 }
 
@@ -93,8 +93,8 @@ test "parse summary no parts just flat list" {
       ordered: false,
       start: None,
       items: [
-        [Paragraph([Link([Text("Intro")], "intro.md")])],
-        [Paragraph([Link([Text("Guide")], "guide.md")])],
+        [Paragraph([Link([Text("Intro")], "intro.html")])],
+        [Paragraph([Link([Text("Guide")], "guide.html")])],
       ],
     }),
   ]
@@ -108,7 +108,7 @@ test "parse summary no parts just flat list" {
   match summary.numbered_chapters[0] {
     Link(item) => {
       @debug.assert_eq(item.title, "Intro")
-      @debug.assert_eq(item.location, "intro.md")
+      @debug.assert_eq(item.location, "intro.html")
       @debug.assert_eq(item.nested_items.length(), 0)
     }
     _ => panic()
@@ -117,7 +117,7 @@ test "parse summary no parts just flat list" {
   match summary.numbered_chapters[1] {
     Link(item) => {
       @debug.assert_eq(item.title, "Guide")
-      @debug.assert_eq(item.location, "guide.md")
+      @debug.assert_eq(item.location, "guide.html")
       @debug.assert_eq(item.nested_items.length(), 0)
     }
     _ => panic()
@@ -130,7 +130,7 @@ test "parse summary no title fallback" {
     List({
       ordered: false,
       start: None,
-      items: [[Paragraph([Link([Text("Page")], "page.md")])]],
+      items: [[Paragraph([Link([Text("Page")], "page.html")])]],
     }),
   ]
 
