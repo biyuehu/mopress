@@ -42,7 +42,7 @@ test "parse only title" {
   )
   assert_eq(config.title, "OnlyTitle")
   assert_eq(config.language, "en")
-  assert_eq(config.dest, "dest")
+  assert_eq(config.dest, "./dest")
 }
 
 ///|
