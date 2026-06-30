@@ -106,12 +106,6 @@ fn parse_summary_item(item : Array[@markdown.Block]) -> SummaryItem? {
   let nested : Array[SummaryItem] = extract_nested_items(item)
 
   link.map(link => {
-    if link.location.contains(".md") {
-      debug(
-        "Warning: Summary link location should be .html, not .md: " +
-        link.location,
-      )
-    }
     Link({
       title: link.title,
       location: link.location,

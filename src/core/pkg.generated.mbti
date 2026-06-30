@@ -2,6 +2,7 @@
 package "himeno/mopress/core"
 
 import {
+  "himeno/mopress/config",
   "himeno/mopress/markdown",
   "himeno/mopress/template",
   "moonbitlang/core/debug",
@@ -26,6 +27,10 @@ pub fn inject_body(Item[String], String) -> Item[String]
 pub fn inject_head(Item[String], String) -> Item[String]
 
 pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
+
+pub fn mo_build(Options, Array[Rule]) -> Unit raise
+
+pub async fn mo_serve(Options) -> Unit
 
 pub async fn mopress(Array[Rule], options? : Options) -> Unit
 
@@ -55,7 +60,7 @@ pub struct Item[T] {
   vars : Map[String, @template.Value]
   target : String
   // private fields
-}
+} derive(Eq, @debug.Debug)
 pub fn[T] Item::add_vars(Self[T], Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
 pub fn[T] Item::extend(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
@@ -76,6 +81,7 @@ pub(all) struct Options {
   src : String
   dest : String
 } derive(Eq, @debug.Debug)
+pub fn Options::from_config(@config.BookConfig) -> Self
 pub impl Default for Options
 
 pub(all) enum Rule {

@@ -8,7 +8,7 @@ A modern documentation and static site generator for the MoonBit ecosystem, insp
 
 mopress offers two usage modes:
 
-**Book mode** — out-of-the-box experience similar to mdBook. Configure via `press.toml` and write Markdown. No code required.
+**Book mode** — out-of-the-box experience similar to mdBook. Configure via `sena.toml` and write Markdown. No code required.
 
 **Site mode** — declare rules and pipelines in `site.mbt` for full control over how your content is processed and rendered. Inspired by Hakyll's composable compiler design.
 
@@ -48,7 +48,7 @@ moon add himeno/mopress
 ## Quick Start
 
 ```toml
-# press.toml
+# sena.toml
 title = "My Book"
 src = "src"
 ```

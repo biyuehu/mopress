@@ -4,12 +4,11 @@ pub async fn mopress(
   options? : Options = Options::default(),
 ) -> Unit {
   let args = @env.args()
-  let cmd = if args.length() > 1 { args[1] } else { "help" }
+  let cmd = if args.length() > 1 { args[1] } else { "" }
   match cmd {
     "build" => options |> mo_build(rules)
-    "init" => options |> mo_init()
-    "serve" => options |> mo_serve(rules)
-    "help" | _ => mo_help()
+    "serve" => options |> mo_serve
+    opts => println("Unknown command: \{opts}")
   }
 }
 
@@ -23,34 +22,12 @@ pub async fn[E] mopress_with(
 }
 
 ///|
-fn mo_init(options : Options) -> Unit raise {
-  ignore(options)
-  fail("`mopress init` is not implemented yet")
-}
-
-///|
-async fn mo_serve(options : Options, rules : Rules) -> Unit {
-  options |> mo_build(rules)
+pub async fn mo_serve(options : Options) -> Unit {
   serve_static_dir(options.dest)
 }
 
 ///|
-fn mo_help() -> Unit {
-  println(
-    (
-      #|Usage: mopress <command>
-      #|
-      #|Commands:
-      #|  build    Build the site
-      #|  init     Initialize a new project
-      #|  serve    Serve the site locally
-      #|  help     Print this help message
-    ),
-  )
-}
-
-///|
-fn mo_build(options : Options, rules : Rules) -> Unit raise {
+pub fn mo_build(options : Options, rules : Rules) -> Unit raise {
   for rule in rules {
     for
       path in (match rule {
@@ -61,9 +38,4 @@ fn mo_build(options : Options, rules : Rules) -> Unit raise {
       item.data.write(options.dest, item.location())
     }
   }
-}
-
-///|
-async test {
-  // Test mopress
 }

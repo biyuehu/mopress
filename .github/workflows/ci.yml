@@ -23,4 +23,4 @@ jobs:
         run: moon test
 
       - name: Build project
-        run: moon build
+        run: just build

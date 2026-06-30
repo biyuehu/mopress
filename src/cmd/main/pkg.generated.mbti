@@ -1,7 +1,16 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "himeno/mopress/cmd/main"
 
+import {
+  "himeno/mopress/config",
+  "himeno/mopress/core",
+  "himeno/mopress/summary",
+}
+
 // Values
+pub fn run(@config.BookConfig) -> Unit raise
+
+pub fn step_markdown_raw(@core.Item[String], @config.BookConfig, @summary.Summary) -> @core.Item[@core.Thing] raise
 
 // Errors
 

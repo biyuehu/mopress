@@ -1,0 +1,6 @@
+{
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^26.0.1"
+  }
+}

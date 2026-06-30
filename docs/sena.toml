@@ -1,0 +1,26 @@
+title = "MoPress Doc"
+description = "A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll"
+keywords = "Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll"
+favicon = "https://himeno-sena.com/favicon.ico"
+logo = "https://himeno-sena.com/favicon.ico"
+authors = ["Himeno Sena"]
+language = "en"
+src = "./"
+dest = "./dest"
+
+[features]
+highlight-enabled = false
+highlight-theme = "github"
+mathjax-enabled = false
+
+[extension]
+template = "templates/default.html"
+assets = ["images/*", "styles/*", "scripts/*"]
+inject-head = []
+inject-body = []
+use-js = []
+use-css = ["console.log('Hello, MoPress!');"]
+import-css = []
+import-js = []
+preprocessors = []
+transformers = []

@@ -14,6 +14,11 @@ pub impl Default for Options with fn default() -> Options {
 }
 
 ///|
+pub fn Options::from_config(config : @config.BookConfig) -> Options {
+  { src: config.src, dest: config.dest }
+}
+
+///|
 pub type Rules = Array[Rule]
 
 ///|
@@ -44,7 +49,7 @@ pub struct Item[T] {
   priv extension : String
   vars : Vars
   target : String
-}
+} derive(Eq, Debug)
 
 ///|
 pub fn[T] Item::new(

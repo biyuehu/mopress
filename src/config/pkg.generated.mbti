@@ -6,6 +6,7 @@ import {
 }
 
 // Values
+pub let file_name : String
 
 // Errors
 pub suberror ConfigParseError {
@@ -29,6 +30,7 @@ pub(all) struct BookConfig {
 } derive(Eq, @debug.Debug)
 pub fn BookConfig::extract_features(Self) -> Self
 pub fn BookConfig::parse(String) -> Self raise ConfigParseError
+pub fn BookConfig::to_toml(Self) -> String
 pub impl Default for BookConfig
 
 pub(all) struct ExtensionConfig {

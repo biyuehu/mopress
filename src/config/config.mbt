@@ -41,6 +41,9 @@ pub suberror ConfigParseError {
 } derive(Eq, Debug)
 
 ///|
+pub let file_name = "sena.toml"
+
+///|
 pub fn BookConfig::extract_features(self : BookConfig) -> BookConfig {
   if self.features.highlight_enabled {
     self.extension.import_css.push(
@@ -60,6 +63,62 @@ pub fn BookConfig::extract_features(self : BookConfig) -> BookConfig {
     )
   }
   self
+}
+
+///|
+pub fn BookConfig::to_toml(self : BookConfig) -> String {
+  let b = StringBuilder::new()
+  b.write_string("title = \{toml_string(self.title)}\n")
+  b.write_string("description = \{toml_string(self.description)}\n")
+  b.write_string("keywords = \{toml_string(self.keywords)}\n")
+  b.write_string("favicon = \{toml_string(self.favicon)}\n")
+  b.write_string("logo = \{toml_string(self.logo)}\n")
+  b.write_string("authors = \{toml_string_array(self.authors)}\n")
+  b.write_string("language = \{toml_string(self.language)}\n")
+  b.write_string("src = \{toml_string(self.src)}\n")
+  b.write_string("dest = \{toml_string(self.dest)}\n")
+  match self.repository {
+    Some(r) => b.write_string("repository = \{toml_string(r)}\n")
+    None => ()
+  }
+  b.write_string("\n[features]\n")
+  b.write_string("highlight-enabled = \{self.features.highlight_enabled}\n")
+  b.write_string(
+    "highlight-theme = \{toml_string(self.features.highlight_theme)}\n",
+  )
+  b.write_string("mathjax-enabled = \{self.features.mathjax_enabled}\n")
+  b.write_string("\n[extension]\n")
+  b.write_string("template = \{toml_string(self.extension.template)}\n")
+  b.write_string("assets = \{toml_string_array(self.extension.assets)}\n")
+  b.write_string(
+    "inject-head = \{toml_string_array(self.extension.inject_head)}\n",
+  )
+  b.write_string(
+    "inject-body = \{toml_string_array(self.extension.inject_body)}\n",
+  )
+  b.write_string("use-js = \{toml_string_array(self.extension.use_js)}\n")
+  b.write_string("use-css = \{toml_string_array(self.extension.use_css)}\n")
+  b.write_string(
+    "import-css = \{toml_string_array(self.extension.import_css)}\n",
+  )
+  b.write_string("import-js = \{toml_string_array(self.extension.import_js)}\n")
+  b.write_string(
+    "preprocessors = \{toml_string_array(self.extension.preprocessors)}\n",
+  )
+  b.write_string(
+    "transformers = \{toml_string_array(self.extension.transformers)}\n",
+  )
+  b.to_string()
+}
+
+///|
+fn toml_string(s : String) -> String {
+  "\"\{s.replace(old="\\",new= "\\\\").replace(old="\"", new="\\\"")}\""
+}
+
+///|
+fn toml_string_array(arr : Array[String]) -> String {
+  "[\{arr.map(toml_string).join(", ")}]"
 }
 
 ///|
@@ -120,9 +179,9 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     logo: "https://himeno-sena.com/favicon.ico",
     authors: ["Himeno Sena"],
     language: "en",
-    src: "",
-    dest: "dest",
-    repository: None,
+    src: "./",
+    dest: "./dest",
+    repository: Some("https://github.com/biyuehu/mopress"),
     features: FeaturesConfig::default(),
     extension: ExtensionConfig::default(),
   }
@@ -144,8 +203,8 @@ pub impl Default for ExtensionConfig with fn default() -> ExtensionConfig {
     assets: ["images/*", "styles/*", "scripts/*"],
     inject_head: [],
     inject_body: [],
-    use_js: [],
-    use_css: ["console.log('Hello, MoPress!');"],
+    use_js: ["console.log('Hello, MoPress!');"],
+    use_css: [],
     import_css: [],
     import_js: [],
     preprocessors: [],
@@ -200,16 +259,10 @@ fn read_bool(
   table : Map[String, @toml.TomlValue],
   key : String,
 ) -> Bool raise ConfigParseError {
-  match read_optional_string(table, key) {
-    Some(s) =>
-      if s == "true" {
-        true
-      } else if s == "false" {
-        false
-      } else {
-        raise ConfigParseError("`\{key}` must be a boolean")
-      }
-    None => false
+  match table.get(key) {
+    Some(@toml.TomlBoolean(b)) => b
+    Some(_) => raise ConfigParseError("`\{key}` must be a boolean")
+    _ => false
   }
 }
 
