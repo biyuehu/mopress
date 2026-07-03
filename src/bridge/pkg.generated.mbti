@@ -1,0 +1,33 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "himeno/mopress/bridge"
+
+import {
+  "himeno/mopress/config",
+  "himeno/mopress/markdown",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub async fn run_markdown_preprocessors(@config.BookConfig, String) -> String
+
+pub async fn run_markdown_transformers(@config.BookConfig, Array[@markdown.Block]) -> Array[@markdown.Block]
+
+// Errors
+pub suberror ProcessorError {
+  NonZeroExit(command~ : String, exit_code~ : Int, stderr~ : String)
+  StderrReported(command~ : String, message~ : String)
+  InvalidStdout(command~ : String, raw~ : String, reason~ : String)
+} derive(Eq, @debug.Debug)
+
+// Types and methods
+type MarkdownRequest derive(ToJson)
+
+type MarkdownResponse derive(@json.FromJson)
+
+type StderrPayload derive(@json.FromJson)
+
+// Type aliases
+
+// Traits
+

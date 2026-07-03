@@ -8,9 +8,9 @@ import {
 }
 
 // Values
-pub fn run(@config.BookConfig) -> Unit raise
+pub async fn run(@config.BookConfig) -> Unit
 
-pub fn step_markdown_raw(@core.Item[String], @config.BookConfig, @summary.Summary) -> @core.Item[@core.Thing] raise
+pub async fn step_markdown_raw(@core.Item[String], @config.BookConfig, @summary.Summary) -> @core.Item[@core.Thing]
 
 // Errors
 

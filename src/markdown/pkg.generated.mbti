@@ -3,6 +3,7 @@ package "himeno/mopress/markdown"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -20,7 +21,7 @@ pub(all) enum Block {
   List(ListBlock)
   HtmlBlock(String)
   Table(TableBlock)
-} derive(Eq, @debug.Debug)
+} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
 pub impl Plainable for Block
 
 pub(all) enum Inline {
@@ -33,20 +34,20 @@ pub(all) enum Inline {
   Html(String)
   SoftBreak
   HardBreak
-} derive(Eq, @debug.Debug)
+} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
 pub impl Plainable for Inline
 
 pub(all) struct ListBlock {
   ordered : Bool
   start : Int?
   items : Array[Array[Block]]
-} derive(Eq, @debug.Debug)
+} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
 pub impl Plainable for ListBlock
 
 pub(all) struct TableBlock {
   headers : Array[Array[Inline]]
   rows : Array[Array[Array[Inline]]]
-} derive(Eq, @debug.Debug)
+} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
 
 // Type aliases
 pub type Markdown = Array[Block]

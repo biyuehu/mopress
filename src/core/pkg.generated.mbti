@@ -28,7 +28,7 @@ pub fn inject_head(Item[String], String) -> Item[String]
 
 pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
 
-pub fn mo_build(Options, Array[Rule]) -> Unit raise
+pub async fn mo_build(Options, Array[Rule]) -> Unit
 
 pub async fn mo_serve(Options) -> Unit
 
@@ -41,6 +41,12 @@ pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
 pub fn[T : Show] render_markdown(Item[T]) -> Item[String]
 
 pub fn[T : Show] render_markdown_and_frontmatter(Item[T]) -> Item[String]
+
+pub fn render_markdown_and_frontmatter_from_ast(Item[Array[@markdown.Block]], Map[String, String]) -> Item[String]
+
+pub fn render_markdown_from_ast(Item[Array[@markdown.Block]]) -> Item[String]
+
+pub fn separate_frontmatter(Item[String]) -> Item[(Map[String, String], String)]
 
 pub fn[T] set_extension(Item[T], String) -> Item[T]
 
@@ -71,11 +77,11 @@ pub fn[T] Item::new(T, String, extension? : String, vars? : Map[String, @templat
 pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
 
 pub(all) enum Mode {
-  Text((Item[String]) -> Item[Thing] raise)
-  Binary((Item[Bytes]) -> Item[Thing] raise)
+  Text(async (Item[String]) -> Item[Thing])
+  Binary(async (Item[Bytes]) -> Item[Thing])
   Copy
 }
-pub fn Mode::run(Self, Options, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing] raise
+pub async fn Mode::run(Self, Options, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing]
 
 pub(all) struct Options {
   src : String
@@ -106,7 +112,7 @@ pub type Html = String
 
 pub type Rules = Array[Rule]
 
-pub type Step[T, R] = (Item[T]) -> Item[R] raise
+pub type Step[T, R] = async (Item[T]) -> Item[R]
 
 pub type Vars = Map[String, @template.Value]
 
