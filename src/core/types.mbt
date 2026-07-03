@@ -1,9 +1,5 @@
 ///|
 pub(all) struct Options {
-  // title : String
-  // authors : Array[String]
-  // description : String
-  // language : String
   src : String
   dest : String
 } derive(Eq, Debug)
@@ -224,7 +220,7 @@ pub impl Thingable for Json with fn to_thing(self : Json) -> Thing {
 }
 
 ///|
-pub type Step[T, R] = (Item[T]) -> Item[R] raise
+pub type Step[T, R] = async (Item[T]) -> Item[R]
 
 ///|
 pub(all) enum Mode {
@@ -234,7 +230,7 @@ pub(all) enum Mode {
 }
 
 ///|
-pub fn Mode::run(
+pub async fn Mode::run(
   self : Mode,
   options : Options,
   path : String,
@@ -242,7 +238,7 @@ pub fn Mode::run(
     @fs.read_file_to_string(path)
   },
   read_bytes? : (String) -> Bytes raise = path => @fs.read_file_to_bytes(path),
-) -> Item[Thing] raise {
+) -> Item[Thing] {
   let extension = @path.Path(path).extname() |> Show::to_string
   let target = path[options.src.length() + 1:] |> Show::to_string
   match self {

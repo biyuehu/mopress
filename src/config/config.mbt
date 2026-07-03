@@ -12,14 +12,14 @@ pub(all) struct BookConfig {
   repository : String?
   features : FeaturesConfig
   extension : ExtensionConfig
-} derive(Eq, Debug)
+} derive(Eq, Debug, ToJson)
 
 ///|
 pub(all) struct FeaturesConfig {
   highlight_enabled : Bool
   highlight_theme : String
   mathjax_enabled : Bool
-} derive(Eq, Debug)
+} derive(Eq, Debug, ToJson)
 
 ///|
 pub(all) struct ExtensionConfig {
@@ -33,7 +33,7 @@ pub(all) struct ExtensionConfig {
   import_js : Array[String]
   preprocessors : Array[String]
   transformers : Array[String]
-} derive(Eq, Debug)
+} derive(Eq, Debug, ToJson)
 
 ///|
 pub suberror ConfigParseError {

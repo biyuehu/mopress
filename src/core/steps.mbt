@@ -12,41 +12,35 @@ pub fn[T : Show] extract_markdown(
 
 ///|
 pub fn[T : Show] render_markdown(item : Item[T]) -> Item[Html] {
-  let { html, toc } = item.data
-    |> @markdown.parse_markdown
-    |> @renderer.render_markdown
-  item.map(
-    _ => html,
-    vars=Map([
-      ("body", html |> String),
-      (
-        "toc",
-        toc.map(item => item.to_json() |> @template.Value::from_json) |> Array,
-      ),
-    ]),
-  )
+  render_markdown_from_ast(item.map(data => data |> @markdown.parse_markdown))
+}
+
+///|
+pub fn render_markdown_from_ast(item : Item[@markdown.Markdown]) -> Item[Html] {
+  let { html, .. } = item.data |> @renderer.render_markdown
+  item.map(_ => html)
+}
+
+///|
+pub fn separate_frontmatter(item : Item[String]) -> Item[(Frontmatter, String)] {
+  item.map(data => data |> parse_frontmatter)
+}
+
+///|
+pub fn render_markdown_and_frontmatter_from_ast(
+  item : Item[@markdown.Markdown],
+  frontmatter : Map[String, String],
+) -> Item[Html] {
+  let { html, .. } = item.data |> @renderer.render_markdown
+  item.map(_ => html, vars=frontmatter.map((_, v) => v |> @template.String))
 }
 
 ///|
 pub fn[T : Show] render_markdown_and_frontmatter(item : Item[T]) -> Item[Html] {
   let (frontmatter, content) = item.data.to_string() |> parse_frontmatter
-  let { html, toc } = content
-    |> @markdown.parse_markdown
-    |> @renderer.render_markdown
-  item.map(
-    _ => html,
-    vars=frontmatter
-      .map((_, v) => v |> @template.String)
-      .merge(
-        Map([
-          ("body", html |> String),
-          (
-            "toc",
-            toc.map(item => item.to_json() |> @template.Value::from_json)
-            |> Array,
-          ),
-        ]),
-      ),
+  render_markdown_and_frontmatter_from_ast(
+    item.map(_ => content |> @markdown.parse_markdown),
+    frontmatter,
   )
 }
 
@@ -60,7 +54,10 @@ pub fn apply_template(
   body : Item[Html],
   template : @template.Template,
 ) -> Item[Html] {
-  body.map(_ => template |> @template.apply_template(body.vars))
+  body.map(_ => {
+    template
+    |> @template.apply_template(body.set_var("body", body.data |> String).vars)
+  })
 }
 
 ///|
@@ -68,7 +65,12 @@ pub fn apply_template_strict(
   body : Item[Html],
   template : @template.Template,
 ) -> Item[Html] raise {
-  body.map_with_eff(_ => template |> @template.apply_template_strict(body.vars))
+  body.map_with_eff(_ => {
+    template
+    |> @template.apply_template_strict(
+      body.set_var("body", body.data |> String).vars,
+    )
+  })
 }
 
 ///|

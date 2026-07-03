@@ -9,7 +9,7 @@ pub(all) struct ListBlock {
   ordered : Bool
   start : Int?
   items : Array[Markdown]
-} derive(Eq, Debug)
+} derive(Eq, Debug, FromJson, ToJson)
 
 ///|
 pub(all) enum Block {
@@ -21,7 +21,7 @@ pub(all) enum Block {
   List(ListBlock)
   HtmlBlock(String)
   Table(TableBlock)
-} derive(Eq, Debug)
+} derive(Eq, Debug, FromJson, ToJson)
 
 ///|
 pub(all) enum Inline {
@@ -34,13 +34,13 @@ pub(all) enum Inline {
   Html(String)
   SoftBreak
   HardBreak
-} derive(Eq, Debug)
+} derive(Eq, Debug, FromJson, ToJson)
 
 ///|
 pub(all) struct TableBlock {
   headers : Array[Array[Inline]]
   rows : Array[Array[Array[Inline]]]
-} derive(Eq, Debug)
+} derive(Eq, Debug, FromJson, ToJson)
 
 ///|
 pub trait Plainable {

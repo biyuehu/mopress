@@ -1,4 +1,5 @@
 import {
   "bobzhang/toml",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }

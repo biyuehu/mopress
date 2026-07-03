@@ -27,7 +27,7 @@ pub async fn mo_serve(options : Options) -> Unit {
 }
 
 ///|
-pub fn mo_build(options : Options, rules : Rules) -> Unit raise {
+pub async fn mo_build(options : Options, rules : Rules) -> Unit {
   for rule in rules {
     for
       path in (match rule {

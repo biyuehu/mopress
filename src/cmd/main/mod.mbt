@@ -44,7 +44,7 @@ fn handle_help() -> Unit {
 }
 
 ///|
-fn handle_build() -> Unit raise {
+async fn handle_build() -> Unit {
   load_config() |> run
 }
 
@@ -65,14 +65,22 @@ async fn command_handler() -> Unit {
 }
 
 ///|
-pub fn step_markdown_raw(
+pub async fn step_markdown_raw(
   raw : @core.Item[String],
   config : @config.BookConfig,
   summary : @summary.Summary,
-) -> @core.Item[@core.Thing] raise {
-  raw
+) -> @core.Item[@core.Thing] {
+  let seprated = raw |> @core.separate_frontmatter
+  let text = @bridge.run_markdown_preprocessors(config, seprated.data.1)
+  let ast = @bridge.run_markdown_transformers(
+    config,
+    (seprated.map(_ => text) |> @core.parse_markdown).data,
+  )
+  @core.render_markdown_and_frontmatter_from_ast(
+    seprated.map(_ => ast),
+    seprated.data.0,
+  )
   |> @core.set_extension(".html")
-  |> @core.render_markdown_and_frontmatter
   |> x => {
     let (prev, next) = summary.prev_next(x.location())
     x.add_vars(
@@ -122,12 +130,22 @@ pub fn step_markdown_raw(
 }
 
 ///|
-pub fn run(config : @config.BookConfig) -> Unit raise {
+pub async fn run(config : @config.BookConfig) -> Unit {
   let summary = @fs.read_file_to_string(
       @path.Path(config.src).join("SUMMARY.md").to_string(),
     )
     |> @markdown.parse_markdown
     |> @summary.parse_summary
+
+  let not_found_page = step_markdown_raw(
+    @core.Item::new(
+      "---\ntitle: 404\n---\nYour page can not be found...",
+      "404",
+      extension=".md",
+    ),
+    config,
+    summary,
+  )
 
   @core.mo_build(
     { src: config.src, dest: config.dest },
@@ -145,18 +163,7 @@ pub fn run(config : @config.BookConfig) -> Unit raise {
                   summary.index_articles(config.src).to_json().stringify()
                   |> @core.Doc,
                 ),
-                (
-                  "404.html",
-                  step_markdown_raw(
-                    @core.Item::new(
-                      "---\ntitle: 404\n---\nYour page can not be found...",
-                      "404",
-                      extension=".md",
-                    ),
-                    config,
-                    summary,
-                  ).data,
-                ),
+                ("404.html", not_found_page.data),
               ])
             })
           }
