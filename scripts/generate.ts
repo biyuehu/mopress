@@ -7,6 +7,10 @@ writeFileSync(
 			["docs/scripts/main.js", "scripts_main_js"],
 			["docs/styles/index.css", "styles_index_css"],
 			["docs/templates/default.html", "templates_default_html"],
+			[
+				"docs/plugins/preprocessers/github-alert.ts",
+				"preprocessers_github_alert_ts",
+			],
 		] as [string, string][]
 	)
 		.map(

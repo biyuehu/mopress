@@ -5,3 +5,4 @@ _build/
 dest
 local_*.mbt
 node_modules/
+src/cmd/main/includes.mbt
