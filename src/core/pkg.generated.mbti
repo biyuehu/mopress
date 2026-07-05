@@ -72,7 +72,7 @@ pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
 pub fn[T] Item::extend(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::location(Self[T]) -> String
 pub fn[T, R] Item::map(Self[T], (T) -> R, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R]
-pub fn[T, R] Item::map_with_eff(Self[T], (T) -> R raise, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R] raise
+pub fn[T, R] Item::map_with_raise(Self[T], (T) -> R raise, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R] raise
 pub fn[T] Item::new(T, String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
 
@@ -80,7 +80,7 @@ pub(all) enum Mode {
   Text(async (Item[String]) -> Item[Thing])
   Binary(async (Item[Bytes]) -> Item[Thing])
   Copy
-}
+} derive(@debug.Debug)
 pub async fn Mode::run(Self, Options, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing]
 
 pub(all) struct Options {
@@ -93,7 +93,7 @@ pub impl Default for Options
 pub(all) enum Rule {
   Glob(String, Mode)
   Guard(String, (String) -> Bool, Mode)
-}
+} derive(@debug.Debug)
 pub fn Rule::check(Self, String) -> Bool
 pub fn Rule::mode(Self) -> Mode
 
@@ -102,7 +102,7 @@ pub(all) enum Thing {
   Asset(Bytes)
   Multiple(Array[(String, Thing)])
   Empty
-}
+} derive(Eq, @debug.Debug)
 pub fn Thing::write(Self, String, String) -> Unit raise @fs.IOError
 
 // Type aliases

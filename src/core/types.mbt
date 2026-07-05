@@ -34,7 +34,7 @@ pub(all) enum Rule {
   /// pattern *and* the predicate returns `true` when called with the
   /// file's full relative path (consistent with `@glob.glob_match_with`).
   Guard(String, (String) -> Bool, Mode)
-}
+} derive(Debug)
 
 ///|
 /// Reports whether `path` matches this rule (i.e. whether it should be
@@ -157,7 +157,7 @@ pub fn[T, R] Item::map(
 ///
 /// `extension`, when provided, should include its leading dot (e.g.
 /// `.html`), consistent with `set_extension`.
-pub fn[T, R] Item::map_with_eff(
+pub fn[T, R] Item::map_with_raise(
   self : Item[T],
   f : (T) -> R raise,
   target? : String,
@@ -248,12 +248,16 @@ pub(all) enum Thing {
   Multiple(Array[(String, Thing)])
   /// No output should be written for this item.
   Empty
-}
+} derive(Eq, Debug)
 
 ///|
 /// Writes this `Thing` to disk under `dest`, using `name` as the output
 /// file name (including extension) — or, for `Multiple`, as the base
 /// directory under which each named sub-output is written.
+///
+/// This is a thin wrapper around the underlying filesystem write
+/// operations (see `@fs`); no additional processing (e.g. templating or
+/// transformation) is applied here.
 ///
 /// Raises `@fs.IOError` if writing fails.
 pub fn Thing::write(
@@ -315,7 +319,7 @@ pub(all) enum Mode {
   /// Copies the matched file to the output directory unchanged, without
   /// any processing.
   Copy
-}
+} derive(Debug)
 
 ///|
 /// Executes this mode against the file at `path` (relative to

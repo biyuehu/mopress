@@ -4,7 +4,7 @@
 /// This is the structure serialized to and parsed from the project's
 /// configuration file (see `file_name`), and is threaded through the
 /// entire build pipeline (see `mopress/main`'s `run` and
-/// `step_markdown_raw`, and `mopress/bridge`'s processor-running
+/// `process_markdown_page`, and `mopress/bridge`'s processor-running
 /// functions) as shared, read-only context.
 pub(all) struct BookConfig {
   /// The site's title, used both for `<title>`/template variables and as
@@ -63,7 +63,7 @@ pub(all) struct FeaturesConfig {
 /// preprocessor/transformer commands to run over Markdown content.
 pub(all) struct ExtensionConfig {
   /// Path to the HTML template file used to render every page (see
-  /// `@core.load_and_apply_template` as used by `step_markdown_raw`).
+  /// `@core.load_and_apply_template` as used by `process_markdown_page`).
   template : String
   /// Glob patterns (relative to `BookConfig.src`) identifying additional
   /// static asset files/directories to copy into the output verbatim,
@@ -123,7 +123,7 @@ pub let file_name = "sena.toml"
 /// separately; it is exposed primarily for cases where a `BookConfig` is
 /// constructed or mutated by other means and needs the same desugaring
 /// applied afterwards.
-pub fn BookConfig::extract_features(self : BookConfig) -> BookConfig {
+pub fn BookConfig::apply_feature_presets(self : BookConfig) -> BookConfig {
   if self.features.highlight_enabled {
     self.extension.import_css.push(
       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/\{self.features.highlight_theme}.min.css",
@@ -253,7 +253,7 @@ pub fn BookConfig::parse(
       preprocessors: read_string_array(extension, "preprocessors"),
       transformers: read_string_array(extension, "transformers"),
     },
-  }.extract_features()
+  }.apply_feature_presets()
 }
 
 ///|

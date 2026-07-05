@@ -9,7 +9,7 @@ pub(all) struct RenderOptions {
   /// `@markdown.Inline::Html`) are emitted as-is in the output, or
   /// stripped/escaped.
   allow_raw_html : Bool
-}
+} derive(Eq, Debug)
 
 ///|
 /// An entry in a document's table of contents, corresponding to a
@@ -21,18 +21,18 @@ pub(all) struct TocItem {
 } derive(Eq, Debug, ToJson)
 
 ///|
-priv struct RenderContext {
+struct RenderContext {
   slug_counts : Map[String, Int]
   toc : Toc
   opt : RenderOptions
-}
+} derive(Eq, Debug)
 
 ///|
 /// The result of rendering a Markdown AST to HTML.
 pub(all) struct RenderedMarkdown {
   html : String
   toc : Toc
-}
+} derive(Eq, Debug)
 
 ///|
 pub type Toc = Array[TocItem]

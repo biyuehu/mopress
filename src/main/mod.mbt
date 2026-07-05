@@ -51,7 +51,7 @@ fn handle_help() -> Unit {
 ///|
 async fn handle_build() -> Unit {
   println("Building site.")
-  load_config() |> run
+  load_config() |> build_book
 }
 
 ///|
@@ -94,7 +94,7 @@ async fn command_handler() -> Unit {
 /// table of contents, in order to compute breadcrumbs and previous/next
 /// links; it is expected to have already been parsed from the book's
 /// `SUMMARY.md` before calling this function.
-pub async fn step_markdown_raw(
+pub async fn process_markdown_page(
   raw : @core.Item[String],
   config : @config.BookConfig,
   summary : @summary.Summary,
@@ -171,7 +171,7 @@ pub async fn step_markdown_raw(
 /// surface as raised errors from the underlying steps (config loading,
 /// file I/O, markdown processing, or templating) rather than through a
 /// return value.
-pub async fn run(config : @config.BookConfig) -> Unit {
+pub async fn build_book(config : @config.BookConfig) -> Unit {
   println("Parsing SUMMARY.md")
   let summary = @fs.read_file_to_string(
       @path.Path(config.src).join("SUMMARY.md").to_string(),
@@ -180,7 +180,7 @@ pub async fn run(config : @config.BookConfig) -> Unit {
     |> @summary.parse_summary
 
   println("Rendering 404 page")
-  let not_found_page = step_markdown_raw(
+  let not_found_page = process_markdown_page(
     @core.Item::new(
       "---\ntitle: 404\n---\nYour page can not be found...",
       "404",
@@ -199,7 +199,7 @@ pub async fn run(config : @config.BookConfig) -> Unit {
           raw
           |> @core.set_extension(".json")
           |> x => {
-            x.map_with_eff(_ => {
+            x.map_with_raise(_ => {
               @core.Multiple([
                 (
                   "index.json",
@@ -212,7 +212,10 @@ pub async fn run(config : @config.BookConfig) -> Unit {
           }
         }),
       ),
-      Glob("*.markdown", Text(raw => raw |> step_markdown_raw(config, summary))),
+      Glob(
+        "*.markdown",
+        Text(raw => raw |> process_markdown_page(config, summary)),
+      ),
       ..config.extension.assets.map(glob => @core.Glob(glob, Copy)),
     ],
   )

@@ -12,16 +12,18 @@ pub fn render_markdown(Array[@markdown.Block], opt? : RenderOptions) -> Rendered
 // Errors
 
 // Types and methods
+type RenderContext derive(Eq, @debug.Debug)
+
 pub(all) struct RenderOptions {
   heading_anchor_prefix : String
   allow_raw_html : Bool
-}
+} derive(Eq, @debug.Debug)
 pub impl Default for RenderOptions
 
 pub(all) struct RenderedMarkdown {
   html : String
   toc : Array[TocItem]
-}
+} derive(Eq, @debug.Debug)
 
 pub(all) struct TocItem {
   level : Int

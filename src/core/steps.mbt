@@ -115,7 +115,7 @@ pub fn apply_template_strict(
   body : Item[Html],
   template : @template.Template,
 ) -> Item[Html] raise {
-  body.map_with_eff(_ => {
+  body.map_with_raise(_ => {
     template
     |> @template.apply_template_strict(
       body.set_var("body", body.data |> String).vars,

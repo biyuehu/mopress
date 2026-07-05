@@ -28,7 +28,7 @@ pub(all) struct BookConfig {
   features : FeaturesConfig
   extension : ExtensionConfig
 } derive(Eq, ToJson, @debug.Debug)
-pub fn BookConfig::extract_features(Self) -> Self
+pub fn BookConfig::apply_feature_presets(Self) -> Self
 pub fn BookConfig::parse(String) -> Self raise ConfigParseError
 pub fn BookConfig::to_toml(Self) -> String
 pub impl Default for BookConfig
