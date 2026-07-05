@@ -1,10 +1,19 @@
 ///|
+/// Options controlling how a Markdown AST is rendered to HTML.
 pub(all) struct RenderOptions {
+  /// A prefix prepended to the generated `id`/anchor attribute of
+  /// rendered headings, e.g. to namespace anchors when embedding rendered
+  /// content alongside other anchored content on the same page.
   heading_anchor_prefix : String
+  /// Whether raw HTML blocks/inlines (`@markdown.Block::HtmlBlock`,
+  /// `@markdown.Inline::Html`) are emitted as-is in the output, or
+  /// stripped/escaped.
   allow_raw_html : Bool
 }
 
 ///|
+/// An entry in a document's table of contents, corresponding to a
+/// rendered heading.
 pub(all) struct TocItem {
   level : Int
   title : String
@@ -19,6 +28,7 @@ priv struct RenderContext {
 }
 
 ///|
+/// The result of rendering a Markdown AST to HTML.
 pub(all) struct RenderedMarkdown {
   html : String
   toc : Toc
@@ -28,11 +38,14 @@ pub(all) struct RenderedMarkdown {
 pub type Toc = Array[TocItem]
 
 ///|
+/// The default rendering options.
 pub impl Default for RenderOptions with fn default() -> RenderOptions {
   { heading_anchor_prefix: "", allow_raw_html: true }
 }
 
 ///|
+/// Renders a Markdown AST to HTML, using the given rendering options
+/// (defaulting to `RenderOptions::default()` if not provided).
 pub fn render_markdown(
   md : @markdown.Markdown,
   opt? : RenderOptions = RenderOptions::default(),

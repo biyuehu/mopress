@@ -100,6 +100,13 @@ fn match_tokens(
 }
 
 ///|
+/// Reports whether `path` matches the given glob `pattern`.
+///
+/// Supports `*` (matching any sequence of characters within a path
+/// segment) and `?` (matching any single character), including `**` for
+/// matching across path segment boundaries (e.g. `./**/*.js`) and mixed
+/// patterns like `src/?.md`. No other glob syntax (such as brace
+/// expansion or character classes) is supported.
 pub fn glob_match(pattern : String, path : String) -> Bool {
   match_tokens(
     tokenize(pattern),
@@ -110,6 +117,13 @@ pub fn glob_match(pattern : String, path : String) -> Bool {
 }
 
 ///|
+/// Like `glob_match`, but delegates to `f` instead of standard glob
+/// semantics: `f` receives the full relative path (matching the same
+/// candidate path `glob_match` would test against `pattern`) and its
+/// return value determines whether that path is considered a match.
+///
+/// `pattern` follows the same glob syntax as `glob_match` (`*`, `?`, and
+/// `**` across path segments).
 pub fn glob_match_with(
   pattern : String,
   path : String,
@@ -118,7 +132,15 @@ pub fn glob_match_with(
   glob_match(pattern, path) && f(path)
 }
 
+//|
+
 ///|
+/// Recursively scans the directory at `root` and returns the paths of all
+/// files matching the glob `pattern` (see `glob_match` for supported
+/// syntax: `*`, `?`, and `**` across path segments).
+///
+/// Raises `@fs.IOError` if `root` cannot be read (e.g. it does not exist,
+/// or the process lacks permission to list its contents).
 pub fn scan_files(
   dir : String,
   pattern : String,
@@ -129,6 +151,12 @@ pub fn scan_files(
 }
 
 ///|
+/// Like `scan_files`, but uses `f` instead of standard glob matching to
+/// decide which files to include: for each candidate file, `f` is called
+/// with its full relative path (relative to `root`), and the file is
+/// included in the result only if `f` returns `true`.
+///
+/// Raises `@fs.IOError` under the same conditions as `scan_files`.
 pub fn scan_files_with(
   dir : String,
   pattern : String,

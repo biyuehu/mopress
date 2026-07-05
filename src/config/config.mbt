@@ -1,49 +1,128 @@
 ///|
+/// Top-level configuration for a mopress site/book.
+///
+/// This is the structure serialized to and parsed from the project's
+/// configuration file (see `file_name`), and is threaded through the
+/// entire build pipeline (see `mopress/main`'s `run` and
+/// `step_markdown_raw`, and `mopress/bridge`'s processor-running
+/// functions) as shared, read-only context.
 pub(all) struct BookConfig {
+  /// The site's title, used both for `<title>`/template variables and as
+  /// the default display name of the book.
   title : String
+  /// A short description of the site, typically surfaced in template
+  /// variables and metadata (e.g. an HTML `<meta name="description">` tag).
   description : String
+  /// A comma- or space-separated (format defined by consuming templates)
+  /// list of keywords for the site, surfaced via the `site_keywords`
+  /// template variable.
   keywords : String
+  /// Path (relative to the site root) to the favicon asset.
   favicon : String
+  /// Path (relative to the site root) to the site's logo asset.
   logo : String
+  /// The list of author names credited for the site's content.
   authors : Array[String]
+  /// The site's primary language, e.g. as an HTML `lang` attribute value.
   language : String
+  /// Path to the directory containing the site's source Markdown content
+  /// and its `SUMMARY.md` table of contents, relative to the project root.
   src : String
+  /// Path to the directory where the built site is written, relative to
+  /// the project root.
   dest : String
+  /// Optional URL to the site's source repository, surfaced via the
+  /// `repository` template variable when present (defaults to an empty
+  /// string in templates when absent).
   repository : String?
+  /// Feature toggles controlling optional built-in behavior such as
+  /// syntax highlighting and MathJax support.
   features : FeaturesConfig
+  /// Extension points for customizing the build: templates, asset
+  /// injection, and the external preprocessor/transformer command
+  /// pipelines.
   extension : ExtensionConfig
-} derive(Eq, Debug, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 ///|
+/// Toggles for optional, built-in rendering features.
 pub(all) struct FeaturesConfig {
+  /// Whether syntax highlighting of fenced code blocks is enabled.
   highlight_enabled : Bool
+  /// The name of the syntax highlighting theme to use when
+  /// `highlight_enabled` is `true`.
   highlight_theme : String
+  /// Whether MathJax rendering of mathematical notation is enabled.
   mathjax_enabled : Bool
-} derive(Eq, Debug, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 ///|
+/// Configuration for extension points that customize how a site is built:
+/// which template to render pages with, which static assets to copy
+/// verbatim, which CSS/JS to inject or import, and which external
+/// preprocessor/transformer commands to run over Markdown content.
 pub(all) struct ExtensionConfig {
+  /// Path to the HTML template file used to render every page (see
+  /// `@core.load_and_apply_template` as used by `step_markdown_raw`).
   template : String
+  /// Glob patterns (relative to `BookConfig.src`) identifying additional
+  /// static asset files/directories to copy into the output verbatim,
+  /// alongside the rendered Markdown pages.
   assets : Array[String]
+  /// Raw HTML snippets injected into the `<head>` of every rendered page.
   inject_head : Array[String]
+  /// Raw HTML snippets injected at the end of the `<body>` of every
+  /// rendered page.
   inject_body : Array[String]
+  /// Raw JavaScript code to be injected as inline `<script>` blocks just
+  /// before `</body>` on every page (see `@core.use_js`), one `<script>`
+  /// tag per array element.
   use_js : Array[String]
+  /// Raw CSS code to be injected as inline `<style>` blocks just before
+  /// `</head>` on every page (see `@core.use_css`), one `<style>` tag per
+  /// array element.
   use_css : Array[String]
+  /// Paths/URLs to external CSS files to be imported via `<link>` (see
+  /// `@core.import_css`) on every page, rather than inlined.
   import_css : Array[String]
+  /// Paths/URLs to external JavaScript files to be imported via
+  /// `<script src>` (see `@core.import_js`) on every page, rather than
+  /// inlined.
   import_js : Array[String]
+  /// Commands (see `@bridge.run_markdown_preprocessors`) to run, in order,
+  /// over each page's raw Markdown text before it is parsed into an AST.
   preprocessors : Array[String]
+  /// Commands (see `@bridge.run_markdown_transformers`) to run, in order,
+  /// over each page's parsed Markdown AST before it is rendered to HTML.
   transformers : Array[String]
-} derive(Eq, Debug, ToJson)
+} derive(Eq, ToJson, @debug.Debug)
 
 ///|
+/// Error raised when a configuration file's contents cannot be parsed into
+/// a `BookConfig`. The associated `String` carries a human-readable
+/// description of the parse failure.
 pub suberror ConfigParseError {
   ConfigParseError(String)
 } derive(Eq, Debug)
 
 ///|
+/// The file name (relative to the current working directory) that mopress
+/// looks for, reads, and writes as the project's configuration file, e.g.
+/// when running `mopress init` or when loading configuration before a
+/// `build`/`serve` command.
 pub let file_name = "sena.toml"
 
 ///|
+/// Desugars the `features` preset into their corresponding low-level
+/// `extension` fields (`use_js`, `use_css`, `inject_head`, `inject_body`,
+/// `import_css`, `import_js`, etc.), returning a new `BookConfig` with
+/// those `extension` fields populated accordingly.
+///
+/// This is automatically invoked at the end of `BookConfig::parse`, so
+/// callers loading configuration through `parse` do not need to call this
+/// separately; it is exposed primarily for cases where a `BookConfig` is
+/// constructed or mutated by other means and needs the same desugaring
+/// applied afterwards.
 pub fn BookConfig::extract_features(self : BookConfig) -> BookConfig {
   if self.features.highlight_enabled {
     self.extension.import_css.push(
@@ -66,6 +145,9 @@ pub fn BookConfig::extract_features(self : BookConfig) -> BookConfig {
 }
 
 ///|
+/// Serializes this configuration to its TOML string representation, e.g.
+/// for writing out to the project's configuration file (see `file_name`)
+/// during `mopress init` or when persisting configuration changes.
 pub fn BookConfig::to_toml(self : BookConfig) -> String {
   let b = StringBuilder::new()
   b.write_string("title = \{toml_string(self.title)}\n")
@@ -122,6 +204,11 @@ fn toml_string_array(arr : Array[String]) -> String {
 }
 
 ///|
+/// Parses a `BookConfig` from its serialized (TOML) string representation.
+///
+/// Raises `ConfigParseError` if `input` is not valid TOML, or is valid TOML
+/// that does not match the expected `BookConfig` shape (e.g. missing
+/// required fields or fields of the wrong type).
 pub fn BookConfig::parse(
   config_str : String,
 ) -> BookConfig raise ConfigParseError {
@@ -170,6 +257,8 @@ pub fn BookConfig::parse(
 }
 
 ///|
+/// The default configuration used to scaffold a new project, e.g. when
+/// running `mopress init` and no configuration file yet exists.
 pub impl Default for BookConfig with fn default() -> BookConfig {
   {
     title: "MoPress Doc",
@@ -188,6 +277,13 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
 }
 
 ///|
+/// The default feature configuration used to scaffold a new project.
+///
+/// # Uncertainty
+/// I don't know the exact default values (e.g. whether highlighting/MathJax
+/// are on or off by default, or what the default theme name is) without
+/// seeing the implementation, so I haven't asserted specific defaults in
+/// this comment.
 pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
   {
     highlight_enabled: false,
@@ -197,6 +293,9 @@ pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
 }
 
 ///|
+/// The default extension configuration used to scaffold a new project,
+/// with no custom preprocessors/transformers and no injected assets beyond
+/// the default template.
 pub impl Default for ExtensionConfig with fn default() -> ExtensionConfig {
   {
     template: "templates/default.html",

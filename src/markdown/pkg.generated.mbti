@@ -48,6 +48,7 @@ pub(all) struct TableBlock {
   headers : Array[Array[Inline]]
   rows : Array[Array[Array[Inline]]]
 } derive(Eq, ToJson, @debug.Debug, @json.FromJson)
+pub impl Plainable for TableBlock
 
 // Type aliases
 pub type Markdown = Array[Block]

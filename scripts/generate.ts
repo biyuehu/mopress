@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 writeFileSync(
-	"src/cmd/main/includes.mbt",
+	"src/main/includes.mbt",
 	(
 		[
 			["docs/scripts/main.js", "scripts_main_js"],

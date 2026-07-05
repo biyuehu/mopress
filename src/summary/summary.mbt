@@ -1,19 +1,29 @@
 ///|
+/// A single chapter link in a table of contents.
 pub(all) struct SummaryLink {
   title : String
   location : String
   source : String
+  /// Nested sub-chapters under this chapter, if any.
   nested_items : Array[SummaryItem]
 } derive(Eq, Debug)
 
 ///|
+/// A single entry in a table of contents.
 pub(all) enum SummaryItem {
+  /// A link to a chapter.
   Link(SummaryLink)
+  /// A part title, grouping subsequent chapters under a heading.
   PartTitle(String)
+  /// A visual separator between groups of chapters.
   Separator
 } derive(Eq, Debug)
 
 ///|
+/// The parsed structure of a book's table of contents (`SUMMARY.md`),
+/// split into an optional prefix section, the main numbered chapters, and
+/// an optional suffix section — mirroring the conventional structure of
+/// an mdBook-style summary file.
 pub(all) struct Summary {
   title : String
   prefix_chapters : Array[SummaryItem]
@@ -22,6 +32,8 @@ pub(all) struct Summary {
 } derive(Eq, Debug)
 
 ///|
+/// A single article's indexed content, e.g. for building a client-side
+/// search index over the site's pages.
 pub(all) struct ArticleIndex {
   title : String
   location : String
@@ -85,6 +97,9 @@ fn flatten_items(
 }
 
 ///|
+/// Returns a JSON representation of this summary, rooted at `location`,
+/// e.g. for use as a template variable describing the current section's
+/// navigation structure.
 pub fn Summary::flatten(self : Summary, current : String) -> Json {
   {
     "title": self.title.to_json(),
@@ -160,6 +175,8 @@ fn parse_list_items(
 }
 
 ///|
+/// Parses a book's `SUMMARY.md` (already parsed into a Markdown AST) into
+/// its structured `Summary` representation.
 pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
   let title : String = find_title(doc)
 
@@ -301,6 +318,9 @@ fn extract_root_link_items(
 }
 
 ///|
+/// Renders a Markdown string to its plain-text representation (stripping
+/// all Markdown/HTML markup), e.g. for use in generating search indexes
+/// or previews from summary/article content.
 pub fn md_to_plain(input : String) -> String {
   let out = StringBuilder::new()
   let mut i = 0
@@ -379,6 +399,10 @@ pub fn md_to_plain(input : String) -> String {
 }
 
 ///|
+/// Builds a search/content index over all articles reachable from this
+/// summary, reading each article's source file from `src`.
+///
+/// Raises if any referenced article's source file cannot be read.
 pub fn Summary::index_articles(
   self : Summary,
   src : String,
@@ -409,6 +433,8 @@ pub fn Summary::index_articles(
 }
 
 ///|
+/// Returns a breadcrumb string describing the path from the root of the
+/// table of contents down to the chapter located at `location`.
 pub fn Summary::breadcrumb(self : Summary, current : String) -> String {
   fn find(items : Array[SummaryItem], path : Array[String]) -> Array[String]? {
     for item in items {
@@ -445,6 +471,10 @@ pub fn Summary::breadcrumb(self : Summary, current : String) -> String {
 }
 
 ///|
+/// Returns the previous and next chapter (as `(title, location)` pairs),
+/// relative to the chapter located at `location`, according to this
+/// summary's chapter ordering. Either value is `None` if there is no
+/// previous/next chapter (e.g. at the start or end of the book).
 pub fn Summary::prev_next(
   self : Summary,
   current : String,

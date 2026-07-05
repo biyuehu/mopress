@@ -1,6 +1,7 @@
 ///|
-/// 单次 transformer 调用的通用错误类型，
-/// 覆盖了「命令本身跑不起来 / 非零退出码 / stderr 有内容 / stdout 不是合法 JSON」这几种情况。
+/// Error type describing why an external preprocessor/transformer command
+/// failed while running through `run_markdown_preprocessors` or
+/// `run_markdown_transformers`.
 pub suberror ProcessorError {
   NonZeroExit(command~ : String, exit_code~ : Int, stderr~ : String)
   StderrReported(command~ : String, message~ : String)
@@ -8,7 +9,9 @@ pub suberror ProcessorError {
 } derive(Debug, Eq)
 
 ///|
-/// stdin 协议：传给子进程的请求体
+/// The JSON request payload sent on stdin to each markdown-ast/markdown-text
+/// processor command. Not intended to be constructed or consumed outside of
+/// `run_markdown_preprocessors` / `run_markdown_transformers`.
 struct MarkdownRequest {
   config : @config.BookConfig
   type_ : String
@@ -16,31 +19,44 @@ struct MarkdownRequest {
 } derive(ToJson)
 
 ///|
-/// stdout 协议：从子进程读回来的正常响应体
+/// The expected JSON response shape read from a processor command's
+/// stdout on success, i.e. `{ "data": ... }`. Not intended to be
+/// constructed or consumed outside of `run_markdown_preprocessors` /
+/// `run_markdown_transformers`.
 struct MarkdownResponse {
   data : @markdown.Markdown
 } derive(FromJson)
 
 ///|
-/// stderr 协议：从子进程读回来的错误响应体
+/// The expected JSON payload read from a processor command's stderr when
+/// it reports an application-level error, i.e. `{ "error": string }`. Not
+/// intended to be constructed or consumed outside of
+/// `run_markdown_preprocessors` / `run_markdown_transformers`.
 struct StderrPayload {
   error : String
 } derive(FromJson)
 
 ///|
-/// 执行一系列 markdown-ast transformer 脚本，依次对 Markdown AST 做链式变换。
+/// Runs a chain of external "transformer" commands over a Markdown AST,
+/// feeding the output of each command as the input to the next.
 ///
-/// `config` 会原样传给每一个脚本，作为上下文信息。
-/// `data` 是初始的 Markdown AST。
-/// `scripts` 是要依次执行的命令数组，每个元素是完整的命令行参数列表
-/// （例如 `["bun", "scripts/my_transformer.ts"]`），
-/// 数组里每一条命令依次执行，前一条的输出会作为后一条的输入。
+/// This mirrors `run_markdown_preprocessors`, except the payload's `data`
+/// field carries a Markdown AST (`Array[@markdown.Block]`) rather than raw
+/// text, and the `type` field sent to each command is `"markdown-ast"`
+/// instead of `"markdown-text"`.
 ///
-/// 如果某个脚本的 stdout 为空字符串，代表该脚本选择不处理这份数据，
-/// 数据会原样传递给下一个脚本。
+/// Each command receives on stdin:
+/// ```json
+/// { "config": <BookConfig>, "type": "markdown-ast", "data": <Markdown AST> }
+/// ```
+/// and must write to stdout either:
+/// - `{ "data": <Markdown AST> }` — the transformed AST, passed on to the
+///   next command, or
+/// - an empty stdout — meaning this command leaves the AST unchanged.
 ///
-/// 如果某个脚本写了 stderr，或者退出码非零，或者 stdout 不是合法的 JSON，
-/// 会立即中断并 raise 对应的 `ProcessorError`。
+/// As with `run_markdown_preprocessors`, a non-zero exit code or any
+/// stderr output from a command raises `ProcessorError` and aborts the
+/// remaining chain.
 pub async fn run_markdown_transformers(
   config : @config.BookConfig,
   data : @markdown.Markdown,
@@ -53,10 +69,6 @@ pub async fn run_markdown_transformers(
 }
 
 ///|
-/// 执行单个 markdown-ast transformer 命令。
-/// `script` 是一整条 shell 命令字符串，内部会按空格切分成 cmd + args。
-/// 如果你的命令路径本身带空格，建议改用下面的 `run_markdown_transformers_argv`
-/// 版本，直接传 `Array[Array[String]]` 避免切分歧义。
 async fn run_single_markdown_transformer(
   config : @config.BookConfig,
   data : @markdown.Markdown,
@@ -158,6 +170,27 @@ fn build_text_request_json(
 }
 
 ///|
+/// Runs a chain of external "preprocessor" commands over raw Markdown text,
+/// feeding the output of each command as the input to the next.
+///
+/// Each command in the underlying pipeline receives a JSON payload on
+/// stdin of the shape:
+/// ```json
+/// { "config": <BookConfig>, "type": "markdown-text", "data": <string> }
+/// ```
+/// and is expected to write one of the following to stdout:
+/// - `{ "data": <string> }` — the transformed text, which becomes the input
+///   to the next command in the chain.
+/// - An empty stdout — signals that this command does not want to modify
+///   the data; the current text is passed through unchanged to the next
+///   command.
+///
+/// If a command exits with a non-zero status, or writes anything to
+/// stderr, this function raises `ProcessorError` and the chain is aborted;
+/// no further commands in the pipeline are executed.
+///
+/// `config` is forwarded verbatim to every command invocation and is not
+/// itself modified by this function.
 pub async fn run_markdown_preprocessors(
   config : @config.BookConfig,
   data : String,

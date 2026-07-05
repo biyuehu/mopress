@@ -5,54 +5,87 @@
 pub type Markdown = Array[Block]
 
 ///|
+/// An ordered or unordered list block.
 pub(all) struct ListBlock {
+  /// Whether this is an ordered (numbered) list.
   ordered : Bool
+  /// The starting number for an ordered list, if specified.
   start : Int?
-  items : Array[Markdown]
+  /// The list's items, each itself a sequence of blocks (allowing items
+  /// to contain multiple paragraphs, nested lists, etc.).
+  items : Array[Array[Block]]
 } derive(Eq, Debug, FromJson, ToJson)
 
 ///|
+/// A single block-level Markdown element.
 pub(all) enum Block {
+  /// A heading, with its level (1–6) and inline content.
   Heading(Int, Array[Inline])
+  /// A paragraph of inline content.
   Paragraph(Array[Inline])
+  /// A thematic break (horizontal rule).
   ThematicBreak
+  /// A fenced or indented code block, with an optional language/info
+  /// string and the raw code text.
   CodeBlock(String?, String)
-  BlockQuote(Markdown)
+  /// A block quote, containing its own nested sequence of blocks.
+  BlockQuote(Array[Block])
+  /// An ordered or unordered list.
   List(ListBlock)
+  /// A raw block of HTML.
   HtmlBlock(String)
+  /// A table.
   Table(TableBlock)
-} derive(Eq, Debug, FromJson, ToJson)
+} derive(Eq, ToJson, Debug, FromJson)
 
 ///|
+/// A single inline-level Markdown element.
 pub(all) enum Inline {
+  /// Plain text content.
   Text(String)
+  /// Emphasized (typically italic) inline content.
   Emphasis(Array[Inline])
+  /// Strongly emphasized (typically bold) inline content.
   Strong(Array[Inline])
+  /// Inline code.
   Code(String)
+  /// A hyperlink, with its inline label content and target URL.
   Link(Array[Inline], String)
+  /// An image, with its alt text and source URL.
   Image(String, String)
+  /// Raw inline HTML.
   Html(String)
+  /// A soft line break (rendered as whitespace).
   SoftBreak
+  /// A hard line break (rendered as an explicit line break, e.g. `<br>`).
   HardBreak
 } derive(Eq, Debug, FromJson, ToJson)
 
 ///|
+/// A table block, with its header row and body rows, each cell holding
+/// inline content.
 pub(all) struct TableBlock {
   headers : Array[Array[Inline]]
   rows : Array[Array[Array[Inline]]]
 } derive(Eq, Debug, FromJson, ToJson)
 
 ///|
+/// Types that can be rendered to a plain-text representation with all
+/// markup stripped.
 pub trait Plainable {
   fn to_plain(self : Self) -> String
 }
 
 ///|
+/// Renders each element to plain text and concatenates the results.
 pub impl[T : Plainable] Plainable for Array[T] with fn to_plain(self : Array[T]) -> String {
   self.map(item => item.to_plain()).join(" ")
 }
 
 ///|
+/// Renders a `Block` to its plain-text (non-HTML) representation, e.g.
+/// for use in summaries, search indexing, or previews where markup should
+/// be stripped.
 pub impl Plainable for Block with fn to_plain(self : Block) -> String {
   match self {
     Heading(_, content) => Plainable::to_plain(content)
@@ -62,14 +95,12 @@ pub impl Plainable for Block with fn to_plain(self : Block) -> String {
     BlockQuote(blocks) => Plainable::to_plain(blocks)
     List(list) => list.to_plain()
     HtmlBlock(content) => content
-    Table(table) =>
-      Plainable::to_plain(table.headers) +
-      " " +
-      table.rows.map(row => Plainable::to_plain(row)).join(" ")
+    Table(table) => Plainable::to_plain(table)
   }
 }
 
 ///|
+/// Renders an `Inline` to its plain-text (non-HTML) representation.
 pub impl Plainable for Inline with fn to_plain(self : Inline) -> String {
   match self {
     Text(text) => text
@@ -85,12 +116,23 @@ pub impl Plainable for Inline with fn to_plain(self : Inline) -> String {
 }
 
 ///|
+/// Renders a `ListBlock` to its plain-text (non-HTML) representation.
 pub impl Plainable for ListBlock with fn to_plain(self : ListBlock) -> String {
   (if self.start is Some(start) { start.to_string() + " " } else { "" }) +
   Plainable::to_plain(self.items)
 }
 
 ///|
+/// Renders a `TableBlock` to its plain-text (non-HTML) representation.
+pub impl Plainable for TableBlock with fn to_plain(self : TableBlock) -> String {
+  Plainable::to_plain(self.headers) +
+  " " +
+  self.rows.map(row => Plainable::to_plain(row)).join(" ")
+}
+
+///|
+/// Parses `input` (any `Show`-able value, typically a `String` of raw
+/// Markdown source) into a Markdown AST.
 pub fn[T : Show] parse_markdown(input : T) -> Markdown {
   parse_string(input.to_string())
 }

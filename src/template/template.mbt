@@ -1,24 +1,42 @@
 ///|
+/// A parsed template, as produced by `parse_template`.
 pub type Template = Array[TemplateNode]
 
 ///|
+/// A single node in a parsed template's AST.
 pub(all) enum TemplateNode {
+  /// A literal, verbatim text fragment.
   Text(String)
+  /// A variable reference, to be substituted with its value from the
+  /// rendering context.
   Variable(String)
+  /// A conditional block: the variable name to test, the nodes to render
+  /// when it is truthy, and the nodes to render otherwise.
   If(String, Array[TemplateNode], Array[TemplateNode])
+  /// A loop block: the variable name (expected to hold a `Value::Array`)
+  /// to iterate over, and the nodes to render once per element.
   For(String, Array[TemplateNode])
+  /// A reference to another template file to be rendered inline at this
+  /// position.
   Partial(String)
 } derive(Eq, Debug)
 
 ///|
+/// Error raised when a template's source cannot be parsed into a valid
+/// template AST. The associated `String` carries a human-readable
+/// description of the parse failure.
 pub suberror TemplateParseError {
   TemplateParseError(String)
 } derive(Eq, Debug)
 
 ///|
+/// A named set of template variables, as passed to `apply_template` /
+/// `apply_template_strict`.
 pub type Context = Map[String, Value]
 
 ///|
+/// A dynamically-typed value available to templates as part of their
+/// rendering context.
 pub(all) enum Value {
   String(String)
   Number(Double)
@@ -28,6 +46,8 @@ pub(all) enum Value {
 } derive(Eq, Debug)
 
 ///|
+/// Formats this value for display, e.g. when substituting a `Value`
+/// directly into rendered template output.
 pub impl Show for Value with fn to_string(self : Value) -> String {
   let to_string_spec = (v : Value) => {
     match v {
@@ -61,6 +81,9 @@ pub impl Show for Value with fn to_string(self : Value) -> String {
 }
 
 ///|
+/// Converts a `Json` value into its corresponding `Value` representation,
+/// e.g. for constructing template variables from JSON data (see
+/// `Summary::flatten`).
 pub fn Value::from_json(json : Json) -> Value {
   match json {
     String(s) => String(s)
@@ -74,6 +97,10 @@ pub fn Value::from_json(json : Json) -> Value {
 }
 
 ///|
+/// Parses `input` (any `Show`-able value, typically a `String` of raw
+/// template source) into a template AST.
+///
+/// Raises `TemplateParseError` if `input` is not valid template syntax.
 pub fn[T : Show] parse_template(input : T) -> Template raise TemplateParseError {
   parse_string(input.to_string())
 }
@@ -302,15 +329,34 @@ fn char_at(input : String, index : Int) -> Char {
 }
 
 ///|
+/// Errors that can occur while rendering a parsed template against a
+/// variable context, as raised by `apply_template_strict`.
 pub suberror TemplateRenderError {
+  /// A variable referenced by the template was not present in the
+  /// rendering context.
   UndefinedVariableError(String)
+  /// A `for` loop referenced a variable whose value was not a `Value::Array`.
   NonArrayForLoopError(String)
+  /// A referenced partial template could not be loaded (e.g. its file
+  /// could not be read).
   PartialLoadError(String)
+  /// A referenced partial template could not be parsed.
   PartialParseError(String)
+  /// A partial template referenced itself, directly or transitively,
+  /// resulting in unbounded recursion.
   RecursivePartialError(String)
 } derive(Eq, Debug)
 
 ///|
+/// Renders a parsed template against the given variable context,
+/// producing the final output string.
+///
+/// Rendering errors (e.g. an undefined variable reference, or a failed
+/// partial) are tolerated on a per-node basis: the offending template
+/// node is simply rendered as empty output, and rendering continues for
+/// the rest of the template, rather than the whole render failing. Use
+/// `apply_template_strict` if such errors should instead abort rendering
+/// entirely.
 pub fn apply_template(template : Template, context : Context) -> String {
   let output = StringBuilder::new()
   render_nodes(template, context, false, output, []) catch {
@@ -320,6 +366,11 @@ pub fn apply_template(template : Template, context : Context) -> String {
 }
 
 ///|
+/// Like `apply_template`, but raises `TemplateRenderError` as soon as any
+/// node fails to render — e.g. an undefined variable, a non-array value
+/// used in a `for` loop, or a problem loading/parsing a referenced partial
+/// — instead of tolerating the failure by rendering that node as empty
+/// output.
 pub fn apply_template_strict(
   template : Template,
   context : Context,
