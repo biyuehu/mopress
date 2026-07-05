@@ -227,7 +227,7 @@ pub fn inject_body(item : Item[Html], code : String) -> Item[Html] {
 /// used when writing build results to disk (see `Thing::write`).
 ///
 /// This is typically the final step applied to an item before it is
-/// handed off as the result of a `Mode::Text` or `Mode::Binary` handler.
+/// handed off as the result of a `Handler::Text` or `Handler::Binary` handler.
 pub fn[T : Thingable] identify(item : Item[T]) -> Item[Thing] {
   item.map(x => x.to_thing())
 }

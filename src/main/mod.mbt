@@ -212,6 +212,7 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
           }
         }),
       ),
+      Glob("*.md", Text(raw => raw |> process_markdown_page(config, summary))),
       Glob(
         "*.markdown",
         Text(raw => raw |> process_markdown_page(config, summary)),

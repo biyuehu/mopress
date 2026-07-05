@@ -58,7 +58,7 @@ pub async fn mo_build(options : Options, rules : Rules) -> Unit {
         Glob(glob, _) => @glob.scan_files(options.src, glob)
         Guard(glob, f, _) => @glob.scan_files_with(options.src, glob, f)
       }) {
-      let item = rule.mode().run(options, path)
+      let item = rule.handler().run(options, path)
       item.data.write(options.dest, item.location())
     }
   }

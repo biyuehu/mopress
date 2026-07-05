@@ -28,17 +28,17 @@ pub type Rules = Array[Rule]
 /// processed during a build.
 pub(all) enum Rule {
   /// Matches files by glob pattern (see `@glob.glob_match`) alone.
-  Glob(String, Mode)
+  Glob(String, Handler)
   /// Matches files by glob pattern, further filtered by a user-supplied
   /// predicate: a file matches this rule only if it matches the glob
   /// pattern *and* the predicate returns `true` when called with the
   /// file's full relative path (consistent with `@glob.glob_match_with`).
-  Guard(String, (String) -> Bool, Mode)
+  Guard(String, (String) -> Bool, Handler)
 } derive(Debug)
 
 ///|
 /// Reports whether `path` matches this rule (i.e. whether it should be
-/// processed according to this rule's `Mode`).
+/// processed according to this rule's `Handler`).
 pub fn Rule::check(self : Rule, path : String) -> Bool {
   match self {
     Glob(glob, _) => @glob.glob_match(glob, path)
@@ -47,11 +47,11 @@ pub fn Rule::check(self : Rule, path : String) -> Bool {
 }
 
 ///|
-/// Returns this rule's processing `Mode`.
-pub fn Rule::mode(self : Rule) -> Mode {
+/// Returns this rule's processing `Handler`.
+pub fn Rule::handler(self : Rule) -> Handler {
   match self {
-    Glob(_, mode) => mode
-    Guard(_, _, mode) => mode
+    Glob(_, handler) => handler
+    Guard(_, _, handler) => handler
   }
 }
 
@@ -308,8 +308,8 @@ pub impl Thingable for Json with fn to_thing(self : Json) -> Thing {
 pub type Step[T, R] = async (Item[T]) -> Item[R]
 
 ///|
-/// The processing mode applied to files matched by a `Rule`.
-pub(all) enum Mode {
+/// The processing handler applied to files matched by a `Rule`.
+pub(all) enum Handler {
   /// Reads the matched file as text and processes it with the given
   /// step, producing the final `Item[Thing]` to be written to disk.
   Text(async (Item[String]) -> Item[Thing])
@@ -322,16 +322,16 @@ pub(all) enum Mode {
 } derive(Debug)
 
 ///|
-/// Executes this mode against the file at `path` (relative to
+/// Executes this handler against the file at `path` (relative to
 /// `options.src`), returning the resulting `Item[Thing]`.
 ///
 /// `read_string` and `read_bytes` allow overriding how the file's
-/// contents are read for `Text` and `Binary` modes respectively
+/// contents are read for `Text` and `Binary` handlers respectively
 /// (defaulting to ordinary filesystem reads), which is primarily useful
 /// for testing or for sourcing content from something other than the
 /// local filesystem.
-pub async fn Mode::run(
-  self : Mode,
+pub async fn Handler::run(
+  self : Handler,
   options : Options,
   path : String,
   read_string? : (String) -> String raise = path => {
