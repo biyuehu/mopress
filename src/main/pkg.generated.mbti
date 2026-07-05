@@ -1,0 +1,22 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "himeno/mopress/main"
+
+import {
+  "himeno/mopress/config",
+  "himeno/mopress/core",
+  "himeno/mopress/summary",
+}
+
+// Values
+pub async fn run(@config.BookConfig) -> Unit
+
+pub async fn step_markdown_raw(@core.Item[String], @config.BookConfig, @summary.Summary) -> @core.Item[@core.Thing]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+
