@@ -17,25 +17,6 @@ function initMobileSidebar() {
 	update();
 }
 
-// function initCodeCopyButtons() {
-// 	document.addEventListener("click", async (e) => {
-// 		const btn = e.target.closest(".code-copy");
-// 		if (!btn) return;
-
-// 		const target = btn.dataset.copyTarget
-// 			? $(btn.dataset.copyTarget)
-// 			: btn.closest(".code-block")?.querySelector("code");
-// 		if (!target) return;
-
-// 		try {
-// 			await navigator.clipboard.writeText(target.innerText);
-// 			const old = btn.textContent;
-// 			btn.textContent = "✓";
-// 			setTimeout(() => (btn.textContent = old), 1200);
-// 		} catch { }
-// 	});
-// }
-
 function initProgressBar() {
 	const content = $(".content");
 	if (!content) return;
@@ -51,39 +32,6 @@ function initProgressBar() {
 	content.addEventListener("scroll", update, { passive: true });
 	update();
 }
-
-// function initTocScrollSpy() {
-// 	const links = $$(".toc-sub-item[data-anchor]");
-// 	const headings = $$(".content [id]");
-// 	if (!links.length || !headings.length) return;
-
-// 	const map = Object.fromEntries(links.map((l) => [l.dataset.anchor, l]));
-// 	let active = null;
-
-// 	const observer = new IntersectionObserver(
-// 		(entries) => {
-// 			const v = entries.find((e) => e.isIntersecting);
-// 			if (!v) return;
-// 			active?.classList.remove("active");
-// 			active = map[v.target.id];
-// 			active?.classList.add("active");
-// 		},
-// 		{ rootMargin: "0px 0px -70% 0px" },
-// 	);
-
-// 	headings.forEach((h) => observer.observe(h));
-// }
-
-// function initPageToc() {
-// 	$$("[data-toc-trigger]").forEach((t) => {
-// 		const toc = document.getElementById(t.dataset.tocTrigger);
-// 		if (!toc) return;
-// 		t.addEventListener("click", (e) => {
-// 			e.preventDefault();
-// 			t.classList.toggle("page-expanded", toc.classList.toggle("open"));
-// 		});
-// 	});
-// }
 
 function initSearch() {
 	const overlay = $("#searchOverlay");

@@ -1,39 +1,39 @@
 # Summary
 
-[Introduction](./introduction.md)
+[介绍](./index.md)
 
-# Tutorials
+## 指南
 
-- [Quick Start](./quick-start.md)
+- [快速开始](./starting.md)
 
-- [Book Mode](./book-mode/overview.md)
-  - [Configuration (sena.toml)](./book-mode/configuration.md)
-  - [Organizing Chapters (SUMMARY.md)](./book-mode/summary-file.md)
-  - [Frontmatter](./book-mode/frontmatter.md)
-  - [Extensions](./book-mode/extensions.md)
-  - [Features Presets](./book-mode/features.md)
+- [Book 模式](./book-mode/index.md)
+  - [配置 (sena.toml)](./book-mode/configuration.md)
+  - [组织章节 (SUMMARY.md)](./book-mode/summary-file.md)
+  - [元数据](./book-mode/frontmatter.md)
+  - [扩展](./book-mode/extensions.md)
+  - [功能预设](./book-mode/features.md)
 
-- [Site Mode](./site-mode/overview.md)
-  - [Starting a Site](./site-mode/starting.md)
-  - [Rules, Handlers and Steps](./site-mode/rules-handlers-steps.md)
-  - [Composing Steps](./site-mode/composing-steps.md)
-  - [Output Formats](./site-mode/recipes/output-formats.md)
+- [Site 模式](./site-mode/index.md)
+  - [开始](./site-mode/starting.md)
+  - [Rules, Handlers 和 Steps](./site-mode/rules-handlers-steps.md)
+  - [组合 Steps](./site-mode/composing-steps.md)
+  - [输出格式](./site-mode/recipes/output-formats.md)
 
-- [Customization](./customization/overview.md)
-  - [Templating Engine](./customization/template.md)
-  - [Custom 404 Pages](./customization/custom-404.md)
-  - [Diverse Plugins](./customization/plugins.md)
-    - [The External stdin/stdout Protocol](./customization/plugins/protocol.md)
-    - [Web Components](./customization/plugins/web-components.md)
-    - [Moonbit Modules (Only Site Mode)](./customization/plugins/moonbit-modules.md)
+- [自定义](./custom/index.md)
+  - [模板引擎](./custom/template.md)
+  - [自定义 404 页面](./custom/custom-404.md)
+  - [多样化的插件](./custom/plugins/index.md)
+    - [外部 stdin/stdout 协议](./custom/plugins/protocol.md)
+    - [Web Components](./custom/plugins/web-components.md)
+    - [Moonbit 模块 (仅限 Site 模式)](./custom/plugins/moonbit-modules.md)
 
-# Reference
+## 参考
 
-- [Markdown Demostration](./reference/markdown.md)
-- [Glob Patterns](./reference/glob.md)
-- [Cli Reference](./reference/cli.md)
-- [Api Reference](./reference/api.md)
+- [Markdown 演示](./references/markdown.md)
+- [Glob 模式](./references/glob.md)
+- [Cli 参考](./references/cli.md)
+- [Api 参考](./references/api.md)
 
-[Contributing](./contributing.md)
+[贡献](./contributing.md)
 [Changelog](./changelog.md)
 [FAQ](./faq.md)
