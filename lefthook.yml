@@ -1,5 +1,8 @@
 pre-commit:
   commands:
+    prebuild:
+      run: just prebuild
+      stage_fixed: true
     format:
       run: moon fmt
       stage_fixed: true

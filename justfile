@@ -11,3 +11,6 @@ test:
 build:
   bun scripts/generate.ts
   moon build
+
+prebuild:
+  bun scripts/generate.ts

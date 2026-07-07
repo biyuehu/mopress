@@ -9,7 +9,7 @@ writeFileSync(
 			["docs/templates/default.html", "templates_default_html"],
 			[
 				"docs/plugins/preprocessers/github-alert.ts",
-				"preprocessers_github_alert_ts",
+				"plugins_preprocessers_github_alert_ts",
 			],
 		] as [string, string][]
 	)

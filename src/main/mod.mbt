@@ -26,6 +26,24 @@ fn handle_init() -> Unit raise {
     println("Creating scripts/")
     @fs.create_dir("scripts")
   }
+  if !@fs.path_exists("plugins") {
+    println("Creating plugins/")
+    @fs.create_dir("plugins")
+  }
+  if !@fs.path_exists("plugins/preprocessers") {
+    @fs.create_dir("plugins/preprocessers")
+  }
+  if !@fs.path_exists("plugins/transformers") {
+    @fs.create_dir("plugins/transformers")
+  }
+  if !@fs.path_exists("plugins/external") {
+    @fs.create_dir("plugins/external")
+  }
+  if !@fs.path_exists("plugins/preprocessors/github-alert.ts") {
+    @fs.write_string_to_file(
+      "plugins/preprocessers/github-alert.ts", plugins_preprocessers_github_alert_ts,
+    )
+  }
   println("Scaffolding default assets.")
   @fs.write_string_to_file("templates/default.html", templates_default_html)
   @fs.write_string_to_file("styles/index.css", styles_index_css)

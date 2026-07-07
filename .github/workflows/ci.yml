@@ -28,8 +28,15 @@ jobs:
       - name: Update Moonbit registry
         run: moon update
 
-      - name: Run tests
-        run: just test
+      - name: Run prebuild
+        run: just prebuild
+
+      - name: Run checks and tests
+        run: |
+          moon check
+          moon test
+          moon info && git diff --exit-code
+          moon fmt && git diff --exit-code
 
       - name: Build project
-        run: just build
+        run: moon build
