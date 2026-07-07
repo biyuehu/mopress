@@ -18,6 +18,7 @@ fn inject_before_body_end(html : String, tag : String) -> String {
 
 ///|
 fn parse_frontmatter(content : String) -> (Frontmatter, String) {
+  let content = content.replace_all(old="\r\n", new="\n")
   if !content.has_prefix("---\n") {
     (Map([]), content)
   } else {
