@@ -228,7 +228,7 @@ pub fn inject_body(item : Item[Html], code : String) -> Item[Html] {
 ///
 /// This is typically the final step applied to an item before it is
 /// handed off as the result of a `Handler::Text` or `Handler::Binary` handler.
-pub fn[T : Thingable] identify(item : Item[T]) -> Item[Thing] {
+pub fn[T : Thingable] unify(item : Item[T]) -> Item[Thing] {
   item.map(x => x.to_thing())
 }
 

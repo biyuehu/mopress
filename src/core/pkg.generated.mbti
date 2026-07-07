@@ -16,8 +16,6 @@ pub fn apply_template_strict(Item[String], Array[@template.TemplateNode]) -> Ite
 
 pub fn[T : Show] extract_markdown(Item[T]) -> Item[(Map[String, String], String)]
 
-pub fn[T : Thingable] identify(Item[T]) -> Item[Thing]
-
 pub fn import_css(Item[String], Array[String]) -> Item[String]
 
 pub fn import_js(Item[String], Array[String]) -> Item[String]
@@ -49,6 +47,8 @@ pub fn render_markdown_from_ast(Item[Array[@markdown.Block]]) -> Item[String]
 pub fn separate_frontmatter(Item[String]) -> Item[(Map[String, String], String)]
 
 pub fn[T] set_extension(Item[T], String) -> Item[T]
+
+pub fn[T : Thingable] unify(Item[T]) -> Item[Thing]
 
 pub fn use_css(Item[String], Array[String]) -> Item[String]
 

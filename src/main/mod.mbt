@@ -177,7 +177,7 @@ pub async fn process_markdown_page(
   |> @core.use_js(config.extension.use_js)
   |> @core.inject_head(config.extension.inject_head.join("\n"))
   |> @core.inject_body(config.extension.inject_body.join("\n"))
-  |> @core.identify
+  |> @core.unify
 }
 
 ///|

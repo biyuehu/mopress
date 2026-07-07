@@ -344,7 +344,7 @@ pub async fn Handler::run(
   match self {
     Text(f) => read_string(path) |> Item::new(target, extension~) |> f
     Binary(f) => read_bytes(path) |> Item::new(target, extension~) |> f
-    Copy => read_bytes(path) |> Item::new(target, extension~) |> identify
+    Copy => read_bytes(path) |> Item::new(target, extension~) |> unify
   }
 }
 
