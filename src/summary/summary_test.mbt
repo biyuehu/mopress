@@ -41,7 +41,7 @@ test "parse simple summary" {
   @debug.assert_eq(summary.prefix_chapters, [
     Link({
       title: "Preface",
-      location: "preface.html",
+      location: "/preface.html",
       source: "preface.md",
       nested_items: [],
     }),
@@ -55,13 +55,13 @@ test "parse simple summary" {
   match summary.numbered_chapters[1] {
     Link(ch1) => {
       @debug.assert_eq(ch1.title, "Chapter 1")
-      @debug.assert_eq(ch1.location, "ch1.html")
+      @debug.assert_eq(ch1.location, "/ch1.html")
       @debug.assert_eq(ch1.nested_items.length(), 1)
 
       match ch1.nested_items[0] {
         Link(sub) => {
           @debug.assert_eq(sub.title, "Sub 1.1")
-          @debug.assert_eq(sub.location, "ch1/sub.html")
+          @debug.assert_eq(sub.location, "/ch1/sub.html")
           @debug.assert_eq(sub.nested_items.length(), 0)
         }
         _ => panic()
@@ -73,7 +73,7 @@ test "parse simple summary" {
   match summary.numbered_chapters[2] {
     Link(ch2) => {
       @debug.assert_eq(ch2.title, "Chapter 2")
-      @debug.assert_eq(ch2.location, "ch2.html")
+      @debug.assert_eq(ch2.location, "/ch2.html")
       @debug.assert_eq(ch2.nested_items.length(), 0)
     }
     _ => panic()
@@ -84,7 +84,7 @@ test "parse simple summary" {
   @debug.assert_eq(summary.suffix_chapters, [
     Link({
       title: "Appendix",
-      location: "appendix.html",
+      location: "/appendix.html",
       source: "appendix.md",
       nested_items: [],
     }),
@@ -118,7 +118,7 @@ test "parse summary no parts just flat list" {
   match summary.numbered_chapters[0] {
     Link(item) => {
       @debug.assert_eq(item.title, "Intro")
-      @debug.assert_eq(item.location, "intro.html")
+      @debug.assert_eq(item.location, "/intro.html")
       @debug.assert_eq(item.nested_items.length(), 0)
     }
     _ => panic()
@@ -127,7 +127,7 @@ test "parse summary no parts just flat list" {
   match summary.numbered_chapters[1] {
     Link(item) => {
       @debug.assert_eq(item.title, "Guide")
-      @debug.assert_eq(item.location, "guide.html")
+      @debug.assert_eq(item.location, "/guide.html")
       @debug.assert_eq(item.nested_items.length(), 0)
     }
     _ => panic()
@@ -155,7 +155,7 @@ test "breadcrumb" {
     prefix_chapters: [
       SummaryItem::Link({
         title: "说明",
-        location: "./intro.html",
+        location: "/intro.html",
         source: "./intro.md",
         nested_items: [],
       }),
@@ -163,12 +163,12 @@ test "breadcrumb" {
     numbered_chapters: [
       SummaryItem::Link({
         title: "指南",
-        location: "./guide.html",
+        location: "/guide.html",
         source: "./guide.md",
         nested_items: [
           SummaryItem::Link({
             title: "命令",
-            location: "./cmd.html",
+            location: "/cmd.html",
             source: "./cmd.md",
             nested_items: [],
           }),
@@ -199,13 +199,13 @@ test "prev_next" {
       SummaryItem::PartTitle("x"),
       SummaryItem::Link({
         title: "B",
-        location: "./b.html",
+        location: "/b.html",
         source: "./b.md",
         nested_items: [],
       }),
       SummaryItem::Link({
         title: "C",
-        location: "./c.html",
+        location: "/c.html",
         source: "./c.md",
         nested_items: [],
       }),

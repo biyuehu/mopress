@@ -27,16 +27,20 @@ pub(all) struct BookConfig {
   language : String
   /// Path to the directory containing the site's source Markdown content
   /// and its `SUMMARY.md` table of contents, relative to the project root.
+  repository : String?
+  /// Feature toggles controlling optional built-in behavior such as
+  /// syntax highlighting and MathJax support.
   src : String
   /// Path to the directory where the built site is written, relative to
   /// the project root.
   dest : String
+  /// The base URL of the site, used to generate absolute URLs for
+  /// links and assets. This is typically the site's domain name, defaulting
+  /// to `/`.
+  base_url : String
   /// Optional URL to the site's source repository, surfaced via the
   /// `repository` template variable when present (defaults to an empty
   /// string in templates when absent).
-  repository : String?
-  /// Feature toggles controlling optional built-in behavior such as
-  /// syntax highlighting and MathJax support.
   features : FeaturesConfig
   /// Extension points for customizing the build: templates, asset
   /// injection, and the external preprocessor/transformer command
@@ -229,9 +233,10 @@ pub fn BookConfig::parse(
     favicon: read_string(root, "favicon", default.favicon),
     logo: read_string(root, "logo", default.logo),
     language: read_string(root, "language", default.language),
+    repository: read_optional_string(root, "repository"),
     src: read_string(root, "src", default.src),
     dest: read_string(root, "dest", default.dest),
-    repository: read_optional_string(root, "repository"),
+    base_url: read_string(root, "base_url", default.base_url),
     features: {
       highlight_enabled: read_bool(features, "highlight-enabled"),
       highlight_theme: read_string(
@@ -268,9 +273,10 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     logo: "https://himeno-sena.com/favicon.ico",
     authors: ["Himeno Sena"],
     language: "en",
+    repository: Some("https://github.com/biyuehu/mopress"),
     src: "./",
     dest: "./dest",
-    repository: Some("https://github.com/biyuehu/mopress"),
+    base_url: "/",
     features: FeaturesConfig::default(),
     extension: ExtensionConfig::default(),
   }
@@ -299,7 +305,7 @@ pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
 pub impl Default for ExtensionConfig with fn default() -> ExtensionConfig {
   {
     template: "templates/default.html",
-    assets: ["images/*", "styles/*", "scripts/*"],
+    assets: ["images/**/*", "styles/**/*", "scripts/**/*"],
     inject_head: [],
     inject_body: [],
     use_js: ["console.log('Hello, MoPress!');"],

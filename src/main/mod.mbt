@@ -132,7 +132,11 @@ pub async fn process_markdown_page(
     let (prev, next) = summary.prev_next(x.location())
     x.add_vars(
       Map([
-        ("section", summary.flatten(x.location()) |> @template.Value::from_json),
+        (
+          "section",
+          summary.flatten(x.location(), config.base_url)
+          |> @template.Value::from_json,
+        ),
         ("site_title", config.title |> String),
         ("site_description", config.description |> String),
         ("site_keywords", config.keywords |> String),
@@ -195,7 +199,7 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
       @path.Path(config.src).join("SUMMARY.md").to_string(),
     )
     |> @markdown.parse_markdown
-    |> @summary.parse_summary
+    |> @summary.parse_summary()
 
   println("Rendering 404 page")
   let not_found_page = process_markdown_page(
@@ -230,9 +234,12 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
           }
         }),
       ),
-      Glob("*.md", Text(raw => raw |> process_markdown_page(config, summary))),
       Glob(
-        "*.markdown",
+        "**/*.md",
+        Text(raw => raw |> process_markdown_page(config, summary)),
+      ),
+      Glob(
+        "**/*.markdown",
         Text(raw => raw |> process_markdown_page(config, summary)),
       ),
       ..config.extension.assets.map(glob => @core.Glob(glob, Copy)),

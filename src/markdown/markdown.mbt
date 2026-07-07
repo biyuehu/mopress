@@ -134,7 +134,7 @@ pub impl Plainable for TableBlock with fn to_plain(self : TableBlock) -> String 
 /// Parses `input` (any `Show`-able value, typically a `String` of raw
 /// Markdown source) into a Markdown AST.
 pub fn[T : Show] parse_markdown(input : T) -> Markdown {
-  parse_string(input.to_string())
+  parse_string(input.to_string().replace_all(old="\r\n", new="\n"))
 }
 
 ///|

@@ -45,6 +45,7 @@ fn flatten_items(
   items : Array[SummaryItem],
   depth : Int,
   current : String,
+  base_url : String,
   numbered? : Bool = false,
   prefix? : String = "",
 ) -> Array[Json] {
@@ -61,11 +62,16 @@ fn flatten_items(
       Link(link) => {
         counter += 1
         let number = prefix + counter.to_string()
+        let location = if base_url[-1:] == "/" {
+          base_url[0:base_url.length() - 1] + link.location
+        } else {
+          base_url + link.location
+        }
         if numbered {
           result.push({
             "is_link": true.to_json(),
             "title": link.title.to_json(),
-            "location": link.location,
+            "location": location,
             "source": link.source,
             "depth": depth.to_json(),
             "is_current": (link.location == current).to_json(),
@@ -75,7 +81,7 @@ fn flatten_items(
           result.push({
             "is_link": true.to_json(),
             "title": link.title.to_json(),
-            "location": link.location,
+            "location": location,
             "source": link.source,
             "depth": depth.to_json(),
             "is_current": (link.location == current).to_json(),
@@ -86,6 +92,7 @@ fn flatten_items(
             link.nested_items,
             depth + 1,
             current,
+            base_url,
             numbered~,
             prefix=number + ".",
           ),
@@ -100,17 +107,22 @@ fn flatten_items(
 /// Returns a JSON representation of this summary, rooted at `location`,
 /// e.g. for use as a template variable describing the current section's
 /// navigation structure.
-pub fn Summary::flatten(self : Summary, current : String) -> Json {
+pub fn Summary::flatten(
+  self : Summary,
+  current : String,
+  base_url : String,
+) -> Json {
+  let current = unify_url(current)
   {
     "title": self.title.to_json(),
     "prefix_chapters": Json::array(
-      flatten_items(self.prefix_chapters, 0, current),
+      flatten_items(self.prefix_chapters, 0, current, base_url),
     ),
     "numbered_chapters": Json::array(
-      flatten_items(self.numbered_chapters, 0, current, numbered=true),
+      flatten_items(self.numbered_chapters, 0, current, base_url, numbered=true),
     ),
     "suffix_chapters": Json::array(
-      flatten_items(self.suffix_chapters, 0, current),
+      flatten_items(self.suffix_chapters, 0, current, base_url),
     ),
   }
 }
@@ -138,7 +150,7 @@ fn extract_item_link(item : Array[@markdown.Block]) -> SummaryLink? {
         [Link(title, url), ..] =>
           Some({
             title: @markdown.Plainable::to_plain(title),
-            location: handle_location(url),
+            location: unify_url(url),
             source: url,
             nested_items: [],
           })
@@ -240,11 +252,11 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
 }
 
 ///|
-fn handle_location(url : String) -> String {
+fn unify_url(url : String) -> String {
+  let url = url.replace_all(old="\\", new="/")
   let path = @path.Path(url)
   let basename = Show::to_string(path.basename())
-
-  let location = path
+  let result = path
     .dirname()
     .join(
       basename
@@ -253,11 +265,13 @@ fn handle_location(url : String) -> String {
       .unwrap_or(basename) +
       ".html",
     )
-    .to_string()
-  if location.length() > 2 && location[0:2] == "./" {
-    location[2:] |> Show::to_string
+    |> Show::to_string
+  if result[0:2] == "./" {
+    "/" + (result[2:] |> Show::to_string)
+  } else if result[0:1] == "/" {
+    result
   } else {
-    location
+    "/" + result
   }
 }
 
@@ -306,7 +320,7 @@ fn extract_root_link_items(
         result.push(
           Link({
             title: @markdown.Plainable::to_plain(title),
-            location: handle_location(url),
+            location: unify_url(url),
             source: url,
             nested_items: [],
           }),
@@ -436,6 +450,7 @@ pub fn Summary::index_articles(
 /// Returns a breadcrumb string describing the path from the root of the
 /// table of contents down to the chapter located at `location`.
 pub fn Summary::breadcrumb(self : Summary, current : String) -> String {
+  let current = unify_url(current)
   fn find(items : Array[SummaryItem], path : Array[String]) -> Array[String]? {
     for item in items {
       match item {
@@ -479,6 +494,7 @@ pub fn Summary::prev_next(
   self : Summary,
   current : String,
 ) -> ((String, String)?, (String, String)?) {
+  let current = unify_url(current)
   let flat : Array[SummaryLink] = []
   fn collect(items : Array[SummaryItem]) -> Unit {
     for item in items {

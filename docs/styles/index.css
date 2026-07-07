@@ -237,18 +237,6 @@ body {
 	font-size: 0.75rem;
 }
 
-.nav-item .dot {
-	width: 0.25rem;
-	height: 0.25rem;
-	flex-shrink: 0;
-	border-radius: 50%;
-	background: var(--text-faint);
-}
-
-.nav-item.active .dot {
-	background: var(--accent);
-}
-
 .nav-item .chevron {
 	margin-left: auto;
 	display: flex;
