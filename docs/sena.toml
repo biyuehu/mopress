@@ -4,18 +4,20 @@ keywords = "Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functi
 favicon = "https://himeno-sena.com/favicon.ico"
 logo = "https://himeno-sena.com/favicon.ico"
 authors = ["Himeno Sena"]
-language = "en"
+language = "zh"
+repository = "https://github.com/biyuehu/mopress"
 src = "./"
 dest = "./dest"
+base-url = "/"
 
 [features]
-highlight-enabled = false
+highlight-enabled = true
 highlight-theme = "github"
-mathjax-enabled = false
+mathjax-enabled = true
 
 [extension]
 template = "templates/default.html"
-assets = ["images/*", "styles/*", "scripts/*"]
+assets = ["images/**/", "styles/**/*", "scripts/**/*"]
 inject-head = []
 inject-body = []
 use-js = []

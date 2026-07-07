@@ -10,14 +10,14 @@
   - [配置 (sena.toml)](./book-mode/configuration.md)
   - [组织章节 (SUMMARY.md)](./book-mode/summary-file.md)
   - [元数据](./book-mode/frontmatter.md)
-  - [扩展](./book-mode/extensions.md)
+  - [扩展配置](./book-mode/extensions.md)
   - [功能预设](./book-mode/features.md)
 
 - [Site 模式](./site-mode/index.md)
   - [开始](./site-mode/starting.md)
   - [Rules, Handlers 和 Steps](./site-mode/rules-handlers-steps.md)
   - [组合 Steps](./site-mode/composing-steps.md)
-  - [输出格式](./site-mode/recipes/output-formats.md)
+  - [输出格式](./site-mode/output-formats.md)
 
 - [自定义](./custom/index.md)
   - [模板引擎](./custom/template.md)

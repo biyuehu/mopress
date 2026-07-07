@@ -80,10 +80,10 @@ fn main {
         |> import_css("./custom.css")
         |> use_js("console.log('hi, moonbit! hi, mopress!')")
         |> use_css("some css code")
-        |> identify
+        |> unify
       }),
     ),
-  Glob("images/*", Binary(raw => raw |> identify)),
+  Glob("images/*", Binary(raw => raw |> unify)),
   Glob("css/*", Copy),
   ])
 }
