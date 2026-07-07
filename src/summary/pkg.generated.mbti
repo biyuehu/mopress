@@ -27,7 +27,7 @@ pub(all) struct Summary {
   suffix_chapters : Array[SummaryItem]
 } derive(Eq, @debug.Debug)
 pub fn Summary::breadcrumb(Self, String) -> String
-pub fn Summary::flatten(Self, String) -> Json
+pub fn Summary::flatten(Self, String, String) -> Json
 pub fn Summary::index_articles(Self, String) -> Array[ArticleIndex] raise
 pub fn Summary::prev_next(Self, String) -> ((String, String)?, (String, String)?)
 

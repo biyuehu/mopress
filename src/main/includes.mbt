@@ -373,18 +373,6 @@ let styles_index_css: String =   #|@import url("https://fonts.googleapis.com/css
   #|	font-size: 0.75rem;
   #|}
   #|
-  #|.nav-item .dot {
-  #|	width: 0.25rem;
-  #|	height: 0.25rem;
-  #|	flex-shrink: 0;
-  #|	border-radius: 50%;
-  #|	background: var(--text-faint);
-  #|}
-  #|
-  #|.nav-item.active .dot {
-  #|	background: var(--accent);
-  #|}
-  #|
   #|.nav-item .chevron {
   #|	margin-left: auto;
   #|	display: flex;
@@ -1054,8 +1042,8 @@ let templates_default_html: String =   #|<!DOCTYPE html>
   #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
   #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
   #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
-  #|          <span class="dot"></span>$item.title$
+  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
+  #|          $item.title$
   #|        </a>
   #|        $endif$
   #|        $endfor$
@@ -1063,8 +1051,8 @@ let templates_default_html: String =   #|<!DOCTYPE html>
   #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
   #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
   #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="/$item.location$">
-  #|          <span class="dot"></span><strong>$item.number$</strong>$item.title$
+  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="$item.location$">
+  #|          <strong>$item.number$</strong>$item.title$
   #|        </a>
   #|        $endif$
   #|        $endfor$
@@ -1072,8 +1060,8 @@ let templates_default_html: String =   #|<!DOCTYPE html>
   #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
   #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
   #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="/$item.location$">
-  #|          <span class="dot"></span>$item.title$</a>
+  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
+  #|          $item.title$</a>
   #|        $endif$
   #|        $endfor$
   #|      </div>

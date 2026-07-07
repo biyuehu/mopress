@@ -22,9 +22,10 @@ pub(all) struct BookConfig {
   logo : String
   authors : Array[String]
   language : String
+  repository : String?
   src : String
   dest : String
-  repository : String?
+  base_url : String
   features : FeaturesConfig
   extension : ExtensionConfig
 } derive(Eq, ToJson, @debug.Debug)
