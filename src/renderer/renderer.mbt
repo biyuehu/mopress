@@ -147,7 +147,8 @@ fn render_link(
   href : String,
   ctx : RenderContext,
 ) -> String {
-  "<a href=\"\{escape_attr(href)}\" target=\"_blank\" rel=\"noopener noreferrer\">\{render_inlines(label, ctx)}</a>"
+  let url = escape_attr(href)
+  "<a href=\"\{url}\" \{if url.has_prefix("http://") || url.has_prefix("https://") { "target=\"_blank\" "} else {""}} rel=\"noopener noreferrer\">\{render_inlines(label, ctx)}</a>"
 }
 
 ///|
