@@ -27,14 +27,14 @@ pub(all) struct BookConfig {
   dest : String
   base_url : String
   features : FeaturesConfig
-  extensions : ExtensionConfig
+  extensions : ExtensionsConfig
 } derive(Eq, ToJson, @debug.Debug)
 pub fn BookConfig::apply_feature_presets(Self) -> Self
 pub fn BookConfig::parse(String) -> Self raise ConfigParseError
 pub fn BookConfig::to_toml(Self) -> String
 pub impl Default for BookConfig
 
-pub(all) struct ExtensionConfig {
+pub(all) struct ExtensionsConfig {
   template : String
   assets : Array[String]
   inject_head : Array[String]
@@ -46,7 +46,7 @@ pub(all) struct ExtensionConfig {
   preprocessors : Array[String]
   transformers : Array[String]
 } derive(Eq, ToJson, @debug.Debug)
-pub impl Default for ExtensionConfig
+pub impl Default for ExtensionsConfig
 
 pub(all) struct FeaturesConfig {
   highlight_enabled : Bool

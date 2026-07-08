@@ -45,7 +45,7 @@ pub(all) struct BookConfig {
   /// Extension points for customizing the build: templates, asset
   /// injection, and the external preprocessor/transformer command
   /// pipelines.
-  extensions : ExtensionConfig
+  extensions : ExtensionsConfig
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
@@ -65,7 +65,7 @@ pub(all) struct FeaturesConfig {
 /// which template to render pages with, which static assets to copy
 /// verbatim, which CSS/JS to inject or import, and which external
 /// preprocessor/transformer commands to run over Markdown content.
-pub(all) struct ExtensionConfig {
+pub(all) struct ExtensionsConfig {
   /// Path to the HTML template file used to render every page (see
   /// `@core.load_and_apply_template` as used by `process_markdown_page`).
   template : String
@@ -132,9 +132,14 @@ pub fn BookConfig::apply_feature_presets(self : BookConfig) -> BookConfig {
     self.extensions.import_css.push(
       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/\{self.features.highlight_theme}.min.css",
     )
-    self.extensions.import_js.push(
-      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js",
-    )
+    for
+      js in [
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js",
+        "https://cdn.jsdelivr.net/gh/Kaida-Amethyst/highlightjs-moonbit/dist/moonbit.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/haskell.min.js",
+      ] {
+      self.extensions.import_js.push(js)
+    }
     self.extensions.use_js.push("hljs.highlightAll()")
   }
   if self.features.mathjax_enabled {
@@ -280,7 +285,7 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     dest: "./dest",
     base_url: "/",
     features: FeaturesConfig::default(),
-    extensions: ExtensionConfig::default(),
+    extensions: ExtensionsConfig::default(),
   }
 }
 
@@ -304,7 +309,7 @@ pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
 /// The default extension configuration used to scaffold a new project,
 /// with no custom preprocessors/transformers and no injected assets beyond
 /// the default template.
-pub impl Default for ExtensionConfig with fn default() -> ExtensionConfig {
+pub impl Default for ExtensionsConfig with fn default() -> ExtensionsConfig {
   {
     template: "templates/default.html",
     assets: ["images/**/*", "styles/**/*", "scripts/**/*"],
