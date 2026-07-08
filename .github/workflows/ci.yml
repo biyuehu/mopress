@@ -33,7 +33,14 @@ jobs:
 
       - name: install msvc toolchain for Windows
         if: ${{ matrix.os == 'windows-latest' }}
-        uses: microsoft/setup-msbuild@v2
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - shell: cmd
+        run: |
+          where cl
+          cl
 
       - name: Check MoonBit
         run: |
