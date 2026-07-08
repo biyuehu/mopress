@@ -124,7 +124,7 @@ pub fn[T] Item::location(self : Item[T]) -> String {
 ///|
 /// Applies `f` to this item's data to produce a new item with data of
 /// type `R`, optionally overriding `target`, `extension`, and/or `vars` in
-/// the same way as `Item::extend`.
+/// the same way as `Item::base`.
 ///
 /// `extension`, when provided, should include its leading dot (e.g.
 /// `.html`), consistent with `set_extension`.
@@ -187,7 +187,7 @@ pub fn[T, R] Item::map_with_raise(
 ///
 /// `extension`, when provided, should include its leading dot (e.g.
 /// `.html`), consistent with `set_extension`.
-pub fn[T] Item::extend(
+pub fn[T] Item::base(
   self : Item[T],
   target? : String,
   extension? : String,
@@ -213,7 +213,7 @@ pub fn[T] Item::extend(
 /// Returns a copy of `self` with the given variables merged into its
 /// existing `vars`, overwriting any existing entries with the same key.
 pub fn[T] Item::add_vars(self : Item[T], vars : Vars) -> Item[T] {
-  self.extend(vars=self.vars.merge(vars))
+  self.base(vars=self.vars.merge(vars))
 }
 
 ///|
@@ -224,7 +224,7 @@ pub fn[T] Item::set_var(
   key : String,
   value : @template.Value,
 ) -> Item[T] {
-  self.extend(vars=self.vars.merge(Map([(key, value)])))
+  self.base(vars=self.vars.merge(Map([(key, value)])))
 }
 
 ///|

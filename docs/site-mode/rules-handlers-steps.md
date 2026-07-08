@@ -28,12 +28,12 @@ pub struct Item[T] {
 - `Item::new(data, target, extension?, vars?)`——创建一个新的 item。
 - `Item::map(self, f, target?, extension?, vars?)`——对 `data` 应用一个不会失败的函数 `f`，得到新类型的 item，同时可以顺带覆盖 `target`/`extension`/`vars`。
 - `Item::map_with_eff(self, f, target?, extension?, vars?)`——与 `map` 类似，但 `f` 可以 `raise` 错误，错误会向外传播。
-- `Item::extend(self, target?, extension?, vars?)`——仅修改 `target`/`extension`/`vars`，`data` 保持不变。
+- `Item::base(self, target?, extension?, vars?)`——仅修改 `target`/`extension`/`vars`，`data` 保持不变。
 - `Item::add_vars`／`Item::set_var`／`Item::clear_var`——分别用于批量合并变量、设置单个变量、清除某个变量。
 - `Item::location(self)`——返回该 item 当前的 `target` 路径，常用于计算面包屑、上一页/下一页等导航信息。
 
 >[!NOTE]
-> **关于扩展名的约定**：任何涉及 `extension` 参数的地方（`Item::new`、`Item::extend`、`Item::map`、以及顶层的 `set_extension` 函数），传入的字符串都需要包含前导的点号，例如".html"而非"html"。
+> **关于扩展名的约定**：任何涉及 `extension` 参数的地方（`Item::new`、`Item::base`、`Item::map`、以及顶层的 `set_extension` 函数），传入的字符串都需要包含前导的点号，例如".html"而非"html"。
 
 ## Step：数据流动的基本单元
 

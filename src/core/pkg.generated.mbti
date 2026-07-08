@@ -75,8 +75,8 @@ pub struct Item[T] {
   // private fields
 } derive(Eq, @debug.Debug)
 pub fn[T] Item::add_vars(Self[T], Map[String, @template.Value]) -> Self[T]
+pub fn[T] Item::base(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
-pub fn[T] Item::extend(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::location(Self[T]) -> String
 pub fn[T, R] Item::map(Self[T], (T) -> R, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R]
 pub fn[T, R] Item::map_with_raise(Self[T], (T) -> R raise, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R] raise

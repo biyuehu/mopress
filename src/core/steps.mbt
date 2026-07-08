@@ -78,7 +78,7 @@ pub fn[T : Show] render_markdown_and_frontmatter(item : Item[T]) -> Item[Html] {
 /// `extension` (including the leading dot, e.g. `.html`), without
 /// modifying its data.
 pub fn[T] set_extension(item : Item[T], extension : String) -> Item[T] {
-  item.extend(extension~)
+  item.base(extension~)
 }
 
 ///|
