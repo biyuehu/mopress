@@ -55,4 +55,21 @@ jobs:
           moon info && git diff --exit-code
 
       - name: Build project
-        run: moon build
+        run: moon build --release
+
+      - name: Build docs
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          cd docs
+          ../_build/native/release/build/main/main build
+
+
+      - name: Deploy to GitHub Pages
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: webpage
+          build_dir: docs/dest
+          fqdn: https://mo.himeno-sena.com
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
