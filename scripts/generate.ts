@@ -15,7 +15,7 @@ writeFileSync(
 	)
 		.map(
 			([p, n]) =>
-				`///|\nlet ${n}: String = ${readFileSync(p, "utf-8")
+				`///|\nlet ${n} : String =\n${readFileSync(p, "utf-8")
 					.split("\n")
 					.map((l) => `  #|${l}`)
 					.join("\n")}\n`,

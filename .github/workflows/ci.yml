@@ -28,9 +28,6 @@ jobs:
       - name: Update Moonbit registry
         run: moon update
 
-      - name: Run prebuild
-        run: just prebuild
-
       - name: Run checks and tests
         run: |
           moon check
