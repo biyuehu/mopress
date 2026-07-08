@@ -8,8 +8,6 @@ title: 组合 Steps
 
 ## 常用 step 分类
 
-TODO: 提供类型定义
-
 ### 元数据与解析
 
 - `separate_frontmatter`：将文本拆分为 YAML 元数据（`Map[String, String]`）与正文文本。
