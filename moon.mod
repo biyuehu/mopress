@@ -20,6 +20,4 @@ description = "A modern documentation and static site generator for the MoonBit 
 
 preferred_target = "native"
 
-options(
-  source: "src",
-)
+source = "src"
