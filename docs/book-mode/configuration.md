@@ -28,7 +28,7 @@ highlight_enabled = true
 highlight_theme = "github"
 mathjax_enabled = false
 
-[extension]
+[extensions]
 template = "templates/default.html"
 assets = ["images/*", "styles/*", "scripts/*"]
 inject-head = []
@@ -60,11 +60,11 @@ transformers = []
 | `dest` | 字符串 | 构建输出目录，相对于项目根目录 |
 | `base-url` | 字符串 | 基本 URL，用于构建输出的 URL 路径，默认值为 `/` |
 | `[features]` | 表 | 内置功能开关，详见 [Features 预设](./features.md) |
-| `[extension]` | 表 | 模板、资源注入与插件相关配置，详见 [扩展配置](./extensions.md) |
+| `[extensions]` | 表 | 模板、资源注入与插件相关配置，详见 [扩展配置](./extensions.md) |
 
 ## 注意事项
 
 - `title`、`description`、`keywords`、`favicon`、`logo`、`authors`、`language` 字段均会以不同形式自动注入为模板中的变量，具体行为参考 [TODO:]
 - `src` 与 `dest` 建议使用相对路径，且不要让两者产生嵌套关系（例如 `dest` 是 `src` 的子目录），否则构建时可能会把已生成的输出当作源文件重复处理。
 - `repository` 字段留空时，对应的模板变量会是空字符串，而不是不存在——在模板中使用 `{{#if repository}}` 之类的判断时需要留意这一点。
-- `[features]` 与 `[extension]` 并非互斥关系：`features` 中的开关会在配置加载时自动展开（脱糖）为 `extension` 中的具体字段（例如注入对应的 CSS/JS）。也就是说，你既可以只用 `features` 走"预设"路线，也可以直接在 `extension` 中手写等效配置，两者最终作用的对象是一致的。详见 [Features 预设](./features.md)。
+- `[features]` 与 `[extensions]` 并非互斥关系：`features` 中的开关会在配置加载时自动展开（脱糖）为 `extension` 中的具体字段（例如注入对应的 CSS/JS）。也就是说，你既可以只用 `features` 走"预设"路线，也可以直接在 `extension` 中手写等效配置，两者最终作用的对象是一致的。详见 [Features 预设](./features.md)。

@@ -19,19 +19,19 @@
   - [Composing Steps](./site-mode/composing-steps.md)
   - [Output Formats](./site-mode/recipes/output-formats.md)
 
-- [Customization](./customization/overview.md)
-  - [Templating Engine](./customization/template.md)
-  - [Custom 404 Pages](./customization/custom-404.md)
-  - [Diverse Plugins](./customization/plugins.md)
-    - [The External stdin/stdout Protocol](./customization/plugins/protocol.md)
-    - [Web Components](./customization/plugins/web-components.md)
-    - [Moonbit Modules (Only Site Mode)](./customization/plugins/moonbit-modules.md)
+- [Custom](./custom/overview.md)
+  - [Templating Engine](./custom/template.md)
+  - [Custom 404 Pages](./custom/custom-404.md)
+  - [Diverse Plugins](./custom/plugins/index.md)
+    - [The External stdin/stdout Protocol](./custom/plugins/protocol.md)
+    - [Web Components](./custom/plugins/web-components.md)
+    - [Moonbit Modules (Only Site Mode)](./custom/plugins/moonbit-modules.md)
 
 ## References
 
 - [Markdown Demostration](./references/markdown.md)
 - [Glob Patterns](./references/glob.md)
-- [Cli Reference](./references/cli.md)
+- [CLI Reference](./references/cli.md)
 - [Api Reference](./references/api.md)
 
 [Contributing](./contributing.md)

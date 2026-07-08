@@ -15,7 +15,7 @@ highlight-enabled = true
 highlight-theme = "github"
 mathjax-enabled = true
 
-[extension]
+[extensions]
 template = "templates/default.html"
 assets = ["images/**/", "styles/**/*", "scripts/**/*"]
 inject-head = []

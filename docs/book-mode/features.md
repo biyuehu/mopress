@@ -4,7 +4,7 @@ title: 功能预设
 
 # 功能预设
 
-`sena.toml` 中的 `[features]` 表提供了一组开箱即用的功能开关。与 `[extension]` 中需要手写具体配置项不同，`features` 只需要打开对应的布尔开关，mopress 就会在加载配置时自动将其"展开"为等效的 `extension` 配置。
+`sena.toml` 中的 `[features]` 表提供了一组开箱即用的功能开关。与 `[extensions]` 中需要手写具体配置项不同，`features` 只需要打开对应的布尔开关，mopress 就会在加载配置时自动将其"展开"为等效的 `extension` 配置。
 
 ## 字段一览
 

@@ -31,7 +31,7 @@
 
 - [Markdown 演示](./references/markdown.md)
 - [Glob 模式](./references/glob.md)
-- [Cli 参考](./references/cli.md)
+- [CLI 参考](./references/cli.md)
 - [Api 参考](./references/api.md)
 
 [贡献](./contributing.md)
