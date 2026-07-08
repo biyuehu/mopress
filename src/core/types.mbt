@@ -107,6 +107,7 @@ pub fn[T] Item::new(
 /// links, breadcrumbs, or previous/next navigation (see
 /// `@summary.Summary::breadcrumb` and `@summary.Summary::prev_next`).
 pub fn[T] Item::location(self : Item[T]) -> String {
+  println("Location: " + self.target)
   let path = @path.Path(self.target)
   let basename = Show::to_string(path.basename())
   path
@@ -265,6 +266,7 @@ pub fn Thing::write(
   dest : String,
   target : String,
 ) -> Unit raise @fs.IOError {
+  println("Writing to: " + target)
   let path = @path.Path(dest).join(target).to_string()
   ensure_dir_for_file(path)
   match self {
@@ -341,6 +343,9 @@ pub async fn Handler::run(
 ) -> Item[Thing] {
   let extension = @path.Path(path).extname() |> Show::to_string
   let target = path[options.src.length() + 1:] |> Show::to_string
+  println(
+    "Running handler for: " + path + " :: " + target + " :: " + options.src,
+  )
   match self {
     Text(f) => read_string(path) |> Item::new(target, extension~) |> f
     Binary(f) => read_bytes(path) |> Item::new(target, extension~) |> f
