@@ -170,13 +170,13 @@ pub async fn process_markdown_page(
       ]),
     )
   }
-  |> @core.load_and_apply_template(config.extension.template)
-  |> @core.import_css(config.extension.import_css)
-  |> @core.import_js(config.extension.import_js)
-  |> @core.use_css(config.extension.use_css)
-  |> @core.use_js(config.extension.use_js)
-  |> @core.inject_head(config.extension.inject_head.join("\n"))
-  |> @core.inject_body(config.extension.inject_body.join("\n"))
+  |> @core.load_and_apply_template(config.extensions.template)
+  |> @core.import_css(config.extensions.import_css)
+  |> @core.import_js(config.extensions.import_js)
+  |> @core.use_css(config.extensions.use_css)
+  |> @core.use_js(config.extensions.use_js)
+  |> @core.inject_head(config.extensions.inject_head.join("\n"))
+  |> @core.inject_body(config.extensions.inject_body.join("\n"))
   |> @core.unify
 }
 
@@ -242,7 +242,7 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
         "**/*.markdown",
         Text(raw => raw |> process_markdown_page(config, summary)),
       ),
-      ..config.extension.assets.map(glob => @core.Glob(glob, Copy)),
+      ..config.extensions.assets.map(glob => @core.Glob(glob, Copy)),
     ],
   )
 }

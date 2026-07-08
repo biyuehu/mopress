@@ -62,7 +62,7 @@ pub async fn run_markdown_transformers(
   data : @markdown.Markdown,
 ) -> @markdown.Markdown {
   let mut current = data
-  for script in config.extension.transformers {
+  for script in config.extensions.transformers {
     current = run_single_markdown_transformer(config, current, script)
   }
   current
@@ -196,7 +196,7 @@ pub async fn run_markdown_preprocessors(
   data : String,
 ) -> String {
   let mut current = data
-  for script in config.extension.preprocessors {
+  for script in config.extensions.preprocessors {
     current = run_single_markdown_preprocessor(config, current, script)
   }
   current

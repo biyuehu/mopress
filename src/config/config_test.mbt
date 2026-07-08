@@ -9,7 +9,7 @@ test "parse full config" {
     #|src = "src"
     #|dest = "public"
     #|
-    #|[extension]
+    #|[extensions]
     #|template = "template.html"
     #|use-css = ["// ..."]
     #|use-js = ["console.log('hello')"]
@@ -25,12 +25,12 @@ test "parse full config" {
   assert_eq(config.language, "zh")
   assert_eq(config.src, "src")
   assert_eq(config.dest, "public")
-  assert_eq(config.extension.template, "template.html")
-  @debug.assert_eq(config.extension.use_css, ["// ..."])
-  @debug.assert_eq(config.extension.use_js, ["console.log('hello')"])
-  @debug.assert_eq(config.extension.import_css, ["style.css", "custom.css"])
-  @debug.assert_eq(config.extension.import_js, ["app.js"])
-  @debug.assert_eq(config.extension.preprocessors, ["katex"])
+  assert_eq(config.extensions.template, "template.html")
+  @debug.assert_eq(config.extensions.use_css, ["// ..."])
+  @debug.assert_eq(config.extensions.use_js, ["console.log('hello')"])
+  @debug.assert_eq(config.extensions.import_css, ["style.css", "custom.css"])
+  @debug.assert_eq(config.extensions.import_js, ["app.js"])
+  @debug.assert_eq(config.extensions.preprocessors, ["katex"])
 }
 
 ///|
@@ -54,10 +54,10 @@ test "parse missing extension section" {
     ),
   )
   @debug.assert_eq(config.title, "NoExt")
-  @debug.assert_eq(config.extension.import_css, [])
-  @debug.assert_eq(config.extension.import_js, [])
-  @debug.assert_eq(config.extension.preprocessors, [])
-  @debug.assert_eq(config.extension.transformers, [])
+  @debug.assert_eq(config.extensions.import_css, [])
+  @debug.assert_eq(config.extensions.import_js, [])
+  @debug.assert_eq(config.extensions.preprocessors, [])
+  @debug.assert_eq(config.extensions.transformers, [])
 }
 
 ///|
@@ -90,13 +90,13 @@ test "parse title is not string" {
 ///|
 test "parse extension is not table" {
   let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse("extension = \"not_a_table\""),
+    BookConfig::parse("extensions = \"not_a_table\""),
   ) catch {
     e => Err(e)
   }
   match result {
     Err(ConfigParseError(msg)) =>
-      @debug.assert_eq(msg.has_prefix("[extension] must be a table"), true)
+      @debug.assert_eq(msg.has_prefix("[extensions] must be a table"), true)
     Ok(_) => fail("Expected error for non-table extension")
   }
 }
@@ -107,7 +107,7 @@ test "parse import-css is not array" {
     BookConfig::parse(
       (
         #|title = "sena!"
-        #|[extension]
+        #|[extensions]
         #|template = ""
         #|import-css = "not_an_array"
       ),
@@ -128,7 +128,7 @@ test "parse import-js array contains non-string" {
     BookConfig::parse(
       (
         #|title = "sena!"
-        #|[extension]
+        #|[extensions]
         #|template = ""
         #|import-js = ["ok.js", 42]
       ),
@@ -152,7 +152,7 @@ test "parse preprocessors array contains non-string" {
     BookConfig::parse(
       (
         #|title = "sena!"
-        #|[extension]
+        #|[extensions]
         #|template = ""
         #|preprocessors = [true, false]
       ),
@@ -176,7 +176,7 @@ test "parse transformers is not array" {
     BookConfig::parse(
       (
         #|title = "sena!"
-        #|[extension]
+        #|[extensions]
         #|template = ""
         #|transformers = 999
       ),

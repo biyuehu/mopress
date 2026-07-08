@@ -45,7 +45,7 @@ pub(all) struct BookConfig {
   /// Extension points for customizing the build: templates, asset
   /// injection, and the external preprocessor/transformer command
   /// pipelines.
-  extension : ExtensionConfig
+  extensions : ExtensionConfig
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
@@ -129,16 +129,16 @@ pub let file_name = "sena.toml"
 /// applied afterwards.
 pub fn BookConfig::apply_feature_presets(self : BookConfig) -> BookConfig {
   if self.features.highlight_enabled {
-    self.extension.import_css.push(
+    self.extensions.import_css.push(
       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/\{self.features.highlight_theme}.min.css",
     )
-    self.extension.import_js.push(
+    self.extensions.import_js.push(
       "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js",
     )
-    self.extension.use_js.push("hljs.highlightAll()")
+    self.extensions.use_js.push("hljs.highlightAll()")
   }
   if self.features.mathjax_enabled {
-    self.extension.inject_head.push(
+    self.extensions.inject_head.push(
       (
         #|<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
         #|<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script>
@@ -173,26 +173,28 @@ pub fn BookConfig::to_toml(self : BookConfig) -> String {
     "highlight-theme = \{toml_string(self.features.highlight_theme)}\n",
   )
   b.write_string("mathjax-enabled = \{self.features.mathjax_enabled}\n")
-  b.write_string("\n[extension]\n")
-  b.write_string("template = \{toml_string(self.extension.template)}\n")
-  b.write_string("assets = \{toml_string_array(self.extension.assets)}\n")
+  b.write_string("\n[extensions]\n")
+  b.write_string("template = \{toml_string(self.extensions.template)}\n")
+  b.write_string("assets = \{toml_string_array(self.extensions.assets)}\n")
   b.write_string(
-    "inject-head = \{toml_string_array(self.extension.inject_head)}\n",
+    "inject-head = \{toml_string_array(self.extensions.inject_head)}\n",
   )
   b.write_string(
-    "inject-body = \{toml_string_array(self.extension.inject_body)}\n",
+    "inject-body = \{toml_string_array(self.extensions.inject_body)}\n",
   )
-  b.write_string("use-js = \{toml_string_array(self.extension.use_js)}\n")
-  b.write_string("use-css = \{toml_string_array(self.extension.use_css)}\n")
+  b.write_string("use-js = \{toml_string_array(self.extensions.use_js)}\n")
+  b.write_string("use-css = \{toml_string_array(self.extensions.use_css)}\n")
   b.write_string(
-    "import-css = \{toml_string_array(self.extension.import_css)}\n",
-  )
-  b.write_string("import-js = \{toml_string_array(self.extension.import_js)}\n")
-  b.write_string(
-    "preprocessors = \{toml_string_array(self.extension.preprocessors)}\n",
+    "import-css = \{toml_string_array(self.extensions.import_css)}\n",
   )
   b.write_string(
-    "transformers = \{toml_string_array(self.extension.transformers)}\n",
+    "import-js = \{toml_string_array(self.extensions.import_js)}\n",
+  )
+  b.write_string(
+    "preprocessors = \{toml_string_array(self.extensions.preprocessors)}\n",
+  )
+  b.write_string(
+    "transformers = \{toml_string_array(self.extensions.transformers)}\n",
   )
   b.to_string()
 }
@@ -223,7 +225,7 @@ pub fn BookConfig::parse(
     raise ConfigParseError("Config root must be a TOML table")
   }
   let features = read_table(root, "features", true)
-  let extension = read_table(root, "extension", true)
+  let extensions = read_table(root, "extensions", true)
   let default = BookConfig::default()
   {
     title: read_string_nonempty(root, "title"),
@@ -246,17 +248,17 @@ pub fn BookConfig::parse(
       ),
       mathjax_enabled: read_bool(features, "mathjax-enabled"),
     },
-    extension: {
-      template: read_string(extension, "template", default.extension.template),
-      assets: read_string_array(extension, "assets"),
-      inject_head: read_string_array(extension, "inject-head"),
-      inject_body: read_string_array(extension, "inject-body"),
-      use_js: read_string_array(extension, "use-js"),
-      use_css: read_string_array(extension, "use-css"),
-      import_css: read_string_array(extension, "import-css"),
-      import_js: read_string_array(extension, "import-js"),
-      preprocessors: read_string_array(extension, "preprocessors"),
-      transformers: read_string_array(extension, "transformers"),
+    extensions: {
+      template: read_string(extensions, "template", default.extensions.template),
+      assets: read_string_array(extensions, "assets"),
+      inject_head: read_string_array(extensions, "inject-head"),
+      inject_body: read_string_array(extensions, "inject-body"),
+      use_js: read_string_array(extensions, "use-js"),
+      use_css: read_string_array(extensions, "use-css"),
+      import_css: read_string_array(extensions, "import-css"),
+      import_js: read_string_array(extensions, "import-js"),
+      preprocessors: read_string_array(extensions, "preprocessors"),
+      transformers: read_string_array(extensions, "transformers"),
     },
   }.apply_feature_presets()
 }
@@ -278,7 +280,7 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     dest: "./dest",
     base_url: "/",
     features: FeaturesConfig::default(),
-    extension: ExtensionConfig::default(),
+    extensions: ExtensionConfig::default(),
   }
 }
 

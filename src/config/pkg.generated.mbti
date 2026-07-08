@@ -27,7 +27,7 @@ pub(all) struct BookConfig {
   dest : String
   base_url : String
   features : FeaturesConfig
-  extension : ExtensionConfig
+  extensions : ExtensionConfig
 } derive(Eq, ToJson, @debug.Debug)
 pub fn BookConfig::apply_feature_presets(Self) -> Self
 pub fn BookConfig::parse(String) -> Self raise ConfigParseError
