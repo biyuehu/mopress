@@ -66,7 +66,7 @@ jobs:
           ls _build/native/release
           ls _build/native/release/build/main
           cd docs
-          ../_build/native/release/build/main/main build
+          ../_build/native/release/build/main/main.exe build
 
       - name: Deploy to GitHub Pages
         if: ${{ matrix.os == 'ubuntu-latest' }}
