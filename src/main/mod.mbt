@@ -147,6 +147,7 @@ pub async fn process_markdown_page(
         ("repository", config.repository.unwrap_or("") |> String),
         ("breadcrumb", summary.breadcrumb(x.location()) |> String),
         ("version", "v1.0.0" |> String),
+        ("current", x.location() |> String),
         (
           "prev",
           prev
