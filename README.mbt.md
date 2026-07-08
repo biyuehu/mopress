@@ -6,7 +6,7 @@ A modern documentation and static site generator for the MoonBit ecosystem, insp
 
 ## Overview
 
-mopress offers two usage modes:
+MoPress offers two usage modes:
 
 **Book mode** — out-of-the-box experience similar to mdBook. Configure via `sena.toml` and write Markdown. No code required.
 
