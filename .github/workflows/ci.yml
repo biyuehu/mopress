@@ -62,13 +62,13 @@ jobs:
         run: moon build --release
 
       - name: Build docs
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
           cd docs
           ../_build/native/release/build/main/main.exe build
 
       - name: Deploy to GitHub Pages
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'windows-latest' }}
         uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: webpage
