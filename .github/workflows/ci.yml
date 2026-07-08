@@ -49,6 +49,7 @@ jobs:
 
       - name: Run checks and tests
         run: |
+          just prebuild
           moon check
           moon test
           moon fmt && git diff --exit-code
@@ -60,9 +61,12 @@ jobs:
       - name: Build docs
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
+          ls _build
+          ls _build/native
+          ls _build/native/release
+          ls _build/native/release/build/main
           cd docs
           ../_build/native/release/build/main/main build
-
 
       - name: Deploy to GitHub Pages
         if: ${{ matrix.os == 'ubuntu-latest' }}
