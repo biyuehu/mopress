@@ -44,13 +44,13 @@ pub suberror ProcessorError {
 } derive(Eq, @debug.Debug)
 ```
 
-- `NonZeroExit`——命令以非零状态码退出。
-- `StderrReported`——命令退出码为零，但标准错误非空，被视为业务层面主动上报的错误。
-- `InvalidStdout`——标准输出非空，但无法解析为预期的响应结构。
+- `NonZeroExit`：命令以非零状态码退出。
+- `StderrReported`：命令退出码为零，但标准错误非空，被视为业务层面主动上报的错误。
+- `InvalidStdout`：标准输出非空，但无法解析为预期的响应结构。
 
 ## Web Components
 
-如果需要的不是"改写内容"，而是"让某段内容在页面上具备交互能力或特殊呈现效果"，Web Components 通常是比外部程序更合适的选择。MoPress 的 Markdown 解析器在遇到无法识别的 HTML 标签时，会将其原样保留在语法树中，而不会报错或丢弃：
+如果需要的不是“改写内容”，而是“让某段内容在页面上具备交互能力或特殊呈现效果”，Web Components 通常是比外部程序更合适的选择。MoPress 的 Markdown 解析器在遇到无法识别的 HTML 标签时，会将其原样保留在语法树中，而不会报错或丢弃：
 
 ```moonbit
 pub(all) enum Block {
@@ -79,4 +79,4 @@ pub(all) enum Block {
 - 需要运行在浏览器端、为读者提供交互，选择 Web Components。
 - 需要运行在构建期、且愿意用 MoonBit 编写、追求进程内调用的性能与可复用性，选择 MoonBit 模块。
 
-这三者并不互斥，一个站点完全可以同时使用多种形式，例如用外部程序处理某种自定义 Markdown 语法，同时用 Web Components 渲染交互式图表。
+这三者并不互斥，一个站点完全可以同时使用多种形式，用外部程序处理某种自定义 Markdown 语法，同时用 Web Components 渲染交互式图表。

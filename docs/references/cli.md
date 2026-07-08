@@ -129,7 +129,7 @@ fn handle_help() -> Unit {
 }
 ```
 
-打印用法说明与四个命令的简要描述。不带任何参数运行 `mopress`，或者传入一个无法识别的命令，都会得到与显式运行 `mopress help` 完全相同的输出，这一点在上面"基本用法"一节的 `command_handler` 实现中可以直接看到：`match` 的默认分支（`_`）就是回退到 `handle_help()`。
+打印用法说明与四个命令的简要描述。不带任何参数运行 `mopress`，或者传入一个无法识别的命令，都会得到与显式运行 `mopress help` 完全相同的输出，这一点在上面“基本用法”一节的 `command_handler` 实现中可以直接看到：`match` 的默认分支（`_`）就是回退到 `handle_help()`。
 
 ## Site 模式下的命令行
 

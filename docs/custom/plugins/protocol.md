@@ -4,7 +4,7 @@ title: 外部插件协议
 
 # 外部插件协议
 
-本节详细说明外部预处理器、转换器程序需要遵循的标准输入、标准输出通信协议。无论用什么语言编写这些程序，只要遵循本节描述的协议，就可以被 MoPress 正确调用。
+本节详细说明外部预处理器、转换器程序需要遵循的标准输入、标准输出通信协议。无论用什么语言（TypeScript、Python、Go、JavaScript、PHP、Lua、Teal、Gleam、Haskell、Idris、Rust、C、Swift、Scala、Kotlin、Scheme、Koka 等）编写这些程序，只要遵循本节描述的协议，就可以被 MoPress 正确调用。
 
 ## 两个阶段
 
@@ -22,7 +22,7 @@ title: 外部插件协议
 }
 ```
 
-`config` 字段是当前站点的完整配置，对应 `BookConfig`，供程序按需读取。`type` 字段固定为两个取值之一：预处理器收到的是"markdown-text"，转换器收到的是"markdown-ast"。`data` 字段是待处理的实际内容：预处理器收到的是纯文本字符串，转换器收到的是 Markdown 语法树的 JSON 表示。
+`config` 字段是当前站点的完整配置，对应 `BookConfig`，供程序按需读取。`type` 字段固定为两个取值之一：预处理器收到的是 `markdown-text`，转换器收到的是 `markdown-ast`。`data` 字段是待处理的实际内容：预处理器收到的是纯文本字符串，转换器收到的是 Markdown 语法树的 JSON 表示。
 
 ## 响应：通过 stdout 返回的内容
 

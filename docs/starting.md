@@ -6,9 +6,8 @@ title: 介绍
 
 本节将带你在几分钟内创建一个可以运行的 MoPress 站点。这里使用的是 Book 模式——不需要写任何代码。
 
-## 前置条件
-
-在开始之前，请确保你已经安装了 MoPress 的可执行程序，并且可以在终端中直接运行 `mopress` 命令。
+> [!WARNING]
+> 项目仍在开发中，当前 MoPress 仅保证在 Windows 平台的准确无误，不保证在其他平台的正确性。建议在 Windows 平台上进行开发和测试。
 
 ## 第零步：安装 MoPress
 
@@ -20,14 +19,12 @@ title: 介绍
 
 ```bash
 moon install mopress
-moon --version
+mopress version
 ```
 
-### 2. 下载可执行文件
+### 2. 下载可执行文件（仅限 Windows 用户）
 
 在 [Github Releases](https://github.com/biyuehu/mopress/releases) 中提供了 Windows 已构建完毕的可执行文件，下载后解压到任意目录并添加到系统环境变量中。
-
-对于非 Windows 用户请参考下面的步骤。
 
 ### 3. 构建可执行文件
 
@@ -118,15 +115,7 @@ mopress build
 如果你想在编写内容的同时实时预览效果，可以运行：
 
 ```bash
-MoPress serve
+mopress serve
 ```
 
 这会启动一个本地开发服务器，方便你在浏览器中直接查看站点效果。
-
-## 下一步
-
-现在你已经有了一个可以运行的站点，接下来可以：
-
-- 阅读 [配置](./book-mode/configuration.md)，了解 `sena.toml` 中的各项字段
-- 阅读 [组织章节](./book-mode/summary-file.md)，学习如何用 `SUMMARY.md` 组织更复杂的目录结构
-- 如果你需要对内容处理流程做更细粒度的控制，可以了解 [Site 模式](./site-mode/overview.md)

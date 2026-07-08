@@ -4,7 +4,7 @@ title: 模板引擎
 
 # 模板引擎
 
-MoPress 内置了一套模板引擎，负责将页面内容与站点的整体 HTML 结构结合起来。本节介绍模板的语法与渲染上下文。
+MoPress 内置了一套简单、轻量的模板引擎，负责将页面内容与站点的整体 HTML 结构结合起来。本节介绍模板的语法与渲染上下文。
 
 ## 模板节点的完整定义
 
@@ -20,47 +20,72 @@ pub(all) enum TemplateNode {
 } derive(Eq, @debug.Debug)
 ```
 
-- `Text(String)`——字面量、原样输出的文本片段。
-- `Variable(String)`——变量引用，渲染时会被替换为对应的值。
-- `If(String, Array[TemplateNode], Array[TemplateNode])`——条件分支：待测试的变量名、变量为真时渲染的节点、变量为假时渲染的节点。
-- `For(String, Array[TemplateNode])`——循环：待遍历的变量名（要求其值为 `Value::Array`）、每次迭代渲染的节点。
-- `Partial(String)`——引用另一份模板文件，将其渲染结果内联到当前位置。
+- `Text(String)`：字面量、原样输出的文本片段。
+- `Variable(String)`：变量引用，渲染时会被替换为对应的值。
+- `If(String, Array[TemplateNode], Array[TemplateNode])`：条件分支：待测试的变量名、变量为真时渲染的节点、变量为假时渲染的节点。
+- `For(String, Array[TemplateNode])`：循环：待遍历的变量名（要求其值为 `Value::Array`）、每次迭代渲染的节点。
+- `Partial(String)`：引用另一份模板文件，将其渲染结果内联到当前位置。
 
 ## 基本语法
 
-**变量插值**：
+其语法参考自 Hakyll。
+
+### 变量插值
 
 ```html
-<title>{{ title }}</title>
+<title>$title$</title>
 ```
 
-**条件判断**：
+支持点语法：
 
 ```html
-{{#if repository}}
-<a href="{{ repository }}">查看源码</a>
-{{/if}}
+<div>$item.title$</div>
 ```
 
-**循环**：
+### 条件判断
+
+```html
+$if(repository)$
+<a href="$repository$">查看源码</a>
+$endif$
+```
+
+`$else$` 分支：
+
+```html
+<title>
+  $if(title)$
+    $title$ - $site_title$
+  $else$
+    $site_title$
+  $endif$
+</title>
+```
+
+### 循环
 
 ```html
 <ul>
-{{#for item in nav_items}}
-  <li>{{ item.title }}</li>
-{{/for}}
+$for(authors)$
+  <li>$item.name$ <$item.email$></li>
+$endfor$
 </ul>
 ```
 
-**局部模板**：
+在循环作用域内通过 `$item$` 访问当前循环项。
+
+### 局部引用
 
 ```html
-{{> header}}
+$partial("path/header.html")$
 ```
 
-`{{> header}}` 会引入另一份模板文件，并将其渲染结果内联到当前位置，便于拆分和复用公共的页面片段，例如页头、页脚。
+`$partial("...")$` 会引入另一份模板文件，并将其渲染结果内联到当前位置，便于拆分和复用公共的页面片段，如页头、页脚。
 
-## 值类型的完整定义
+> [!CAUTION]
+> 谨慎使用，注意循环引用。
+
+## 支持的值类型
 
 模板变量的值使用以下类型表示：
 
@@ -74,16 +99,7 @@ pub(all) enum Value {
 } derive(Eq, @debug.Debug)
 ```
 
-`Array` 类型的值可以配合 `{{#for}}` 循环使用；`Object` 类型的值可以配合点号访问其字段，如上面循环示例中的 `item.title`；`Bool` 类型的值可以配合 `{{#if}}` 使用；`Number` 类型内部统一用 `Double` 表示，不区分整数与浮点数；`String` 类型直接作为文本输出。
-
-`Value` 还提供了以下方法：
-
-```moonbit
-pub fn Value::from_json(json : Json) -> Self
-pub impl Show for Value
-```
-
-`Value::from_json` 用于把一段 JSON 数据转换为对应的 `Value` 表示，例如用于把某个结构化的导航信息、索引数据转换为模板可用的变量；`Show` 的实现意味着一个 `Value` 可以直接作为字符串插值到渲染输出中。
+`Array` 类型的值可以配合 `$for$` 循环使用；`Object` 类型的值可以配合点号访问其字段，如上面循环示例中的 `item.title`；
 
 ## 渲染函数
 
@@ -108,7 +124,7 @@ pub fn[T : Show] parse_template(input : T) -> Array[TemplateNode] raise Template
 
 模板渲染有两种模式：
 
-- **宽松模式**（`apply_template`）：渲染过程中遇到问题，例如引用了不存在的变量，会跳过对应的模板节点、以空内容代替，然后继续渲染文档的其余部分，不会导致整个渲染失败。
+- **宽松模式**（`apply_template`）：渲染过程中遇到问题，如引用了不存在的变量，会跳过对应的模板节点、以空内容代替，然后继续渲染文档的其余部分，不会导致整个渲染失败。
 - **严格模式**（`apply_template_strict`）：一旦渲染中遇到任何问题，会立即中止并抛出具体的错误。对应的错误类型定义如下：
 
 ```moonbit
@@ -121,11 +137,11 @@ pub suberror TemplateRenderError {
 } derive(Eq, @debug.Debug)
 ```
 
-- `UndefinedVariableError`——模板引用了一个渲染上下文中不存在的变量。
-- `NonArrayForLoopError`——`{{#for}}` 循环引用的变量的值不是 `Value::Array`。
-- `PartialLoadError`——引用的局部模板文件无法被读取。
-- `PartialParseError`——引用的局部模板文件内容无法被解析。
-- `RecursivePartialError`——局部模板直接或间接地引用了自身，导致无限递归。
+- `UndefinedVariableError`：模板引用了一个渲染上下文中不存在的变量。
+- `NonArrayForLoopError`：`{{#for}}` 循环引用的变量的值不是 `Value::Array`。
+- `PartialLoadError`：引用的局部模板文件无法被读取。
+- `PartialParseError`：引用的局部模板文件内容无法被解析。
+- `RecursivePartialError`：局部模板直接或间接地引用了自身，导致无限递归。
 
 解析阶段的错误则是另一种独立的错误类型：
 

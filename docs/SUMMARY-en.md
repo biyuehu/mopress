@@ -12,6 +12,7 @@
   - [Frontmatter](./book-mode/frontmatter.md)
   - [Extensions](./book-mode/extensions.md)
   - [Features Presets](./book-mode/features.md)
+  - [Pages](./book-mode/pages.md)
 
 - [Site Mode](./site-mode/overview.md)
   - [Starting a Site](./site-mode/starting.md)

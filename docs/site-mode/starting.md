@@ -8,6 +8,8 @@ title: 开始
 
 ## 准备工作
 
+<!-- TODO: new 命令生成初始化目录 -->
+
 Site 模式下，项目的入口是一份 MoonBit 源文件（文件名可以自定义，只要在运行时正确指定即可）。需要在项目中引入核心库作为依赖。
 
 ## 编写最小示例
@@ -15,7 +17,6 @@ Site 模式下，项目的入口是一份 MoonBit 源文件（文件名可以自
 假设项目结构如下：
 
 ```text
-.
 ├── site.mbt
 └── src
     └── hello.markdown
@@ -32,13 +33,14 @@ async fn main {
       @core.Text(raw => raw
         |> @core.render_markdown_and_frontmatter
         |> @core.set_extension(".html")
-        |> @core.identify),
+        |> @core.unify),
     ),
   ])
 }
 ```
 
-这份代码声明了一条规则：匹配源目录下所有以".markdown"结尾的文件，将其内容作为文本读入，依次经过"渲染 Markdown 与元数据"和"修改目标扩展名为".html""两个 step，最后调用 `identify` 转换为最终可写入磁盘的格式。
+这份代码声明了一条规则：匹配源目录下所有以 `.markdown` 结尾的文件，将其内容作为文本读入，依次经过“渲染 Markdown 与元数据”和
+修改目标扩展名为`.html`”两个 step，最后调用 `unify` 转换为最终可写入磁盘的格式。
 
 ## 运行构建
 
@@ -48,7 +50,8 @@ moon run site.mbt build
 
 构建完成后，源目录中的 `hello.markdown` 会被渲染为输出目录中的 `hello.html`（默认的源目录与输出目录，可以通过 `Options` 自定义，参见下方说明）。
 
-> 提示：这里的命令行参数解析（例如"build"子命令）需要自己在入口函数中处理，`mopress` 本身只负责执行构建，不负责解析命令行参数。如果想要一套类似 Book 模式的命令体系，可以参照 `mopress/main` 中命令分发的写法自行实现。
+<!-- TODO：胡说↓ -->
+<!-- > 提示：这里的命令行参数解析（如 `build` 子命令）需要自己在入口函数中处理，`mopress` 本身只负责执行构建，不负责解析命令行参数。如果想要一套类似 Book 模式的命令体系，可以参照 `mopress/main` 中命令分发的写法自行实现。 -->
 
 ## 自定义源目录与输出目录
 
@@ -57,7 +60,7 @@ moon run site.mbt build
 ```moonbit
 ///|
 async fn main {
-  let options = @core.Options::{ src: "content", dest: "public" }
+  let options :  @core.Options = { src: "content", dest: "public" }
   @core.mopress(
     [
       @core.Glob(
@@ -65,7 +68,7 @@ async fn main {
         @core.Text(raw => raw
           |> @core.render_markdown_and_frontmatter
           |> @core.set_extension(".html")
-          |> @core.identify),
+          |> @core.unify),
       ),
     ],
     options~,
@@ -87,9 +90,41 @@ async fn main {
         |> @core.render_markdown_and_frontmatter
         |> @core.set_extension(".html")
         |> x => x.load_and_apply_template("templates/default.html")
-        |> @core.identify),
+        |> @core.unify),
     ),
   ])
+}
+```
+
+## 初始化与共有项
+
+当需要声明一系列所有规则共用的值时可使用 `@core.mopress_with` 函数：
+
+```moonbit
+pub async fn[E] mopress_with(
+  options? : Options = Options::default(),
+  init : (Options) -> E,
+  rules : (Options, E) -> Rules,
+) -> Unit
+```
+
+在传入的 `init` 函数中自定义返回的类型 `E`，并将其作为 `rules` 函数的第二个参数，所有的规则都将能访问到 `E` 值：
+
+```moonbit
+///|
+async fn main {
+  @core.mopress_with(
+    (options) => {
+      let shared = {
+        "title": "My Site",
+        "footer": "© 2023 My Company",
+      }
+      shared
+    },
+    (options, shared) => [
+      // ...
+    ],
+  )
 }
 ```
 

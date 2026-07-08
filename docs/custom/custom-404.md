@@ -4,7 +4,7 @@ title: 自定义 404 页面
 
 # 自定义 404 页面
 
-404 页面用于展示"页面未找到"提示的兜底页面，是一个很好的例子，可以说明 Book 模式与 Site 模式在处理同一类需求时的对应关系。
+404 页面用于展示“页面未找到”提示的兜底页面，是一个很好的例子，可以说明 Book 模式与 Site 模式在处理同一类需求时的对应关系。
 
 ## Book 模式：不需要额外配置
 
@@ -63,7 +63,7 @@ pub async fn run(config : @config.BookConfig) -> Unit {
 
 ## Site 模式：用一条规则处理
 
-在 Site 模式下，"404 页面"本质上只是"某个 item 经过处理管线后，被写出到 `404.html` 这个特定路径"这样一件事，不需要任何特殊机制，完全可以按照处理其他 Markdown 页面的方式来处理它：
+在 Site 模式下，404 页面本质上只是“某个 item 经过处理管线后，被写出到 `404.html` 这个特定路径”这样一件事，不需要任何特殊机制，完全可以按照处理其他 Markdown 页面的方式来处理它：
 
 ```moonbit
 ///|
@@ -84,11 +84,11 @@ async fn main {
         |> @core.render_markdown_and_frontmatter
         |> @core.set_extension(".html")
         |> x => x.load_and_apply_template("templates/default.html")
-        |> @core.identify),
+        |> @core.unify),
     ),
   ])
 
-  not_found.identify() |> _.write(options.dest, "404.html")
+  not_found.unify() |> _.write(options.dest, "404.html")
 }
 ```
 
@@ -96,4 +96,4 @@ async fn main {
 
 ## 小结
 
-不论是 Book 模式还是 Site 模式，404 页面在 MoPress 眼中都只是"一份经过标准处理管线、最终写出到特定路径的内容"，没有任何专属的隐藏机制，这也正是 MoPress 底层"一切皆是 `Item` 经过 step 处理"这一设计哲学贯彻得比较彻底的地方。
+不论是 Book 模式还是 Site 模式，404 页面在 MoPress 眼中都只是“一份经过标准处理管线、最终写出到特定路径的内容”，没有任何专属的隐藏机制，这也正是 MoPress 底层“一切皆是 `Item` 经过 step 处理”这一设计哲学贯彻得比较彻底的地方。

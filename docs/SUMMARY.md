@@ -2,6 +2,8 @@
 
 [介绍](./index.md)
 
+---
+
 ## 指南
 
 - [快速开始](./starting.md)
@@ -12,6 +14,7 @@
   - [元数据](./book-mode/frontmatter.md)
   - [扩展配置](./book-mode/extensions.md)
   - [功能预设](./book-mode/features.md)
+  - [定制页面](./book-mode/pages.md)
 
 - [Site 模式](./site-mode/index.md)
   - [开始](./site-mode/starting.md)
@@ -30,9 +33,11 @@
 ## 参考
 
 - [Markdown 演示](./references/markdown.md)
-- [Glob 模式](./references/glob.md)
+- [Glob 匹配](./references/glob.md)
 - [CLI 参考](./references/cli.md)
 - [Api 参考](./references/api.md)
+
+---
 
 [贡献](./contributing.md)
 [Changelog](./changelog.md)
