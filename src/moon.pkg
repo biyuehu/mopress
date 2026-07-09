@@ -12,6 +12,8 @@ import {
   "moonbitlang/async",
 }
 
+formatter(ignore: [ "includes.mbt" ])
+
 options(
   "is-main": true,
 )

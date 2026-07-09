@@ -142,6 +142,7 @@ pub fn BookConfig::apply_feature_presets(self : BookConfig) -> BookConfig {
     }
     self.extensions.use_js.push("hljs.highlightAll()")
   }
+  // @block mathjax
   if self.features.mathjax_enabled {
     self.extensions.inject_head.push(
       (
@@ -150,6 +151,7 @@ pub fn BookConfig::apply_feature_presets(self : BookConfig) -> BookConfig {
       ),
     )
   }
+  // @end
   self
 }
 
@@ -312,7 +314,9 @@ pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
 pub impl Default for ExtensionsConfig with fn default() -> ExtensionsConfig {
   {
     template: "templates/default.html",
-    assets: ["images/**/*", "styles/**/*", "scripts/**/*"],
+    assets: [
+      "images/**/*", "styles/**/*", "scripts/**/*", "plugins/external/**/*",
+    ],
     inject_head: [],
     inject_body: [],
     use_js: ["console.log('Hello, MoPress!');"],

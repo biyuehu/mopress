@@ -2,6 +2,8 @@
 /// A parsed template, as produced by `parse_template`.
 pub type Template = Array[TemplateNode]
 
+// @block template-node
+
 ///|
 /// A single node in a parsed template's AST.
 pub(all) enum TemplateNode {
@@ -20,6 +22,9 @@ pub(all) enum TemplateNode {
   /// position.
   Partial(String)
 } derive(Eq, Debug)
+// @end
+
+// @block template-parse-error
 
 ///|
 /// Error raised when a template's source cannot be parsed into a valid
@@ -28,11 +33,14 @@ pub(all) enum TemplateNode {
 pub suberror TemplateParseError {
   TemplateParseError(String)
 } derive(Eq, Debug)
+// @end
 
 ///|
 /// A named set of template variables, as passed to `apply_template` /
 /// `apply_template_strict`.
 pub type Context = Map[String, Value]
+
+// @block value
 
 ///|
 /// A dynamically-typed value available to templates as part of their
@@ -44,6 +52,7 @@ pub(all) enum Value {
   Array(Array[Value])
   Object(Map[String, Value])
 } derive(Eq, Debug)
+// @end
 
 ///|
 /// Formats this value for display, e.g. when substituting a `Value`
@@ -328,6 +337,8 @@ fn char_at(input : String, index : Int) -> Char {
   input.code_unit_at(index).unsafe_to_char()
 }
 
+// @block template-render-error
+
 ///|
 /// Errors that can occur while rendering a parsed template against a
 /// variable context, as raised by `apply_template_strict`.
@@ -346,6 +357,7 @@ pub suberror TemplateRenderError {
   /// resulting in unbounded recursion.
   RecursivePartialError(String)
 } derive(Eq, Debug)
+// @end
 
 ///|
 /// Renders a parsed template against the given variable context,

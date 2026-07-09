@@ -1,3 +1,5 @@
+// @block processor-error
+
 ///|
 /// Error type describing why an external preprocessor/transformer command
 /// failed while running through `run_markdown_preprocessors` or
@@ -7,6 +9,7 @@ pub suberror ProcessorError {
   StderrReported(command~ : String, message~ : String)
   InvalidStdout(command~ : String, raw~ : String, reason~ : String)
 } derive(Debug, Eq)
+// @end
 
 ///|
 /// The JSON request payload sent on stdin to each markdown-ast/markdown-text

@@ -41,14 +41,47 @@ fn handle_init() -> Unit raise {
   }
   if !@fs.path_exists("plugins/preprocessors/github-alert.ts") {
     @fs.write_string_to_file(
-      "plugins/preprocessers/github-alert.ts", plugins_preprocessers_github_alert_ts,
+      "plugins/preprocessers/github-alert.ts", book_plugins_preprocessers_github_alert_ts,
     )
   }
   println("Scaffolding default assets.")
-  @fs.write_string_to_file("templates/default.html", templates_default_html)
-  @fs.write_string_to_file("styles/index.css", styles_index_css)
-  @fs.write_string_to_file("scripts/main.js", scripts_main_js)
+  @fs.write_string_to_file(
+    "templates/default.html", book_templates_default_html,
+  )
+  @fs.write_string_to_file("styles/index.css", book_styles_index_css)
+  @fs.write_string_to_file("scripts/main.js", book_scripts_main_js)
+  @fs.write_string_to_file("index.md", book_index_md)
+  @fs.write_string_to_file("SUMMARY.md", book_summary_md)
   println("Initialization complete.")
+}
+
+///|
+fn handle_new(dir : String) -> Unit raise {
+  println("Creating site-mode project: \{dir}")
+  if @fs.path_exists(dir) {
+    raise @fs.IOError("Directory has already existed: \{dir}")
+  }
+  let path = @path.Path(dir)
+  @fs.write_string_to_file(
+    path.join("index.md") |> Show::to_string,
+    site_index_md,
+  )
+  @fs.write_string_to_file(
+    path.join("about.md") |> Show::to_string,
+    site_about_md,
+  )
+  @fs.write_string_to_file(
+    path.join("contact.md") |> Show::to_string,
+    site_contact_md,
+  )
+  @fs.create_dir(path.join("styles") |> Show::to_string)
+  @fs.write_string_to_file("styles/default.css", site_styles_default_css)
+  @fs.create_dir(path.join("templates") |> Show::to_string)
+  @fs.write_string_to_file(
+    "templates/default.html", site_templates_default_html,
+  )
+  @fs.write_string_to_file("site.mbtx", site_site_mbtx)
+  println("Creation complete.")
 }
 
 ///|
@@ -59,8 +92,10 @@ fn handle_help() -> Unit {
       #|
       #|Commands:
       #|  build    Build the site
-      #|  init     Initialize a new project
+      #|  init     Initialize a new book-mode project
+      #|  new      Create a new site-mode project
       #|  serve    Serve the site locally
+      #|  version  Print the version number
       #|  help     Print this help message
     ),
   )
@@ -83,6 +118,12 @@ async fn command_handler() -> Unit {
   let args = @env.args()
   match (if args.length() > 1 { args[1] } else { "" }) {
     "init" => handle_init()
+    "new" =>
+      if args.length() > 2 {
+        handle_new(args[2])
+      } else {
+        raise @fs.IOError("Usage: mopress new <name>")
+      }
     "build" => handle_build()
     "serve" => handle_serve()
     _ => handle_help()
@@ -123,6 +164,7 @@ pub async fn process_markdown_page(
     config,
     (seprated.map(_ => text) |> @core.parse_markdown).data,
   )
+  // @block steps
   @core.render_markdown_and_frontmatter_from_ast(
     seprated.map(_ => ast),
     seprated.data.0,
@@ -145,8 +187,12 @@ pub async fn process_markdown_page(
         ("favicon", config.favicon |> String),
         ("logo", config.logo |> String),
         ("repository", config.repository.unwrap_or("") |> String),
+        ("src", config.src |> String),
+        ("dest", config.dest |> String),
+        ("base_url", config.base_url |> String),
+        ("build_time", build_time |> String),
+        ("version", version |> String),
         ("breadcrumb", summary.breadcrumb(x.location()) |> String),
-        ("version", "v1.0.0" |> String),
         ("current", x.location() |> String),
         (
           "prev",
@@ -170,6 +216,7 @@ pub async fn process_markdown_page(
         ),
       ]),
     )
+    // @end
   }
   |> @core.load_and_apply_template(config.extensions.template)
   |> @core.import_css(config.extensions.import_css)
@@ -202,7 +249,6 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
     |> @markdown.parse_markdown
     |> @summary.parse_summary()
 
-  println("Rendering 404 page")
   let not_found_page = process_markdown_page(
     @core.Item::new(
       "---\ntitle: 404\n---\nYour page can not be found...",

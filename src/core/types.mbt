@@ -9,7 +9,7 @@ pub(all) struct Options {
 ///|
 /// The default build options.
 pub impl Default for Options with fn default() -> Options {
-  { src: "", dest: "dest" }
+  { src: "./", dest: "./dest" }
 }
 
 ///|
@@ -23,6 +23,8 @@ pub fn Options::from_config(config : @config.BookConfig) -> Options {
 /// A collection of build rules, as passed to `mo_build`/`mopress`.
 pub type Rules = Array[Rule]
 
+// @block rule
+
 ///|
 /// A single rule describing how files matching a pattern should be
 /// processed during a build.
@@ -35,6 +37,7 @@ pub(all) enum Rule {
   /// file's full relative path (consistent with `@glob.glob_match_with`).
   Guard(String, (String) -> Bool, Handler)
 } derive(Debug)
+// @end
 
 ///|
 /// Reports whether `path` matches this rule (i.e. whether it should be
@@ -234,6 +237,8 @@ pub fn[T] Item::clear_var(self : Item[T], key : String) -> Item[T] {
   self.set_var(key, "" |> String)
 }
 
+// @block thing
+
 ///|
 /// The final, writable output produced for a build item.
 pub(all) enum Thing {
@@ -249,6 +254,7 @@ pub(all) enum Thing {
   /// No output should be written for this item.
   Empty
 } derive(Eq, Debug)
+// @end
 
 ///|
 /// Writes this `Thing` to disk under `dest`, using `name` as the output
@@ -307,6 +313,8 @@ pub impl Thingable for Json with fn to_thing(self : Json) -> Thing {
 /// A pipeline step transforming an `Item[T]` into an `Item[R]`.
 pub type Step[T, R] = async (Item[T]) -> Item[R]
 
+// @block handler
+
 ///|
 /// The processing handler applied to files matched by a `Rule`.
 pub(all) enum Handler {
@@ -320,6 +328,7 @@ pub(all) enum Handler {
   /// any processing.
   Copy
 } derive(Debug)
+// @end
 
 ///|
 /// Executes this handler against the file at `path` (relative to

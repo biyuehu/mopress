@@ -16,6 +16,8 @@ pub(all) struct ListBlock {
   items : Array[Array[Block]]
 } derive(Eq, Debug, FromJson, ToJson)
 
+// @block block
+
 ///|
 /// A single block-level Markdown element.
 pub(all) enum Block {
@@ -37,6 +39,7 @@ pub(all) enum Block {
   /// A table.
   Table(TableBlock)
 } derive(Eq, ToJson, Debug, FromJson)
+// @end
 
 ///|
 /// A single inline-level Markdown element.
