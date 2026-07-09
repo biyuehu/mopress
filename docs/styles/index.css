@@ -1,5 +1,35 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
 
+:root {
+	--nav-w: 16.25rem;
+	--font: "Inter", system-ui, sans-serif;
+	--mono: "JetBrains Mono", "Fira Code", monospace;
+
+	--bg: #fafaf9;
+	--bg-secondary: #f4f3f0;
+	--bg-code: #f0efec;
+	--text: #1a1a18;
+	--text-muted: #6b6b66;
+	--text-faint: #a8a8a2;
+	--accent: #d49a84;
+	--accent-bg: #f5e8e0;
+	--accent-light: #eaccbf;
+	--border: rgba(0, 0, 0, 0.08);
+	--border-strong: rgba(0, 0, 0, 0.14);
+
+	--bg-dark: #141413;
+	--bg-secondary-dark: #1e1e1c;
+	--bg-code-dark: #252523;
+	--text-dark: #e8e8e4;
+	--text-muted-dark: #9a9a94;
+	--text-faint-dark: #5a5a56;
+	--accent-dark: #f0c4b0;
+	--accent-bg-dark: #2a1e1a;
+	--accent-light-dark: #3d2d26;
+	--border-dark: rgba(255, 255, 255, 0.07);
+	--border-strong-dark: rgba(255, 255, 255, 0.12);
+}
+
 *,
 *::before,
 *::after {
@@ -15,21 +45,6 @@ body {
 }
 
 .doc-root {
-	--bg: #fafaf9;
-	--bg-secondary: #f4f3f0;
-	--bg-code: #f0efec;
-	--text: #1a1a18;
-	--text-muted: #6b6b66;
-	--text-faint: #a8a8a2;
-	--accent: #3b5bdb;
-	--accent-bg: #eef2ff;
-	--accent-light: #c5d0fa;
-	--border: rgba(0, 0, 0, 0.08);
-	--border-strong: rgba(0, 0, 0, 0.14);
-	--nav-w: 16.25rem;
-	--font: "Inter", system-ui, sans-serif;
-	--mono: "JetBrains Mono", "Fira Code", monospace;
-
 	position: relative;
 	display: flex;
 	min-height: 100vh;
@@ -43,17 +58,17 @@ body {
 }
 
 .doc-root.dark {
-	--bg: #141413;
-	--bg-secondary: #1e1e1c;
-	--bg-code: #252523;
-	--text: #e8e8e4;
-	--text-muted: #9a9a94;
-	--text-faint: #5a5a56;
-	--accent: #7b93f5;
-	--accent-bg: #1a1f3a;
-	--accent-light: #2d3560;
-	--border: rgba(255, 255, 255, 0.07);
-	--border-strong: rgba(255, 255, 255, 0.12);
+	--bg: var(--bg-dark);
+	--bg-secondary: var(--bg-secondary-dark);
+	--bg-code: var(--bg-code-dark);
+	--text: var(--text-dark);
+	--text-muted: var(--text-muted-dark);
+	--text-faint: var(--text-faint-dark);
+	--accent: var(--accent-dark);
+	--accent-bg: var(--accent-bg-dark);
+	--accent-light: var(--accent-light-dark);
+	--border: var(--border-dark);
+	--border-strong: var(--border-strong-dark);
 }
 
 .sidebar {
@@ -258,49 +273,6 @@ body {
 	font-size: 0.625rem;
 	font-weight: 500;
 }
-
-/* .page-toc {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.18s ease;
-}
-
-.page-toc.open {
-  max-height: 20rem;
-} */
-/* 
-
-.toc-sub-item {
-  display: block;
-  padding: 0.25rem 1.25rem 0.25rem 2.75rem;
-  border-left: 0.125rem solid transparent;
-  color: var(--text-faint);
-  font-size: 0.75rem;
-  line-height: 1.5;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.toc-sub-item:hover {
-  color: var(--text-muted);
-}
-
-.toc-sub-item.active {
-  color: var(--accent);
-  font-weight: 500;
-}
-
-.toc-sub-item.indent-1 {
-  padding-left: 3.5rem;
-}
-
-.toc-sub-item.indent-2 {
-  padding-left: 4.25rem;
-}
-
-.toc-sub-item.indent-3 {
-  padding-left: 5rem;
-} */
 
 .nav-footer {
 	flex-shrink: 0;

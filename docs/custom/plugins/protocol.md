@@ -12,13 +12,18 @@ title: 外部插件协议
 
 ## 请求：通过 stdin 发送的内容
 
-每次调用外部程序时，MoPress 会将以下 JSON 结构写入该进程的标准输入：
+每次调用外部程序时，MoPress 会以 JSON 结构写入该进程的标准输入：
 
-```json
+```typescript
+type Request = {
+  config: BookConfig;
+  type: "markdown-text";
+  data: string;
+} |
 {
-  "config": { "...": "当前的站点配置（BookConfig）" },
-  "type": "markdown-text",
-  "data": "..."
+  config: BookConfig;
+  type: "markdown-ast";
+  data: Markdown;
 }
 ```
 
@@ -30,8 +35,10 @@ title: 外部插件协议
 
 **返回处理结果**：
 
-```json
-{ "data": "..." }
+```typescript
+interface Response {
+  data: string | Markdown;
+}
 ```
 
 `data` 字段的类型与请求中的 `data` 字段保持一致。这个结果会成为下一个程序（如果配置了多个）的输入，或者成为该阶段的最终输出。
@@ -42,8 +49,10 @@ title: 外部插件协议
 
 如果处理过程中出现错误，程序应当以非零状态码退出，并且向标准错误写入以下 JSON 结构：
 
-```json
-{ "error": "对错误的描述" }
+```typescript
+interface Error {
+  error: string;
+}
 ```
 
 MoPress 在解析结果时会依次检查：
@@ -82,45 +91,4 @@ if (!req.data.includes("{{BUILD_TIME}}")) {
 preprocessors = ["bun plugins/preprocessers/github-alert"]
 ```
 
-```typescript
-const req = JSON.parse(await Bun.stdin.text());
-
-const COLORS: Record<string, string> = {
- NOTE: "#0969da",
- TIP: "#1a7f37",
- IMPORTANT: "#8250df",
- WARNING: "#9a6700",
- CAUTION: "#cf222e",
-};
-
-const re =
- /^> \[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\][ \t]*\r?\n((?:>.*(?:\r?\n|$))*)/gim;
-
-let matched = false;
-const data = (req.data as string).replace(
- re,
- (_m: string, type: string, block: string) => {
-  matched = true;
-  type = type.toUpperCase();
-  const content = block
-   .split(/\r?\n/)
-   .map((l) => l.replace(/^>\s?/, ""))
-   .join("\n")
-   .trim();
-  const color = COLORS[type];
-  const title = type[0] + type.slice(1).toLowerCase();
-  return `<div style="border-left:4px solid ${color};padding:8px 16px;margin:16px 0;background:${color}1a">
-<p style="font-weight:600;color:${color};margin:0 0 4px">${title}</p>
-<p style="margin:0;white-space:pre-wrap">${content}</p>
-</div>\n`;
- },
-);
-
-if (!matched) {
- process.stdout.write("");
-} else {
- process.stdout.write(JSON.stringify({ data }));
-}
-
-export {};
-```
+{{@ plugins/preprocessers/github-alert.ts}}

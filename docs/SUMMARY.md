@@ -14,7 +14,7 @@
   - [元数据](./book-mode/frontmatter.md)
   - [扩展配置](./book-mode/extensions.md)
   - [功能预设](./book-mode/features.md)
-  - [定制页面](./book-mode/pages.md)
+  - [页面定制](./book-mode/pages.md)
 
 - [Site 模式](./site-mode/index.md)
   - [开始](./site-mode/starting.md)
@@ -28,7 +28,7 @@
   - [多样化的插件](./custom/plugins/index.md)
     - [外部 stdin/stdout 协议](./custom/plugins/protocol.md)
     - [Web Components](./custom/plugins/web-components.md)
-    - [Moonbit 模块 (仅限 Site 模式)](./custom/plugins/moonbit-modules.md)
+    - [Moonbit 模块](./custom/plugins/moonbit-modules.md)
 
 ## 参考
 

@@ -45,32 +45,12 @@ pub fn scan_files_with(
 
 ## 在 Book 模式中的使用
 
-扩展配置中的静态资源字段接受一组 Glob 匹配：
-
-```moonbit
-pub(all) struct ExtensionsConfig {
-  template : String
-  assets : Array[String]
-  inject_head : Array[String]
-  inject_body : Array[String]
-  use_js : Array[String]
-  use_css : Array[String]
-  import_css : Array[String]
-  import_js : Array[String]
-  preprocessors : Array[String]
-  transformers : Array[String]
-} derive(Eq, ToJson, @debug.Debug)
-```
-
-`assets` 中的每一项都会被当作 Glob 匹配，匹配到的文件会被原样复制到输出目录，不经过任何 Markdown 处理，具体请阅读 [扩展配置](../book-mode/extensions.md)。
+扩展配置中的静态资源字段 `assets` 接受一组 Glob 匹配。匹配到的文件会被原样复制到输出目录，不经过任何 Markdown 处理，具体请阅读 [扩展配置](../book-mode/extensions.md)。
 
 ## 在 Site 模式中的使用
 
-```moonbit
-pub(all) enum Rule {
-  Glob(String, Handler)
-  Guard(String, (String) -> Bool, Handler)
-}
-```
+类型 [`Rule`](https://mooncakes.io/docs/himeno/mopress/core#Rule)：
+
+{{@ ../src/core/types.mbt#rule}}
 
 `Rule::Glob` 的第一个参数是一个 Glob 匹配，用于匹配文件；`Rule::Guard` 在此基础上追加一个自定义判定函数，判定函数收到的路径与本页 `glob_match_with` 描述的一致，是相对于源目录的完整路径，具体请阅读 [Rules, Handlers 和 Steps](../site-mode/rules-handlers-steps.md)。

@@ -8,24 +8,9 @@ title: 组织章节
 
 ## 基本语法
 
-`SUMMARY.md` 使用 Markdown 列表来描述章节结构：
+`SUMMARY.md` 使用 Markdown 列表来描述章节结构，以下是本书的完整结构：
 
-```markdown
-# Summary
-
-[介绍](./introduction.md)
-
-# 使用指南
-
-- [快速开始](./quick-start.md)
-- [进阶用法](./advanced.md)
-  - [自定义模板](./advanced/templates.md)
-
----
-
-[常见问题](./faq.md)
-
-```
+{{@ SUMMARY.md}}
 
 其中：
 

@@ -1,5 +1,5 @@
 ---
-title: 介绍
+title: 快速开始
 ---
 
 # 快速开始
@@ -18,7 +18,7 @@ title: 介绍
 要求已安装 MoonBit 工具链。输入以下命令：
 
 ```bash
-moon install mopress
+moon install himeno/mopress
 mopress version
 ```
 
@@ -100,7 +100,7 @@ title: 你好，世界
 ```
 
 > [!NOTE]
-> `SUMMARY.md` 只负责定义导航结构（面包屑、上一页/下一页链接等），并不决定哪些文件会被构建。只要是 `./` 目录下的 `*.md`、`*.markdown` 文件，无论是否出现在 `SUMMARY.md` 中，都会被构建为页面。
+> <i>SUMMARY.md</i> 只负责定义导航结构（面包屑、上一页/下一页链接等），并不决定哪些文件会被构建。只要是 <i>./</i> 目录下的 <i>*.md</i> 、<i>*.markdown</i> 文件，无论是否出现在 <i>SUMMARY.md</i> 中，都会被构建为页面。
 
 ## 第三步：构建站点
 

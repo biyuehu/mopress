@@ -8,32 +8,9 @@ title: Web Components
 
 ## 核心原理：未识别的 HTML 标签会原样保留
 
-MoPress 的 Markdown 解析器在遇到它不认识的 HTML 标签时，不会报错、也不会将其丢弃或转义，而是将其原样保留在语法树中，并在渲染阶段原样输出到最终的 HTML 里。相关的类型定义：
+MoPress 的 Markdown 解析器在遇到它不认识的 HTML 标签时，不会报错、也不会将其丢弃或转义，而是将其原样保留在语法树中，并在渲染阶段原样输出到最终的 HTML 里。相关的类型定义 [`Block`](https://mooncakes.io/docs/himeno/mopress/markdown#Block) ：
 
-```moonbit
-pub(all) enum Block {
-  Heading(Int, Array[Inline])
-  Paragraph(Array[Inline])
-  ThematicBreak
-  CodeBlock(String?, String)
-  BlockQuote(Array[Block])
-  List(ListBlock)
-  HtmlBlock(String)
-  Table(TableBlock)
-} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
-
-pub(all) enum Inline {
-  Text(String)
-  Emphasis(Array[Inline])
-  Strong(Array[Inline])
-  Code(String)
-  Link(Array[Inline], String)
-  Image(String, String)
-  Html(String)
-  SoftBreak
-  HardBreak
-} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
-```
+{{@ ../src/markdown/markdown.mbt#block}}
 
 块级的原始 HTML 对应 `Block::HtmlBlock`，行内的原始 HTML 对应 `Inline::Html`，两者在渲染时都会被原样输出。
 

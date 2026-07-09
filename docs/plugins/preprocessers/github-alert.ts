@@ -1,4 +1,18 @@
-const req = JSON.parse(await Bun.stdin.text());
+interface Request {
+	type: "markdown-text";
+	data: string;
+}
+
+const req: Request = JSON.parse(await Bun.stdin.text());
+
+if (req?.type !== "markdown-text") {
+	process.stderr.write(
+		JSON.stringify({
+			error: "Invalid data type. This is a preprocessor, not a transformer",
+		}),
+	);
+	process.exit(1);
+}
 
 const COLORS: Record<string, string> = {
 	NOTE: "#0969da",
@@ -12,24 +26,21 @@ const re =
 	/^> \[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\][ \t]*\r?\n((?:>.*(?:\r?\n|$))*)/gim;
 
 let matched = false;
-const data = (req.data as string).replace(
-	re,
-	(_m: string, type: string, block: string) => {
-		matched = true;
-		type = type.toUpperCase();
-		const content = block
-			.split(/\r?\n/)
-			.map((l) => l.replace(/^>\s?/, ""))
-			.join("\n")
-			.trim();
-		const color = COLORS[type];
-		const title = type[0] + type.slice(1).toLowerCase();
-		return `<div style="border-left:4px solid ${color};padding:8px 16px;margin:16px 0;background:${color}1a">
+const data = req.data.replace(re, (_m: string, type: string, block: string) => {
+	matched = true;
+	type = type.toUpperCase();
+	const content = block
+		.split(/\r?\n/)
+		.map((l) => l.replace(/^>\s?/, ""))
+		.join("\n")
+		.trim();
+	const color = COLORS[type];
+	const title = type[0] + type.slice(1).toLowerCase();
+	return `<div style="border-left:4px solid ${color};padding:8px 16px;margin:16px 0;background:${color}1a">
 <p style="font-weight:600;color:${color};margin:0 0 4px">${title}</p>
 <p style="margin:0;white-space:pre-wrap">${content}</p>
 </div>\n`;
-	},
-);
+});
 
 if (!matched) {
 	process.stdout.write("");

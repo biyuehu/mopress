@@ -26,7 +26,7 @@
   - [Diverse Plugins](./custom/plugins/index.md)
     - [The External stdin/stdout Protocol](./custom/plugins/protocol.md)
     - [Web Components](./custom/plugins/web-components.md)
-    - [Moonbit Modules (Only Site Mode)](./custom/plugins/moonbit-modules.md)
+    - [Moonbit Modules](./custom/plugins/moonbit-modules.md)
 
 ## References
 

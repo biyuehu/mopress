@@ -8,7 +8,7 @@ title: 开始
 
 ## 准备工作
 
-<!-- TODO: new 命令生成初始化目录 -->
+请先参考 Book 模式的 [快速开始](../starting.md) 中的安装 MoPress 步骤。
 
 Site 模式下，项目的入口是一份 MoonBit 源文件（文件名可以自定义，只要在运行时正确指定即可）。需要在项目中引入核心库作为依赖。
 
@@ -17,41 +17,30 @@ Site 模式下，项目的入口是一份 MoonBit 源文件（文件名可以自
 假设项目结构如下：
 
 ```text
-├── site.mbt
-└── src
-    └── hello.markdown
+├── site.mbtx
+├── index.md
+├── about.md
+├── contact.md
+├── templates
+│   └── default.html
+└── styles
+    └── default.css
 ```
 
-在入口文件中写入：
+其中 `site.mbtx` 为
 
-```moonbit
-///|
-async fn main {
-  @core.mopress([
-    @core.Glob(
-      "*.markdown",
-      @core.Text(raw => raw
-        |> @core.render_markdown_and_frontmatter
-        |> @core.set_extension(".html")
-        |> @core.unify),
-    ),
-  ])
-}
-```
+{{@ demo-site/site.mbtx }}
 
-这份代码声明了一条规则：匹配源目录下所有以 `.markdown` 结尾的文件，将其内容作为文本读入，依次经过“渲染 Markdown 与元数据”和
-修改目标扩展名为`.html`”两个 step，最后调用 `unify` 转换为最终可写入磁盘的格式。
+这份代码声明了一条规则：匹配源目录下所有以 `.md` 结尾的文件，将其内容作为文本读入，依次经过“渲染 Markdown 与元数据”和
+修改目标扩展名为`.html`”等多个 step，最后调用 `unify` 转换为最终可写入磁盘的格式。
 
 ## 运行构建
 
 ```bash
-moon run site.mbt build
+moon run --target native site.mbtx build
 ```
 
-构建完成后，源目录中的 `hello.markdown` 会被渲染为输出目录中的 `hello.html`（默认的源目录与输出目录，可以通过 `Options` 自定义，参见下方说明）。
-
-<!-- TODO：胡说↓ -->
-<!-- > 提示：这里的命令行参数解析（如 `build` 子命令）需要自己在入口函数中处理，`mopress` 本身只负责执行构建，不负责解析命令行参数。如果想要一套类似 Book 模式的命令体系，可以参照 `mopress/main` 中命令分发的写法自行实现。 -->
+构建完成后，源目录中的 `hello.markdown` 会被渲染为输出目录 `dest` 中的 `hello.html`。
 
 ## 自定义源目录与输出目录
 
@@ -60,39 +49,11 @@ moon run site.mbt build
 ```moonbit
 ///|
 async fn main {
-  let options :  @core.Options = { src: "content", dest: "public" }
+  let options :  @core.Options = { src: "./content", dest: "./public" }
   @core.mopress(
-    [
-      @core.Glob(
-        "*.markdown",
-        @core.Text(raw => raw
-          |> @core.render_markdown_and_frontmatter
-          |> @core.set_extension(".html")
-          |> @core.unify),
-      ),
-    ],
     options~,
+    // ...
   )
-}
-```
-
-## 加入模板
-
-上面的示例只是把 Markdown 渲染为一段 HTML 片段，并没有套上完整的页面结构。可以在管线中加入套用模板的 step：
-
-```moonbit
-///|
-async fn main {
-  @core.mopress([
-    @core.Glob(
-      "*.markdown",
-      @core.Text(raw => raw
-        |> @core.render_markdown_and_frontmatter
-        |> @core.set_extension(".html")
-        |> x => x.load_and_apply_template("templates/default.html")
-        |> @core.unify),
-    ),
-  ])
 }
 ```
 
@@ -117,7 +78,7 @@ async fn main {
     (options) => {
       let shared = {
         "title": "My Site",
-        "footer": "© 2023 My Company",
+        "footer": "© 2026 Himeno Sena",
       }
       shared
     },
@@ -129,4 +90,4 @@ async fn main {
 ```
 
 > [!TIP]
-> 关于模板语法本身、以及模板变量是如何对应起来的，请参见 [组合 Steps](./composing-steps.md) 与 [模板引擎](../custom/template.md) 相关说明。
+> 关于模板语法本身、以及模板变量是如何对应起来的，请参见 <a href="./composing-steps.html">组合 Steps</a> 与 <a href="../custom/template.html">模板引擎</a> 相关说明。

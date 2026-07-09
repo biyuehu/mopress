@@ -10,7 +10,7 @@ title: 自定义 404 页面
 
 在 Book 模式下，MoPress 会自动为站点生成一份 404 页面，其内容来自一段内置的默认文本，并经过与其他页面完全相同的处理管线：元数据分离、预处理器、转换器、渲染、套用模板。这意味着 404 页面同样会使用配置中指定的模板与站点信息，视觉上会与站点其余部分保持一致。
 
-对应的实现，节选自 `mopress/main`：
+对应的实现，节选自 `himeno/mopress`：
 
 ```moonbit
 pub async fn run(config : @config.BookConfig) -> Unit {

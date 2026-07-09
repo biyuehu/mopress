@@ -4,18 +4,11 @@ title: 输出格式
 
 # 输出格式
 
-管线处理完成后，最终需要落地为实际写入磁盘的文件——这一层由 `Thing` 类型描述。本节介绍 `Thing` 的几种形态，以及如何让单个 item 产出多个输出文件。
+管线处理完成后，最终需要落地为实际写入磁盘的文件——这一层由 [`Thing`](https://mooncakes.io/docs/himeno/mopress/core#Thing) 类型描述。
 
 ## Thing 的四种形态
 
-```moonbit
-pub(all) enum Thing {
-  Doc(String)
-  Asset(Bytes)
-  Multiple(Array[(String, Thing)])
-  Empty
-}
-```
+{{@ ../src/core/types.mbt#thing }}
 
 - **`Doc(String)`**：文本类输出，如渲染完成的 HTML 页面、生成的 JSON 文本等，会被作为文本文件写入磁盘。
 - **`Asset(Bytes)`**：二进制输出，如图片、字体等，会被作为二进制文件写入磁盘。

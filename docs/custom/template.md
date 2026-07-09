@@ -8,23 +8,9 @@ MoPress 内置了一套简单、轻量的模板引擎，负责将页面内容与
 
 ## 模板节点的完整定义
 
-模板被解析为一棵由以下节点类型组成的语法树：
+模板被解析为一棵由以下节点类型组成的语法树 [`TemplateNode`](https://mooncakes.io/docs/himeno/mopress/template#TemplateNode)：
 
-```moonbit
-pub(all) enum TemplateNode {
-  Text(String)
-  Variable(String)
-  If(String, Array[TemplateNode], Array[TemplateNode])
-  For(String, Array[TemplateNode])
-  Partial(String)
-} derive(Eq, @debug.Debug)
-```
-
-- `Text(String)`：字面量、原样输出的文本片段。
-- `Variable(String)`：变量引用，渲染时会被替换为对应的值。
-- `If(String, Array[TemplateNode], Array[TemplateNode])`：条件分支：待测试的变量名、变量为真时渲染的节点、变量为假时渲染的节点。
-- `For(String, Array[TemplateNode])`：循环：待遍历的变量名（要求其值为 `Value::Array`）、每次迭代渲染的节点。
-- `Partial(String)`：引用另一份模板文件，将其渲染结果内联到当前位置。
+{{@ ../src/template/template.mbt#template-node}}
 
 ## 基本语法
 
@@ -87,17 +73,9 @@ $partial("path/header.html")$
 
 ## 支持的值类型
 
-模板变量的值使用以下类型表示：
+模板变量的值使用 [`Value`](https://mooncakes.io/docs/himeno/mopress/template#Value) 类型表示：
 
-```moonbit
-pub(all) enum Value {
-  String(String)
-  Number(Double)
-  Bool(Bool)
-  Array(Array[Value])
-  Object(Map[String, Value])
-} derive(Eq, @debug.Debug)
-```
+{{@ ../src/template/template.mbt#value}}
 
 `Array` 类型的值可以配合 `$for$` 循环使用；`Object` 类型的值可以配合点号访问其字段，如上面循环示例中的 `item.title`；
 
@@ -125,30 +103,12 @@ pub fn[T : Show] parse_template(input : T) -> Array[TemplateNode] raise Template
 模板渲染有两种模式：
 
 - **宽松模式**（`apply_template`）：渲染过程中遇到问题，如引用了不存在的变量，会跳过对应的模板节点、以空内容代替，然后继续渲染文档的其余部分，不会导致整个渲染失败。
-- **严格模式**（`apply_template_strict`）：一旦渲染中遇到任何问题，会立即中止并抛出具体的错误。对应的错误类型定义如下：
+- **严格模式**（`apply_template_strict`）：一旦渲染中遇到任何问题，会立即中止并抛出具体的错误。对应的错误类型 [`TemplateParseError`](https://mooncakes.io/docs/himeno/mopress/template#TemplateParseError) 定义如下：
 
-```moonbit
-pub suberror TemplateRenderError {
-  UndefinedVariableError(String)
-  NonArrayForLoopError(String)
-  PartialLoadError(String)
-  PartialParseError(String)
-  RecursivePartialError(String)
-} derive(Eq, @debug.Debug)
-```
+{{@ ../src/template/template.mbt#template-render-error}}
 
-- `UndefinedVariableError`：模板引用了一个渲染上下文中不存在的变量。
-- `NonArrayForLoopError`：`{{#for}}` 循环引用的变量的值不是 `Value::Array`。
-- `PartialLoadError`：引用的局部模板文件无法被读取。
-- `PartialParseError`：引用的局部模板文件内容无法被解析。
-- `RecursivePartialError`：局部模板直接或间接地引用了自身，导致无限递归。
+解析阶段的错误则是另一种独立的错误类型 [`TemplateRenderError`](https://mooncakes.io/docs/himeno/mopress/template#TemplateRenderError)：
 
-解析阶段的错误则是另一种独立的错误类型：
-
-```moonbit
-pub suberror TemplateParseError {
-  TemplateParseError(String)
-} derive(Eq, @debug.Debug)
-```
+{{@ ../src/template/template.mbt#template-parse-error}}
 
 在 Book 模式中，`load_and_apply_template` 提供了 `strict` 参数用于在两种模式间切换，默认使用宽松模式。开发阶段建议开启严格模式以尽早暴露问题，正式发布时可以视情况切换回宽松模式，避免个别页面因为模板问题而导致整个构建失败。

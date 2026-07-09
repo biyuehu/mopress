@@ -144,63 +144,6 @@ raw
 
 ## 完整的组合示例
 
-Book 模式的 MarkDown 页面渲染函数 [`process_markdown_page`](https://mooncakes.io/docs/himeno/mopress/main#process_markdown_page) 就是最好的参考示例（以最新 Api 文档为准，以下代码仅供参考）
+Book 模式的 MarkDown 页面渲染函数 [`process_markdown_page`](https://mooncakes.io/docs/himeno/mopress/main#process_markdown_page) 就是最好的参考示例：
 
-```moonbit
-@core.render_markdown_and_frontmatter_from_ast(
-  seprated.map(_ => ast),
-  seprated.data.0,
-)
-|> @core.set_extension(".html")
-|> x => {
-  let (prev, next) = summary.prev_next(x.location())
-  x.add_vars(
-    Map([
-      (
-        "section",
-        summary.flatten(x.location(), config.base_url)
-        |> @template.Value::from_json,
-      ),
-      ("site_title", config.title |> String),
-      ("site_description", config.description |> String),
-      ("site_keywords", config.keywords |> String),
-      ("site_authors", config.authors.join(",") |> String),
-      ("site_language", config.language |> String),
-      ("favicon", config.favicon |> String),
-      ("logo", config.logo |> String),
-      ("repository", config.repository.unwrap_or("") |> String),
-      ("breadcrumb", summary.breadcrumb(x.location()) |> String),
-      ("version", "v1.0.0" |> String),
-      ("current", x.location() |> String),
-      (
-        "prev",
-        prev
-        .map(prev => {
-          @template.Object(
-            Map([("title", prev.0 |> String), ("location", prev.1 |> String)]),
-          )
-        })
-        .unwrap_or(String("")),
-      ),
-      (
-        "next",
-        next
-        .map(next => {
-          @template.Object(
-            Map([("title", next.0 |> String), ("location", next.1 |> String)]),
-          )
-        })
-        .unwrap_or(String("")),
-      ),
-    ]),
-  )
-}
-|> @core.load_and_apply_template(config.extensions.template)
-|> @core.import_css(config.extensions.import_css)
-|> @core.import_js(config.extensions.import_js)
-|> @core.use_css(config.extensions.use_css)
-|> @core.use_js(config.extensions.use_js)
-|> @core.inject_head(config.extensions.inject_head.join("\n"))
-|> @core.inject_body(config.extensions.inject_body.join("\n"))
-|> @core.unify
-```
+{{@ ../src/mod.mbt#steps }}

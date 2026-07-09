@@ -52,14 +52,9 @@ raw
 
 ## 声明“谁该被怎样处理”
 
-一条 `Rule` 描述了“些文件应该被匹配到、并以何种方式处理”，有两种构造方式：
+一条 [`Rule`](https://mooncakes.io/docs/himeno/mopress/core#Rule) 描述了“些文件应该被匹配到、并以何种方式处理”，有两种构造方式：
 
-```moonbit
-pub(all) enum Rule {
-  Glob(String, Handler)
-  Guard(String, (String) -> Bool, Handler)
-}
-```
+{{@ ../src/core/types.mbt#rule}}
 
 - **`Glob(pattern, handler)`**：使用 Glob 匹配文件路径，凡是匹配到的文件都会以给定的处理方式处理。Glob 语法的完整说明请参见相关参考。
 - **`Guard(pattern, predicate, handler)`**：在 Glob 匹配的基础上，追加一层自定义的判定函数——只有当文件路径同时满足 Glob 匹配并且让 `predicate` 返回 `true` 时，才会被这条规则处理。`predicate` 接收的是文件相对于源目录的完整路径。这在需要比 Glob 语法更精细的匹配逻辑时非常有用，如“排除掉某个特定命名规则的文件”或“根据文件内容做条件判断”。
@@ -83,15 +78,9 @@ pub(all) enum Rule {
 
 ## 处理方式
 
-处理方式描述了“匹配到的文件应该以什么形式读入、经过怎样的处理”：
+处理方式 [`Handler`](https://mooncakes.io/docs/himeno/mopress/core#Handler) 描述了“匹配到的文件应该以什么形式读入、经过怎样的处理”：
 
-```moonbit
-pub(all) enum Handler {
-  Text(async (Item[String]) -> Item[Thing])
-  Binary(async (Item[Bytes]) -> Item[Thing])
-  Copy
-}
-```
+{{@ ../src/core/types.mbt#handler}}
 
 - **`Text(step)`**：将匹配到的文件作为 UTF-8 文本读入，包装成 `Item[String]`，交给 `step` 处理，最终产出 `Item[Thing]`。这是处理 Markdown、模板等文本类内容最常用的方式。
 - **`Binary(step)`**：将匹配到的文件作为原始字节读入，包装成 `Item[Bytes]`，交给 `step` 处理。适用于需要对二进制内容做处理的场景（如图片压缩、字体子集化等）。
@@ -114,4 +103,4 @@ pub async fn Handler::run(
 通常不需要手动调用它——构建函数会在遍历匹配到的文件时自动完成这一步。
 
 > [!TIP]
-> 关于最终 Step 的输出类型 `Item[Thing]`、输出多个文件、自定义输出文件名字等内容请参考 [输出格式](./output-formats.md)。
+> 关于最终 Step 的输出类型 <i>Item[Thing]</i>、输出多个文件、自定义输出文件名字等内容请参考 <a href="./output-formats.html">输出格式</a>。

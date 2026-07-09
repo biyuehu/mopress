@@ -34,36 +34,15 @@ pub async fn run_markdown_transformers(
 
 **预处理器**（preprocessor）操作原始 Markdown 文本，在解析为语法树之前运行，对应 `run_markdown_preprocessors`。**转换器**（transformer）操作已经解析好的 Markdown 语法树，在渲染为 HTML 之前运行，对应 `run_markdown_transformers`。这让可以根据实际需求，选择在文本层面还是结构层面介入处理流程。两者都通过配置中的 `preprocessors`、`transformers` 字段声明，具体的通信协议请阅读 [外部插件协议](./plugins/protocol.md)。
 
-失败时统一抛出以下错误类型：
+失败时统一抛出以下错误类型 [`ProcessorError`](https://mooncakes.io/docs/himeno/mopress/bridge#ProcessorError)：
 
-```moonbit
-pub suberror ProcessorError {
-  NonZeroExit(command~ : String, exit_code~ : Int, stderr~ : String)
-  StderrReported(command~ : String, message~ : String)
-  InvalidStdout(command~ : String, raw~ : String, reason~ : String)
-} derive(Eq, @debug.Debug)
-```
-
-- `NonZeroExit`：命令以非零状态码退出。
-- `StderrReported`：命令退出码为零，但标准错误非空，被视为业务层面主动上报的错误。
-- `InvalidStdout`：标准输出非空，但无法解析为预期的响应结构。
+{{@ ../src/bridge/bridge.mbt#processor-error}}
 
 ## Web Components
 
 如果需要的不是“改写内容”，而是“让某段内容在页面上具备交互能力或特殊呈现效果”，Web Components 通常是比外部程序更合适的选择。MoPress 的 Markdown 解析器在遇到无法识别的 HTML 标签时，会将其原样保留在语法树中，而不会报错或丢弃：
 
-```moonbit
-pub(all) enum Block {
-  Heading(Int, Array[Inline])
-  Paragraph(Array[Inline])
-  ThematicBreak
-  CodeBlock(String?, String)
-  BlockQuote(Array[Block])
-  List(ListBlock)
-  HtmlBlock(String)
-  Table(TableBlock)
-} derive(Eq, ToJson, @debug.Debug, @json.FromJson)
-```
+{{@ ../src/markdown/markdown.mbt#block}}
 
 其中 `HtmlBlock(String)` 就是原始 HTML 块被保留下来的形态；行内的原始 HTML 则对应 `Inline` 枚举中的 `Html(String)`。这意味着可以直接在 Markdown 正文中写自定义元素标签，只要配合注入脚本引入对应的自定义元素定义脚本，浏览器就会在渲染时原生地接管这部分内容，不需要 MoPress 在构建期做任何额外处理。详情请阅读 [Web Components](./plugins/web-components.md)。
 

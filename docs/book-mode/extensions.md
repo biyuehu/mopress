@@ -8,6 +8,8 @@ title: 扩展配置
 
 ## 字段一览
 
+具体定义参考 [`ExtensionsConfig`](https://mooncakes.io/docs/himeno/mopress/config#ExtensionsConfig)。
+
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | `template` | String | HTML 模板文件路径，所有页面都会套用该模板 |
@@ -22,7 +24,7 @@ title: 扩展配置
 | `transformers` | Array[String] | 依次执行的外部转换命令，作用于已解析的 Markdown AST |
 
 > [!TIP]
-> 运用 `template`、`assets`、`use_*` 等字段可以高度定制页面，详细说明请参见 [页面定制](./pages.md)。
+> 运用 <i>template</i>、<i>assets</i>、<i>use_*</i> 等字段可以高度定制页面，详细说明请参见 <a href="./pages.html">页面定制</a>。
 
 ## 模板
 
@@ -42,7 +44,7 @@ title: 扩展配置
 选择哪一种取决于你的使用场景：内联适合少量、页面强相关的样式或脚本；外部引入适合体积较大、或希望利用浏览器缓存的公共资源。
 
 > [!NOTE]
-> 当引用外部资源时，如果是本地资源，请确保其包含在 `assets` 中，否则相应资源不会被复制到输出目录。
+> 当引用外部资源时，如果是本地资源，请确保其包含在 <i>assets</i> 中，否则相应资源不会被复制到输出目录。
 
 ## 头部与正文注入
 
@@ -50,14 +52,7 @@ title: 扩展配置
 
 理论上额外引用内容借助 `use_css`、`use_js` 或 `import_css`、`import_js` 即可满足大部分需求，例外的是 `use_*` 引入 CSS 或 JavaScript 代码的生成的 HTML 位于 `import_*` 导入 CSS 或 JavaScript 资源生成的 HTML 之后，而某些 JavaScript 库要求引入前得先有配置代码，故此即可使用 `inject_*` 自由地插入这些内容。如 MoPress 对 MathJax 功能的处理：
 
-```moonbit
-self.extensions.inject_head.push(
-  (
-    #|<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
-    #|<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script>
-  ),
-)
-```
+{{@ ../src/config/config.mbt#mathjax}}
 
 ## 预处理器与转换器
 

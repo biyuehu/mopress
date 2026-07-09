@@ -8,45 +8,13 @@ title: 配置
 
 ## 基本格式
 
-`sena.toml` 使用 [TOML](https://toml.io/) 格式编写。一个最简单的示例如下：
+`sena.toml` 使用 [TOML](https://toml.io/) 格式编写。以下是本书的完整配置：
 
-TODO: @refer
-
-```toml
-title = "我的文档站"
-description = "一个用 mopress 搭建的站点"
-keywords = "moonbit, 文档, 静态站点"
-favicon = "favicon.ico"
-logo = "logo.png"
-authors = ["Sena", "Romi"]
-language = "zh"
-repository = "https://github.com/example/example"
-src = "./src"
-dest = "./dest"
-base-url = "/"
-
-[features]
-highlight_enabled = true
-highlight_theme = "github"
-mathjax_enabled = false
-
-[extensions]
-template = "templates/default.html"
-assets = ["images/*", "styles/*", "scripts/*"]
-inject-head = []
-inject-body = []
-use-js = []
-use-css = ["console.log('Hello, MoPress!');"]
-import-css = []
-import-js = []
-preprocessors = []
-transformers = []
-
-```
+{{@ sena.toml}}
 
 ## 字段说明
 
-下表列出了 `sena.toml` 顶层支持的所有字段。
+下表列出了 `sena.toml` 顶层支持的所有字段。具体定义参考 [`BookConfig`](https://mooncakes.io/docs/himeno/mopress/config#BookConfig)。
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -60,12 +28,14 @@ transformers = []
 | `repository` | String? | 源码仓库地址，若填写会通过 `repository` 变量暴露给模板 |
 | `src` | String | 源文件目录，相对于项目根目录 |
 | `dest` | String | 构建输出目录，相对于项目根目录 |
-| `base-url` | String | 基本 URL，用于构建输出的 URL 路径，默认值为 `/` |
+| `base_url` | String | 基本 URL，用于构建输出的 URL 路径，默认值为 `/` |
+<!-- | `build_time` | String | 当前 MoPress 版本构建时间，格式为 `YYYY/MM/DD HH:MM:SS` |
+| `version` | String | MoPress 版本号，格式为 `X.Y.Z` | --> // TODO
 | `[features]` | [FeaturesConfig](https://mooncakes.io/docs/himeno/mopress/config#FeaturesConfig) | 内置功能开关，详见 [功能预设](./features.md) |
 | `[extensions]` | [ExtensionsConfig](https://mooncakes.io/docs/himeno/mopress/config#ExtensionsConfig) | 模板、资源注入与插件相关配置，详见 [扩展配置](./extensions.md) |
 
 ## 注意事项
 
-- `title`、`description`、`keywords`、`favicon`、`logo`、`authors`、`language` 字段均会以不同形式自动注入为模板中的变量，具体行为参考 [TODO:]
+- 除 `[features]` 与 `[extensions]` 字段外，均会以不同形式自动注入为模板中的变量，具体行为参考 [TODO:]
 - `src` 与 `dest` 建议使用相对路径，且不要让两者产生嵌套关系（如 `dest` 是 `src` 的子目录），否则构建时可能会把已生成的输出当作源文件重复处理。
 - `[features]` 与 `[extensions]` 并非互斥关系：`features` 中的开关会在配置加载时自动展开（脱糖）为 `extension` 中的具体字段（如注入对应的 CSS/JS）。也就是说，你既可以只用 `features` 走“预设”路线，也可以直接在 `extension` 中手写等效配置，两者最终作用的对象是一致的。详见 [功能预设](./features.md)。

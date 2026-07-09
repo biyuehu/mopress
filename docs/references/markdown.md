@@ -33,12 +33,6 @@ main = do
   putStrLn truth
 ```
 
-```moonbit
-fn main() {
-  "所有人都给用 MoonBit ！！！" |> println
-}
-```
-
 ## 标题
 
 <!-- markdownlint-disable -->
@@ -71,7 +65,7 @@ fn main() {
 
 ## 引用
 
-> 引用
+> 引用 TODO:
 
 ## 链接
 

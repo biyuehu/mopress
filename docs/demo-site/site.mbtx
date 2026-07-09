@@ -1,0 +1,22 @@
+import {
+  "himeno/mopress/core",
+  "moonbitlang/async",
+}
+
+///|
+async fn main {
+  @core.mopress([
+    Glob(
+      "**/*.md",
+      Text(raw => {
+        raw
+        |> @core.set_extension(".html")
+        |> @core.render_markdown_and_frontmatter
+        |> @core.load_and_apply_template("templates/default.html")
+        |> @core.use_js(["console.log('hi, moonbit! hi, mopress!')"])
+        |> @core.unify
+      }),
+    ),
+    Glob("styles/**/*", Copy),
+  ])
+}

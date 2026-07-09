@@ -8,6 +8,8 @@ title: 功能预设
 
 ## 字段一览
 
+具体定义参考 [`FeaturesConfig`](https://mooncakes.io/docs/himeno/mopress/config#FeaturesConfig)。
+
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | `highlight_enabled` | Bool | 是否启用代码块语法高亮 |
