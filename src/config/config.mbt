@@ -3,8 +3,8 @@
 ///
 /// This is the structure serialized to and parsed from the project's
 /// configuration file (see `file_name`), and is threaded through the
-/// entire build pipeline (see `mopress/main`'s `run` and
-/// `process_markdown_page`, and `mopress/bridge`'s processor-running
+/// entire build pipeline (see `himeno/mopress`'s `run` and
+/// `process_markdown_page`, and `himeno/mopress/bridge`'s processor-running
 /// functions) as shared, read-only context.
 pub(all) struct BookConfig {
   /// The site's title, used both for `<title>`/template variables and as
@@ -315,7 +315,7 @@ pub impl Default for ExtensionsConfig with fn default() -> ExtensionsConfig {
   {
     template: "templates/default.html",
     assets: [
-      "images/**/*", "styles/**/*", "scripts/**/*", "plugins/external/**/*",
+      "images/**/*", "styles/**/*", "scripts/**/*", "plugins/runtime/**/*",
     ],
     inject_head: [],
     inject_body: [],

@@ -93,7 +93,7 @@ fn handle_help() -> Unit {
       #|Commands:
       #|  build    Build the site
       #|  init     Initialize a new book-mode project
-      #|  new      Create a new site-mode project
+      #|  new       Create a new site-mode project
       #|  serve    Serve the site locally
       #|  version  Print the version number
       #|  help     Print this help message
@@ -114,6 +114,11 @@ async fn handle_serve() -> Unit {
 }
 
 ///|
+fn handle_version() -> Unit {
+  println("MoPress version: \{version} (\{build_time})")
+}
+
+///|
 async fn command_handler() -> Unit {
   let args = @env.args()
   match (if args.length() > 1 { args[1] } else { "" }) {
@@ -122,10 +127,11 @@ async fn command_handler() -> Unit {
       if args.length() > 2 {
         handle_new(args[2])
       } else {
-        raise @fs.IOError("Usage: mopress new <name>")
+        raise @fs.IOError("Usage: mopress new <dir>")
       }
     "build" => handle_build()
     "serve" => handle_serve()
+    "version" => handle_version()
     _ => handle_help()
   }
 }
@@ -250,11 +256,7 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
     |> @summary.parse_summary()
 
   let not_found_page = process_markdown_page(
-    @core.Item::new(
-      "---\ntitle: 404\n---\nYour page can not be found...",
-      "404",
-      extension=".md",
-    ),
+    @core.Item::new(book_404_md, "404", extension=".md"),
     config,
     summary,
   )
