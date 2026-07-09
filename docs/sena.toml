@@ -17,13 +17,13 @@ mathjax-enabled = true
 
 [extensions]
 template = "templates/default.html"
-assets = ["images/**/", "styles/**/*", "scripts/**/*", "plugins/external/**/*"]
+assets = ["images/**/", "styles/**/*", "scripts/**/*", "plugins/runtime/**/*"]
 inject-head = []
 inject-body = []
 use-js = []
 use-css = ["console.log('Hello, MoPress!');"]
 import-css = []
-import-js = ["plugins/external/bili-video.js"]
+import-js = ["plugins/runtime/bili-video.js"]
 preprocessors = [
   "bun plugins/preprocessers/github-alert",
   "bun plugins/preprocessers/refer-file",

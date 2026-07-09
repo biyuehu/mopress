@@ -105,7 +105,7 @@ pub async fn run_markdown_transformers(
 item.map_with_eff(text => @bridge.run_markdown_preprocessors(config, text))
 ```
 
-完整的通信协议、错误类型定义，请阅读 [外部插件协议](../custom/plugins/protocol.md)。
+完整的通信协议、错误类型定义，请阅读 [外部插件协议](../advance/plugins/protocol.md)。
 
 ### 进程内插件组合
 
@@ -144,6 +144,6 @@ raw
 
 ## 完整的组合示例
 
-Book 模式的 MarkDown 页面渲染函数 [`process_markdown_page`](https://mooncakes.io/docs/himeno/mopress/main#process_markdown_page) 就是最好的参考示例：
+Book 模式的 MarkDown 页面渲染函数 [`process_markdown_page`](https://mooncakes.io/docs/himeno/himeno/mopress#process_markdown_page) 就是最好的参考示例：
 
 {{@ ../src/mod.mbt#steps }}

@@ -15,6 +15,7 @@
   - [扩展配置](./book-mode/extensions.md)
   - [功能预设](./book-mode/features.md)
   - [页面定制](./book-mode/pages.md)
+  - [使用插件](./book-mode/plugins.md)
 
 - [Site 模式](./site-mode/index.md)
   - [开始](./site-mode/starting.md)
@@ -22,18 +23,17 @@
   - [组合 Steps](./site-mode/composing-steps.md)
   - [输出格式](./site-mode/output-formats.md)
 
-- [自定义](./custom/index.md)
-  - [模板引擎](./custom/template.md)
-  - [自定义 404 页面](./custom/custom-404.md)
-  - [多样化的插件](./custom/plugins/index.md)
-    - [外部 stdin/stdout 协议](./custom/plugins/protocol.md)
-    - [Web Components](./custom/plugins/web-components.md)
-    - [Moonbit 模块](./custom/plugins/moonbit-modules.md)
+- [高级](./advance/index.md)
+  - [模板引擎](./advance/template.md)
+  - [Glob 匹配](./advance/glob.md)
+  - [多样化的插件](./advance/plugins/index.md)
+    - [外部插件协议](./advance/plugins/protocol.md)
+    - [Web Components](./advance/plugins/web-components.md)
+    - [Moonbit 模块](./advance/plugins/moonbit-modules.md)
 
 ## 参考
 
 - [Markdown 演示](./references/markdown.md)
-- [Glob 匹配](./references/glob.md)
 - [CLI 参考](./references/cli.md)
 - [Api 参考](./references/api.md)
 

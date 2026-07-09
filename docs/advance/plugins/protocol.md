@@ -4,7 +4,7 @@ title: 外部插件协议
 
 # 外部插件协议
 
-本节详细说明外部预处理器、转换器程序需要遵循的标准输入、标准输出通信协议。无论用什么语言（TypeScript、Python、Go、JavaScript、PHP、Lua、Teal、Gleam、Haskell、Idris、Rust、C、Swift、Scala、Kotlin、Scheme、Koka 等）编写这些程序，只要遵循本节描述的协议，就可以被 MoPress 正确调用。
+本节详细说明外部预处理器、转换器程序需要遵循的标准输入、标准输出通信协议。无论用什么语言（TypeScript、Python、Go、JavaScript、PHP、Lua、Teal、Gleam、Haskell、Idris、Ocaml、Rust、C、Swift、Scala、Kotlin、Scheme、Koka 等）编写这些程序，只要遵循本节描述的协议，就可以被 MoPress 正确调用。
 
 ## 两个阶段
 

@@ -12,9 +12,15 @@ title: 开始
 
 Site 模式下，项目的入口是一份 MoonBit 源文件（文件名可以自定义，只要在运行时正确指定即可）。需要在项目中引入核心库作为依赖。
 
-## 编写最小示例
+## 创建项目
 
-假设项目结构如下：
+输入以下命令：
+
+```bash
+mopress new <dir>
+```
+
+生成以下 `<dir>` 目录结构：
 
 ```text
 ├── site.mbtx
@@ -90,4 +96,4 @@ async fn main {
 ```
 
 > [!TIP]
-> 关于模板语法本身、以及模板变量是如何对应起来的，请参见 <a href="./composing-steps.html">组合 Steps</a> 与 <a href="../custom/template.html">模板引擎</a> 相关说明。
+> 关于模板语法本身、以及模板变量是如何对应起来的，请参见 <a href="./composing-steps.html">组合 Steps</a> 与 <a href="../advance/template.html">模板引擎</a> 相关说明。

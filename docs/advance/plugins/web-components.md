@@ -27,6 +27,7 @@ fn main {
 
 后面继续是普通正文。
 ```
+<!-- TODO： 使用lit 提及未来支持mbt+jsffi -->
 
 只要浏览器加载页面时，已经通过 `customElements.define(...)` 注册了 `code-playground` 这个自定义元素，浏览器就会在渲染时原生地接管这段标签，赋予它所定义的交互行为，整个过程不需要 MoPress 在构建期做任何额外的解析或编译。这正是 MoPress 选择拥抱 Web Components、而非引入类似 MDX 那种在构建期把 JSX 语法糖编译进 Markdown 的方案的原因：不需要额外的编译管线，直接利用浏览器原生标准，复杂度与维护成本都低得多。
 
@@ -66,7 +67,7 @@ import_js = ["https://cdn.example.com/some-web-component-library.js"]
 
 ## 与外部程序插件的组合使用
 
-Web Components 与外部 stdin、stdout 程序插件并不冲突，甚至可以配合使用：可以编写一个预处理器，把某种更简洁的自定义语法转换为对应的自定义元素标签，再交由浏览器端的 Web Component 负责实际渲染，前者负责作者友好的书写体验，后者负责页面上的实际交互效果，两者各司其职。
+Web Components 与外部 stdin、stdout 程序插件并不冲突，甚至可以配合使用：可以编写一个预处理器，把某种更简洁的自定义语法转换为对应的自定义元素标签，再交由浏览器端的 Web Components 负责实际渲染，前者负责作者友好的书写体验，后者负责页面上的实际交互效果，两者各司其职。
 
 ## 局限性
 

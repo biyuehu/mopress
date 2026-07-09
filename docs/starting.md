@@ -28,20 +28,20 @@ mopress version
 
 ### 3. 构建可执行文件
 
-要求已安装 MoonBit 工具链、Bun（或 Node.js）。输入以下命令：
+要求已安装 MoonBit 工具链、Bun（或 Node.js）、Just。输入以下命令：
 
 ```bash
 git clone https://github.com/biyuehu/mopress.git
 cd mopress
 moon update
-bun scripts/generate.ts
-moon build
+just prebuild
+moon build --release
 ```
 
 > [!CAUTION]
 > 由于 MoonBit 的 Native 后端支持问题，Windows 用户请确保存在并使用 MSVC 工具链而非 MinGW。
 
-构建完后在 `_build/native/release/build/` 目录中找到可执行文件，将其复制到任意目录并添加到系统环境变量中。
+构建完后可找到可执行文件 `_build/native/release/build/mopress.exe`，将其复制到任意目录并添加到系统环境变量中。
 
 ## 第一步：初始化项目
 
@@ -69,7 +69,7 @@ mopress init
 ├── scripts/
 │    └── main.js
 └── plugins/
-     ├── external/
+     ├── runtime/
      ├── preprocessors/
      │    └── github-alert.ts
      └── transformers/
