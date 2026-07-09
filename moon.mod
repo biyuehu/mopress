@@ -1,6 +1,6 @@
 name = "himeno/mopress"
 
-version = "0.1.0"
+version = "0.2.0"
 
 import {
   "bobzhang/toml@0.2.1",
@@ -20,4 +20,10 @@ description = "A modern documentation and static site generator for the MoonBit 
 
 preferred_target = "native"
 
+supported_targets = "native"
+
 source = "src"
+
+options(
+  exclude: [ "docs", "scripts" ],
+)
