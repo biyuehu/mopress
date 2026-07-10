@@ -63,7 +63,6 @@ jobs:
 
       - name: Run checks and tests
         run: |
-          just prebuild
           moon check
           moon test
           moon fmt && git diff --exit-code
