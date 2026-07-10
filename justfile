@@ -2,15 +2,18 @@ set windows-shell := ["powershell.exe"]
 
 init:
   lefthook install
-  bun scripts/generate.ts
+  just prebuild
 
 test:
-  bun scripts/generate.ts
+  just prebuild
   moon test
 
 build:
-  bun scripts/generate.ts
+  just prebuild
   moon build
 
 prebuild:
-  bun scripts/generate.ts
+  bun scripts/gen-includes.ts
+
+logen:
+  bun scripts/gen-log.ts

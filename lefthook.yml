@@ -1,5 +1,8 @@
 pre-commit:
   commands:
+    logen:
+      run: just logen
+      stage_fixed: true
     prebuild:
       run: just prebuild
       stage_fixed: true

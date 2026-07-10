@@ -49,6 +49,7 @@
 - **core:** Add [36mversion[39m subcommand for cli ([2f1c81c](https://github.com/biyuehu/mbdoc/commit/2f1c81c))
 - Add TextRequest struct, implement Show trait for ProcessError, add log information ([267161a](https://github.com/biyuehu/mbdoc/commit/267161a))
 - Implement Show for suberrors and add log information ([15e7c7d](https://github.com/biyuehu/mbdoc/commit/15e7c7d))
+- **plugins:** Add link-checker, relative2absolute and improve github-alert, refer-file ([f1741f2](https://github.com/biyuehu/mbdoc/commit/f1741f2))
 
 ### 🩹 Fixes
 
@@ -71,6 +72,7 @@
 - Improve all documents ([f3928e4](https://github.com/biyuehu/mbdoc/commit/f3928e4))
 - Update all documents ([6dfdfeb](https://github.com/biyuehu/mbdoc/commit/6dfdfeb))
 - Improve all of documents ([1d1e91a](https://github.com/biyuehu/mbdoc/commit/1d1e91a))
+- Improve all documents ([dbec8ac](https://github.com/biyuehu/mbdoc/commit/dbec8ac))
 
 ### 🏡 Chore
 
@@ -116,6 +118,7 @@
 - Update generate.ts, README.md etc. ([50860b3](https://github.com/biyuehu/mbdoc/commit/50860b3))
 - Update ci ([fe5e109](https://github.com/biyuehu/mbdoc/commit/fe5e109))
 - Update ci.yml ([e773383](https://github.com/biyuehu/mbdoc/commit/e773383))
+- Add gen-log.ts that generate changelog and rename generate.ts to gen-includes.ts ([a14cd55](https://github.com/biyuehu/mbdoc/commit/a14cd55))
 
 ### ✅ Tests
 
