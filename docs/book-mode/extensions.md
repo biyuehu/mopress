@@ -32,7 +32,7 @@ title: 扩展配置
 
 ## 静态资源
 
-`assets` 使用 Glob 匹配需要原样复制的文件（如图片、字体等），这些文件不会经过 Markdown 处理，只是从源目录复制到 `dest` 目录下的对应位置。Glob 语法的完整说明请参见 [Glob 匹配](../references/glob.md)。
+`assets` 使用 Glob 匹配需要原样复制的文件（如图片、字体等），这些文件不会经过 Markdown 处理，只是从源目录复制到 `dest` 目录下的对应位置。Glob 语法的完整说明请参见 [Glob 匹配](../advance/glob.md)。
 
 ## 内联注入 vs 外部引入
 

@@ -20,12 +20,15 @@ template = "templates/default.html"
 assets = ["images/**/", "styles/**/*", "scripts/**/*", "plugins/runtime/**/*"]
 inject-head = []
 inject-body = []
-use-js = []
-use-css = ["console.log('Hello, MoPress!');"]
+use-js = ["console.log('Hello, MoPress!');"]
+use-css = []
 import-css = []
 import-js = ["plugins/runtime/bili-video.js"]
 preprocessors = [
   "bun plugins/preprocessers/github-alert",
   "bun plugins/preprocessers/refer-file",
 ]
-transformers = []
+transformers = [
+  "bun plugins/transformers/link-checker",
+  "bun plugins/transformers/relative2absolute.ts",
+]

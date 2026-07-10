@@ -19,15 +19,17 @@ type Request = {
   config: BookConfig;
   type: "markdown-text";
   data: string;
+  target: string;
 } |
 {
   config: BookConfig;
   type: "markdown-ast";
   data: Markdown;
+  target: string;
 }
 ```
 
-`config` 字段是当前站点的完整配置，对应 `BookConfig`，供程序按需读取。`type` 字段固定为两个取值之一：预处理器收到的是 `markdown-text`，转换器收到的是 `markdown-ast`。`data` 字段是待处理的实际内容：预处理器收到的是纯文本字符串，转换器收到的是 Markdown 语法树的 JSON 表示。
+`config` 字段是当前站点的完整配置，对应 `BookConfig`，供程序按需读取。`type` 字段固定为两个取值之一：预处理器收到的是 `markdown-text`，转换器收到的是 `markdown-ast`。`data` 字段是待处理的实际内容：预处理器收到的是纯文本字符串，转换器收到的是 Markdown 语法树的 JSON 表示。`target` 字段是当前 MarkDown 文件的相对路径（相对于 `config.src`）。
 
 ## 响应：通过 stdout 返回的内容
 
@@ -47,13 +49,7 @@ interface Response {
 
 ## 错误：程序如何上报失败
 
-如果处理过程中出现错误，程序应当以非零状态码退出，并且向标准错误写入以下 JSON 结构：
-
-```typescript
-interface Error {
-  error: string;
-}
-```
+如果处理过程中出现错误，程序应当以非零状态码退出，并且向标准错误写入错误信息。
 
 MoPress 在解析结果时会依次检查：
 

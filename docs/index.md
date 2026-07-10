@@ -17,7 +17,7 @@ MoPress 是一个面向 MoonBit 生态的现代文档与通用静态站点生成
 
 ## 接下来读什么
 
-如果你想尽快看到效果，请从 [快速开始](./quick-start.md) 开始；如果你已经知道自己要用哪种模式，可以直接跳到 [Book 模式](./book-mode/overview.md) 或 [Site 模式](./site-mode/overview.md) 章节。
+如果你想尽快看到效果，请从 [快速开始](./starting.md) 开始；如果你已经知道自己要用哪种模式，可以直接跳到 [Book 模式](./book-mode/index.md) 或 [Site 模式](./site-mode/index.md) 章节。
 
 ## 本书结构
 
@@ -25,3 +25,11 @@ MoPress 是一个面向 MoonBit 生态的现代文档与通用静态站点生成
 - [高级](./advance/index.md) 一章中详细讲解 MoPress 的高级功能与插件系统，对于 Book 模式 与 Site 模式共有的重要概念也会一并出现在本章。
 - 之后给出了几篇参考说明。
 - 最后是本书的若干篇附录。
+
+<bili-video bv="BV1xx411c7mD"></bili-video>
+
+## 支持 MoPress
+
+<div align="center">
+  <a href="https://i.arimuraromi.com/donate" target="_blank"><strong style="border-radius: 5px; padding: 10px; background-color: rgb(250, 58, 33); color: white; text-decoration: none;">👉 Keep This Project Alive 👈</strong></a>
+</div>

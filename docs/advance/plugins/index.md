@@ -24,11 +24,13 @@ MoPress 提供三种互不排斥的方式来扩展内容的处理与展现方式
 pub async fn run_markdown_preprocessors(
   config : @config.BookConfig,
   data : String,
+  target: String
 ) -> String raise
 
 pub async fn run_markdown_transformers(
   config : @config.BookConfig,
   data : Array[@markdown.Block],
+  target: String,
 ) -> Array[@markdown.Block] raise
 ```
 

@@ -41,4 +41,3 @@
 
 [贡献](./contributing.md)
 [Changelog](./changelog.md)
-[FAQ](./faq.md)

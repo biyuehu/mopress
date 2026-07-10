@@ -83,7 +83,7 @@ pub impl Thingable for Bytes
 pub impl Thingable for Json
 ```
 
-`String` 会被转换为 `Thing::Doc`，`Bytes` 会被转换为 `Thing::Asset`，`Json` 会被转换为其自身对应的表示，具体的 `Thing` 定义与写入方式请阅读 [输出格式](./recipes/output-formats.md)。
+`String` 会被转换为 `Thing::Doc`，`Bytes` 会被转换为 `Thing::Asset`，`Json` 会被转换为其自身对应的表示，具体的 `Thing` 定义与写入方式请阅读 [输出格式](./output-formats.md)。
 
 ### 外部插件桥接
 

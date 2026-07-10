@@ -4,7 +4,7 @@ title: CLI 参考
 
 # CLI 参考
 
-本页是 `mopress` 可执行程序命令行用法的完整参考。日常上手请优先阅读 [快速开始](../quick-start.md)（Book 模式）或 [开始](../site-mode/starting.md)（Site 模式），本页仅作查阅之用。
+本页是 `mopress` 可执行程序命令行用法的完整参考。日常上手请优先阅读 [快速开始](../starting.md)（Book 模式）或 [开始](../site-mode/starting.md)（Site 模式），本页仅作查阅之用。
 
 ## 基本用法
 
@@ -83,4 +83,4 @@ mopress help
 moon run --target native site.mbtx <args>
 ```
 
-`<args>` 子命令、参数与 MoPress CLI 一致，一般只需要使用到 `build` 与 `serve`。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
+`<args>` 仅支持 `build` 与 `serve` 两个子命令，其中 `server` 与 `mopress serve` 效果基本一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
