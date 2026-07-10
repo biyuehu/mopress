@@ -12,31 +12,41 @@ pub suberror ProcessorError {
 // @end
 
 ///|
-/// The JSON request payload sent on stdin to each markdown-ast/markdown-text
-/// processor command. Not intended to be constructed or consumed outside of
-/// `run_markdown_preprocessors` / `run_markdown_transformers`.
+pub impl Show for ProcessorError with fn to_string(self : ProcessorError) -> String {
+  match self {
+    NonZeroExit(command~, exit_code~, stderr~) =>
+      "ProcessorError: Command \{command} failed with exit code \{exit_code} and stderr: \{stderr}"
+    StderrReported(command~, message~) =>
+      "ProcessorError: Command \{command} reported stderr: \{message}"
+    InvalidStdout(command~, raw~, reason~) =>
+      "ProcessorError: Command \{command} produced invalid stdout: \{raw} (reason: \{reason})"
+  }
+}
+
+///|
 struct MarkdownRequest {
   config : @config.BookConfig
   type_ : String
+  target : String
   data : @markdown.Markdown
-} derive(ToJson)
+} derive(ToJson(fields(type_(rename="type"))))
 
 ///|
-/// The expected JSON response shape read from a processor command's
-/// stdout on success, i.e. `{ "data": ... }`. Not intended to be
-/// constructed or consumed outside of `run_markdown_preprocessors` /
-/// `run_markdown_transformers`.
 struct MarkdownResponse {
   data : @markdown.Markdown
 } derive(FromJson)
 
 ///|
-/// The expected JSON payload read from a processor command's stderr when
-/// it reports an application-level error, i.e. `{ "error": string }`. Not
-/// intended to be constructed or consumed outside of
-/// `run_markdown_preprocessors` / `run_markdown_transformers`.
-struct StderrPayload {
-  error : String
+struct TextRequest {
+  config : @config.BookConfig
+  type_ : String
+  data : String
+  target : String
+} derive(ToJson(fields(type_(rename="type"))))
+
+///|
+struct TextResponse {
+  data : String
 } derive(FromJson)
 
 ///|
@@ -50,7 +60,7 @@ struct StderrPayload {
 ///
 /// Each command receives on stdin:
 /// ```json
-/// { "config": <BookConfig>, "type": "markdown-ast", "data": <Markdown AST> }
+/// { "config": <BookConfig>, "type": "markdown-ast", "data": <Markdown AST>, "target": <string> }
 /// ```
 /// and must write to stdout either:
 /// - `{ "data": <Markdown AST> }` — the transformed AST, passed on to the
@@ -63,10 +73,12 @@ struct StderrPayload {
 pub async fn run_markdown_transformers(
   config : @config.BookConfig,
   data : @markdown.Markdown,
+  target : String,
 ) -> @markdown.Markdown {
+  println("Running transformers for \{target}")
   let mut current = data
   for script in config.extensions.transformers {
-    current = run_single_markdown_transformer(config, current, script)
+    current = run_single_markdown_transformer(config, current, target, script)
   }
   current
 }
@@ -75,6 +87,7 @@ pub async fn run_markdown_transformers(
 async fn run_single_markdown_transformer(
   config : @config.BookConfig,
   data : @markdown.Markdown,
+  target : String,
   script : String,
 ) -> @markdown.Markdown {
   let (cmd, args) = if script.split(" ").collect() is [cmd, .. args] {
@@ -82,7 +95,12 @@ async fn run_single_markdown_transformer(
   } else {
     (script, [])
   }
-  let request = { config, type_: "markdown-ast", data }
+  let request : MarkdownRequest = {
+    config,
+    type_: "markdown-ast",
+    data,
+    target,
+  }
   let input_json = request.to_json().stringify()
   let (stdin_r, stdin_w) = @process.write_to_process()
   let (stdout_r, stdout_w) = @process.read_from_process()
@@ -123,17 +141,7 @@ async fn run_single_markdown_transformer(
   }
 
   if !stderr_text.trim(chars=" \n\r\t").is_empty() {
-    raise ProcessorError::StderrReported(
-      command=script,
-      message=try {
-        let stderr_payload : StderrPayload = @json.from_json(
-          @json.parse(stderr_text),
-        )
-        stderr_payload.error
-      } catch {
-        _ => stderr_text
-      },
-    )
+    raise ProcessorError::StderrReported(command=script, message=stderr_text)
   }
 
   if stdout_text.trim(chars=" \n\r\t").is_empty() {
@@ -155,31 +163,13 @@ async fn run_single_markdown_transformer(
 }
 
 ///|
-priv struct TextResponse {
-  data : String
-} derive(FromJson)
-
-///|
-fn build_text_request_json(
-  config : @config.BookConfig,
-  data : String,
-) -> String {
-  let obj : Json = {
-    "config": config.to_json(),
-    "type": "markdown-text",
-    "data": data.to_json(),
-  }
-  obj.stringify()
-}
-
-///|
 /// Runs a chain of external "preprocessor" commands over raw Markdown text,
 /// feeding the output of each command as the input to the next.
 ///
 /// Each command in the underlying pipeline receives a JSON payload on
 /// stdin of the shape:
 /// ```json
-/// { "config": <BookConfig>, "type": "markdown-text", "data": <string> }
+/// { "config": <BookConfig>, "type": "markdown-text", "data": <string>, "target": <string> }
 /// ```
 /// and is expected to write one of the following to stdout:
 /// - `{ "data": <string> }` — the transformed text, which becomes the input
@@ -197,10 +187,12 @@ fn build_text_request_json(
 pub async fn run_markdown_preprocessors(
   config : @config.BookConfig,
   data : String,
+  target : String,
 ) -> String {
+  println("Running preprocessors for \{target}")
   let mut current = data
   for script in config.extensions.preprocessors {
-    current = run_single_markdown_preprocessor(config, current, script)
+    current = run_single_markdown_preprocessor(config, current, target, script)
   }
   current
 }
@@ -209,6 +201,7 @@ pub async fn run_markdown_preprocessors(
 async fn run_single_markdown_preprocessor(
   config : @config.BookConfig,
   data : String,
+  target : String,
   script : String,
 ) -> String {
   let (cmd, args) = if script.split(" ").collect() is [cmd, .. args] {
@@ -216,7 +209,8 @@ async fn run_single_markdown_preprocessor(
   } else {
     (script, [])
   }
-  let input_json = build_text_request_json(config, data)
+  let request : TextRequest = { config, type_: "markdown-text", data, target }
+  let input_json = request.to_json().stringify()
   let (stdin_r, stdin_w) = @process.write_to_process()
   let (stdout_r, stdout_w) = @process.read_from_process()
   let (stderr_r, stderr_w) = @process.read_from_process()
@@ -257,14 +251,7 @@ async fn run_single_markdown_preprocessor(
   }
 
   if !stderr_text.trim(chars=" \n\r\t").is_empty() {
-    let message = try {
-      let json : Json = @json.parse(stderr_text)
-      let payload : StderrPayload = @json.from_json(json)
-      payload.error
-    } catch {
-      _ => stderr_text
-    }
-    raise ProcessorError::StderrReported(command=script, message~)
+    raise ProcessorError::StderrReported(command=script, message=stderr_text)
   }
 
   if stdout_text.trim(chars=" \n\r\t").is_empty() {
