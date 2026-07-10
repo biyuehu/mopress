@@ -1,6 +1,6 @@
 # himeno/mopress
 
-[![wakatime](https://wakatime.com/badge/user/018dc603-712a-4205-a226-d4c9ccd0d02b/project/c6909f20-193d-49a4-b3ab-f9b7732b5d76.svg)](https://wakatime.com/badge/user/018dc603-712a-4205-a226-d4c9ccd0d02b/project/c6909f20-193d-49a4-b3ab-f9b7732b5d76) [![Language](https://img.shields.io/badge/MoonBit-BF2586?style=flat)](https://www.moonbitlang.com/) [![License](https://img.shields.io/badge/License-GPL_v3-007ec6?style=flat)](https://www.gnu.org/licenses/gpl-3.0) [![CI](https://github.com/biyuehu/mopress/actions/workflows/ci.yml/badge.svg)](https://github.com/biyuehu/mopress/actions/workflows/ci.yml)
+[![MoonBit](https://img.shields.io/badge/MoonBit-BF2586?style=flat)](https://www.moonbitlang.com/) [![License](https://img.shields.io/badge/License-GPL_v3-007ec6?style=flat)](https://www.gnu.org/licenses/gpl-3.0) [![CI](https://github.com/biyuehu/mopress/actions/workflows/ci.yml/badge.svg)](https://github.com/biyuehu/mopress/actions/workflows/ci.yml) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Codeberg](https://img.shields.io/badge/Hosted_on-Codeberg-2185D0?logo=codeberg&logoColor=white)
 
 MoPress is a modern document and static site generator for the MoonBit ecosystem, designed with reference to both [mdBook](https://rust-lang.github.io/mdBook/) and [Hakyll](https://jaspervdj.be/hakyll/). At its core, it uses an embedded DSL (Domain Specific Language) to declare configurations, while also offering a rich plugin system and customization capabilities to meet various needs.
 
