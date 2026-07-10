@@ -164,9 +164,7 @@ const result = req.data.replace(
 		try {
 			content = readFileSync(absPath, "utf-8");
 		} catch {
-			process.stderr.write(
-				JSON.stringify({ error: `Include file not found: ${absPath}` }),
-			);
+			process.stderr.write(`Include file not found: ${absPath}`);
 			process.exit(1);
 		}
 
@@ -186,25 +184,15 @@ const result = req.data.replace(
 				}
 			}
 			if (startLine === -1) {
-				process.stderr.write(
-					JSON.stringify({
-						error: `Block marker not found: ${relPath}#${block}`,
-					}),
-				);
+				process.stderr.write(`Block marker not found: ${relPath}#${block}`);
 				process.exit(1);
 			}
 			if (endLine === -1) {
-				process.stderr.write(
-					JSON.stringify({
-						error: `Block end marker not found: ${relPath}#${block}`,
-					}),
-				);
+				process.stderr.write(`Block end marker not found: ${relPath}#${block}`);
 				process.exit(1);
 			}
 			if (startLine > endLine) {
-				process.stderr.write(
-					JSON.stringify({ error: `Invalid block range: ${relPath}#${block}` }),
-				);
+				process.stderr.write(`Invalid block range: ${relPath}#${block}`);
 				process.exit(1);
 			}
 			sliced = lines.slice(startLine, endLine + 1).join("\n");
@@ -212,11 +200,7 @@ const result = req.data.replace(
 			const from = start ? parseInt(start, 10) : 1;
 			const to = end ? parseInt(end, 10) : lines.length;
 			if (from < 1 || to > lines.length || from > to) {
-				process.stderr.write(
-					JSON.stringify({
-						error: `Invalid line range: ${relPath}:${start}:${end}`,
-					}),
-				);
+				process.stderr.write(`Invalid line range: ${relPath}:${start}:${end}`);
 				process.exit(1);
 			}
 			sliced = lines.slice(from - 1, to).join("\n");

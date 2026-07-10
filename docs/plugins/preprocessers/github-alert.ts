@@ -7,9 +7,7 @@ const req: Request = JSON.parse(await Bun.stdin.text());
 
 if (req?.type !== "markdown-text") {
 	process.stderr.write(
-		JSON.stringify({
-			error: "Invalid data type. This is a preprocessor, not a transformer",
-		}),
+		"Invalid data type. This is a preprocessor, not a transformer",
 	);
 	process.exit(1);
 }

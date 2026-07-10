@@ -1,5 +1,8 @@
+import { dirname } from "node:path";
+
 const req = JSON.parse(await Bun.stdin.text());
-const baseUrl: string = req.config.base_url ?? "/";
+const sourcePath = dirname(req.target);
+const baseUrl: string = req.config.base_url;
 
 function isLocalMdRelative(url: string): boolean {
 	if (/^[a-z][a-z0-9+.-]*:/i.test(url)) return false;
@@ -9,83 +12,76 @@ function isLocalMdRelative(url: string): boolean {
 	return pathPart.endsWith(".md") || pathPart.endsWith(".markdown");
 }
 
-function toAbsoluteHtmlUrl(url: string, sourcePath: string): string {
-	const [pathPart, hash] = url.split("#");
-	const dir = sourcePath.split("/").slice(0, -1);
-	const parts = dir.concat(pathPart.split("/"));
-	const stack: string[] = [];
-	for (const part of parts) {
-		if (part === "." || part === "") continue;
-		if (part === "..") stack.pop();
-		else stack.push(part);
-	}
-	const withoutExt = stack.join("/").replace(/\.(md|markdown)$/, "");
-	const abs = `${baseUrl.replace(/\/$/, "")}/${withoutExt}.html`;
-	return hash ? `${abs}#${hash}` : abs;
-}
-
 let changed = false;
 
-function mapInline(nodes: any[], sourcePath: string): any[] {
+function mapInline(nodes: any[]): any[] {
 	return nodes.map((node) => {
-		if (node.$tag === "Link") {
-			const [label, url] = node.$val;
-			if (isLocalMdRelative(url)) {
-				changed = true;
-				return {
-					$tag: "Link",
-					$val: [
-						mapInline(label, sourcePath),
-						toAbsoluteHtmlUrl(url, sourcePath),
-					],
-				};
+		const [tag, ...rest] = node;
+		switch (tag) {
+			case "Link": {
+				const [label, url] = rest;
+				const newLabel = mapInline(label);
+				if (isLocalMdRelative(url)) {
+					changed = true;
+					return [
+						"Link",
+						newLabel,
+						((url) => {
+							const [pathPart, hash] = url.split("#");
+							const dir = sourcePath.split("/").filter(Boolean);
+							const parts = dir.concat(pathPart.split("/"));
+							const stack: string[] = [];
+							for (const part of parts) {
+								if (part === "." || part === "") continue;
+								if (part === "..") stack.pop();
+								else stack.push(part);
+							}
+							const abs = `${baseUrl.replace(/\/$/, "")}/${stack
+								.join("/")
+								.replace(/\.(md|markdown)$/, "")}.html`;
+							return hash ? `${abs}#${hash}` : abs;
+						})(url),
+					];
+				}
+				return ["Link", newLabel, url];
 			}
-			return { ...node, $val: [mapInline(label, sourcePath), url] };
+			case "Emphasis":
+				return ["Emphasis", mapInline(rest[0])];
+			case "Strong":
+				return ["Strong", mapInline(rest[0])];
+			default:
+				return node;
 		}
-		if (node.$tag === "Emphasis" || node.$tag === "Strong") {
-			return { ...node, $val: [mapInline(node.$val[0], sourcePath)] };
-		}
-		return node;
 	});
 }
 
-function mapBlocks(blocks: any[], sourcePath: string): any[] {
+function mapBlocks(blocks: any[]): any[] {
 	return blocks.map((block) => {
-		switch (block.$tag) {
+		if (typeof block === "string") return block; // ThematicBreak
+		const [tag, ...rest] = block;
+		switch (tag) {
 			case "Paragraph":
-				return { ...block, $val: [mapInline(block.$val[0], sourcePath)] };
+				return ["Paragraph", mapInline(rest[0])];
 			case "Heading":
-				return {
-					...block,
-					$val: [block.$val[0], mapInline(block.$val[1], sourcePath)],
-				};
+				return ["Heading", rest[0], mapInline(rest[1])];
 			case "BlockQuote":
-				return { ...block, $val: [mapBlocks(block.$val[0], sourcePath)] };
+				return ["BlockQuote", mapBlocks(rest[0])];
 			case "List": {
-				const lb = block.$val[0];
-				return {
-					...block,
-					$val: [
-						{
-							...lb,
-							items: lb.items.map((i: any[]) => mapBlocks(i, sourcePath)),
-						},
-					],
-				};
+				const lb = rest[0];
+				return [
+					"List",
+					{ ...lb, items: lb.items.map((i: any[]) => mapBlocks(i)) },
+				];
 			}
 			case "Table": {
-				const tb = block.$val[0];
-				return {
-					...block,
-					$val: [
-						{
-							headers: tb.headers.map((c: any[]) => mapInline(c, sourcePath)),
-							rows: tb.rows.map((r: any[][]) =>
-								r.map((c) => mapInline(c, sourcePath)),
-							),
-						},
-					],
-				};
+				const tb = rest[0];
+				return [
+					"Table",
+					{
+						headers: tb.headers.map((c: any[]) => mapInline(c)),
+						rows: tb.rows.map((r: any[][]) => r.map((c) => mapInline(c))),
+					},
+				];
 			}
 			default:
 				return block;
@@ -93,13 +89,10 @@ function mapBlocks(blocks: any[], sourcePath: string): any[] {
 	});
 }
 
-const sourcePath: string = req.source_path ?? "";
-const result = mapBlocks(req.data, sourcePath);
+const result = mapBlocks(req.data);
 
 if (!changed) {
 	process.stdout.write("");
 } else {
 	process.stdout.write(JSON.stringify({ data: result }));
 }
-
-export {};
