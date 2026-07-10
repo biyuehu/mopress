@@ -74,6 +74,7 @@ jobs:
       - name: Build docs
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
+          just logen
           cd docs
           ../_build/native/release/build/mopress.exe build
 

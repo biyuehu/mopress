@@ -76,6 +76,7 @@ title: Changelog
 - Improve all documents ([f3928e4](https://github.com/biyuehu/mbdoc/commit/f3928e4))
 - Update all documents ([6dfdfeb](https://github.com/biyuehu/mbdoc/commit/6dfdfeb))
 - Improve all of documents ([1d1e91a](https://github.com/biyuehu/mbdoc/commit/1d1e91a))
+- Improve all documents ([dbec8ac](https://github.com/biyuehu/mbdoc/commit/dbec8ac))
 
 ### 🏡 Chore
 
@@ -122,6 +123,7 @@ title: Changelog
 - Update ci ([fe5e109](https://github.com/biyuehu/mbdoc/commit/fe5e109))
 - Update ci.yml ([e773383](https://github.com/biyuehu/mbdoc/commit/e773383))
 - Add gen-log.ts that generate changelog and rename generate.ts to gen-includes.ts ([a14cd55](https://github.com/biyuehu/mbdoc/commit/a14cd55))
+- Update lefthook.yml, moon.mod ([928b5d6](https://github.com/biyuehu/mbdoc/commit/928b5d6))
 
 ### ✅ Tests
 
