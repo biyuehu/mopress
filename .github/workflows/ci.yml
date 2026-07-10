@@ -75,7 +75,7 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           cd docs
-          ../_build/native/release/build/main/main.exe build
+          ../_build/native/release/build/mopress.exe build
 
       - name: Deploy to GitHub Pages
         if: ${{ matrix.os == 'windows-latest' }}
