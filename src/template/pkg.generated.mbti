@@ -16,6 +16,7 @@ pub fn[T : Show] parse_template(T) -> Array[TemplateNode] raise TemplateParseErr
 pub suberror TemplateParseError {
   TemplateParseError(String)
 } derive(Eq, @debug.Debug)
+pub impl Show for TemplateParseError
 
 pub suberror TemplateRenderError {
   UndefinedVariableError(String)

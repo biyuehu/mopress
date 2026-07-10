@@ -11,7 +11,9 @@ pub async fn mopress(
   match cmd {
     "build" => options |> mo_build(rules)
     "serve" => options |> mo_serve
-    opts => println("Unknown command: \{opts}")
+    opts =>
+      @c.chalk().modifier(Bold).color(Red).render("Unknown command: \{opts}")
+      |> println
   }
 }
 
@@ -62,5 +64,5 @@ pub async fn mo_build(options : Options, rules : Rules) -> Unit {
       item.data.write(options.dest, item.location())
     }
   }
-  println("Build finished.")
+  @c.chalk().modifier(Bold).color(Green).render("Build finished.") |> println
 }

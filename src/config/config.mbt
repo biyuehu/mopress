@@ -110,6 +110,13 @@ pub suberror ConfigParseError {
 } derive(Eq, Debug)
 
 ///|
+pub impl Show for ConfigParseError with fn to_string(self : ConfigParseError) -> String {
+  match self {
+    ConfigParseError(s) => "ConfigParseError: \{s}"
+  }
+}
+
+///|
 /// The file name (relative to the current working directory) that mopress
 /// looks for, reads, and writes as the project's configuration file, e.g.
 /// when running `mopress init` or when loading configuration before a

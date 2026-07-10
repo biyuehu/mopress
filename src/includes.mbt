@@ -1220,9 +1220,7 @@ let book_plugins_preprocessers_github_alert_ts : String =
   #|
   #|if (req?.type !== "markdown-text") {
   #|	process.stderr.write(
-  #|		JSON.stringify({
-  #|			error: "Invalid data type. This is a preprocessor, not a transformer",
-  #|		}),
+  #|		"Invalid data type. This is a preprocessor, not a transformer",
   #|	);
   #|	process.exit(1);
   #|}
@@ -1357,7 +1355,7 @@ let site_templates_default_html : String =
   #|      <a href="/index.html">home</a>
   #|      <a href="/contact.html">contact</a>
   #|      <a href="/about.html">about</a>
-  #|      <a href="https://jaspervdj.be/contact.html#donate" target="_blank">donate</a>
+  #|      <a href="https://i.arimuraromi.com/donate" target="_blank">donate</a>
   #|    </div>
   #|
   #|    <div id="content">
@@ -1561,7 +1559,7 @@ let site_styles_default_css : String =
   #|
 
 ///|
-let version : String = "0.2.0"
+let version : String = "0.3.0"
 
 ///|
-let build_time : String = "2026/7/10 01:57:22"
+let build_time : String = "2026/7/11 02:25:29"

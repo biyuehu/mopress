@@ -12,6 +12,7 @@ pub let file_name : String
 pub suberror ConfigParseError {
   ConfigParseError(String)
 } derive(Eq, @debug.Debug)
+pub impl Show for ConfigParseError
 
 // Types and methods
 pub(all) struct BookConfig {

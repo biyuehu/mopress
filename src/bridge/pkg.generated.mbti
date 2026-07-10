@@ -9,9 +9,9 @@ import {
 }
 
 // Values
-pub async fn run_markdown_preprocessors(@config.BookConfig, String) -> String
+pub async fn run_markdown_preprocessors(@config.BookConfig, String, String) -> String
 
-pub async fn run_markdown_transformers(@config.BookConfig, Array[@markdown.Block]) -> Array[@markdown.Block]
+pub async fn run_markdown_transformers(@config.BookConfig, Array[@markdown.Block], String) -> Array[@markdown.Block]
 
 // Errors
 pub suberror ProcessorError {
@@ -19,13 +19,16 @@ pub suberror ProcessorError {
   StderrReported(command~ : String, message~ : String)
   InvalidStdout(command~ : String, raw~ : String, reason~ : String)
 } derive(Eq, @debug.Debug)
+pub impl Show for ProcessorError
 
 // Types and methods
 type MarkdownRequest derive(ToJson)
 
 type MarkdownResponse derive(@json.FromJson)
 
-type StderrPayload derive(@json.FromJson)
+type TextRequest derive(ToJson)
+
+type TextResponse derive(@json.FromJson)
 
 // Type aliases
 

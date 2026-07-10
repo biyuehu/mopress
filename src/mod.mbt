@@ -6,7 +6,11 @@ fn load_config() -> @config.BookConfig raise {
 ///|
 fn handle_init() -> Unit raise {
   if @fs.path_exists(@config.file_name) {
-    println("Configuration already exists, skipping initialization.")
+    @c.chalk()
+    .modifier(Bold)
+    .color(Red)
+    .render("Configuration already exists, skipping initialization.")
+    |> println
     return
   }
   println("Generating configuration: " + @config.file_name)
@@ -52,15 +56,22 @@ fn handle_init() -> Unit raise {
   @fs.write_string_to_file("scripts/main.js", book_scripts_main_js)
   @fs.write_string_to_file("index.md", book_index_md)
   @fs.write_string_to_file("SUMMARY.md", book_summary_md)
-  println("Initialization complete.")
+  @c.chalk().modifier(Bold).color(Green).render("Initialization complete.")
+  |> println
 }
 
 ///|
 fn handle_new(dir : String) -> Unit raise {
   println("Creating site-mode project: \{dir}")
   if @fs.path_exists(dir) {
-    raise @fs.IOError("Directory has already existed: \{dir}")
+    @c.chalk()
+    .modifier(Bold)
+    .color(Red)
+    .render("Directory has already existed: \{dir}")
+    |> println
+    return
   }
+  @fs.create_dir(dir)
   let path = @path.Path(dir)
   @fs.write_string_to_file(
     path.join("index.md") |> Show::to_string,
@@ -75,13 +86,20 @@ fn handle_new(dir : String) -> Unit raise {
     site_contact_md,
   )
   @fs.create_dir(path.join("styles") |> Show::to_string)
-  @fs.write_string_to_file("styles/default.css", site_styles_default_css)
+  @fs.write_string_to_file(
+    path.join("styles/default.css") |> Show::to_string,
+    site_styles_default_css,
+  )
   @fs.create_dir(path.join("templates") |> Show::to_string)
   @fs.write_string_to_file(
-    "templates/default.html", site_templates_default_html,
+    path.join("templates/default.html") |> Show::to_string,
+    site_templates_default_html,
   )
-  @fs.write_string_to_file("site.mbtx", site_site_mbtx)
-  println("Creation complete.")
+  @fs.write_string_to_file(
+    path.join("site.mbtx") |> Show::to_string,
+    site_site_mbtx,
+  )
+  @c.chalk().modifier(Bold).color(Green).render("Creation complete.") |> println
 }
 
 ///|
@@ -115,7 +133,11 @@ async fn handle_serve() -> Unit {
 
 ///|
 fn handle_version() -> Unit {
-  println("MoPress version: \{version} (\{build_time})")
+  @c.chalk()
+  .modifier(Bold)
+  .color(MagentaBright)
+  .render("MoPress version: \{version} (\{build_time})")
+  |> println
 }
 
 ///|
@@ -127,7 +149,8 @@ async fn command_handler() -> Unit {
       if args.length() > 2 {
         handle_new(args[2])
       } else {
-        raise @fs.IOError("Usage: mopress new <dir>")
+        @c.chalk().modifier(Bold).color(Red).render("Usage: mopress new <dir>")
+        |> println
       }
     "build" => handle_build()
     "serve" => handle_serve()
@@ -165,10 +188,15 @@ pub async fn process_markdown_page(
   summary : @summary.Summary,
 ) -> @core.Item[@core.Thing] {
   let seprated = raw |> @core.separate_frontmatter
-  let text = @bridge.run_markdown_preprocessors(config, seprated.data.1)
+  let text = @bridge.run_markdown_preprocessors(
+    config,
+    seprated.data.1,
+    raw.target,
+  )
   let ast = @bridge.run_markdown_transformers(
     config,
     (seprated.map(_ => text) |> @core.parse_markdown).data,
+    raw.target,
   )
   // @block steps
   @core.render_markdown_and_frontmatter_from_ast(
@@ -248,6 +276,7 @@ pub async fn process_markdown_page(
 /// file I/O, markdown processing, or templating) rather than through a
 /// return value.
 pub async fn build_book(config : @config.BookConfig) -> Unit {
+  // TODO: print basic configuration information
   println("Parsing SUMMARY.md")
   let summary = @fs.read_file_to_string(
       @path.Path(config.src).join("SUMMARY.md").to_string(),

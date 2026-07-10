@@ -36,6 +36,15 @@ pub suberror TemplateParseError {
 // @end
 
 ///|
+pub impl Show for TemplateParseError with fn to_string(
+  self : TemplateParseError,
+) -> String {
+  match self {
+    TemplateParseError(s) => "TemplateParseError: \{s}"
+  }
+}
+
+///|
 /// A named set of template variables, as passed to `apply_template` /
 /// `apply_template_strict`.
 pub type Context = Map[String, Value]
@@ -358,6 +367,21 @@ pub suberror TemplateRenderError {
   RecursivePartialError(String)
 } derive(Eq, Debug)
 // @end
+
+///|
+impl Show for TemplateRenderError with fn to_string(self : TemplateRenderError) -> String {
+  match self {
+    UndefinedVariableError(name) =>
+      "UndefinedVariableError: missing variable: \{name}"
+    NonArrayForLoopError(name) =>
+      "NonArrayForLoopError: expected array for loop: \{name}"
+    PartialLoadError(path) => "PartialLoadError: failed to read partial \{path}"
+    PartialParseError(path) =>
+      "PartialParseError: failed to parse partial \{path}"
+    RecursivePartialError(path) =>
+      "RecursivePartialError: recursive partial: \{path}"
+  }
+}
 
 ///|
 /// Renders a parsed template against the given variable context,

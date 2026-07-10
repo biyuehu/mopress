@@ -10,6 +10,7 @@ import {
   "moonbitlang/core/env",
   "moonbitlang/core/debug",
   "moonbitlang/async",
+  "Lampese/moonbit-chalk" @c,
 }
 
 formatter(ignore: [ "includes.mbt" ])

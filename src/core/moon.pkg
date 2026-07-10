@@ -11,4 +11,5 @@ import {
   "moonbitlang/async/fs" @afs,
   "moonbitlang/async/http",
   "moonbitlang/async/socket",
+  "Lampese/moonbit-chalk" @c,
 }

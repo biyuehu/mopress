@@ -43,12 +43,12 @@ async fn serve_path(
     Some(relative_path) => {
       let full_path = @path.Path(root).join(relative_path).to_string()
       if !@afs.exists(full_path) {
-        send_text(conn, 404, "Not Found", "Not Found", head_only)
+        serve_404(root, head_only, conn)
       } else {
         match @afs.kind(full_path) {
-          Directory => serve_directory_index(full_path, head_only, conn)
+          Directory => serve_directory_index(root, full_path, head_only, conn)
           Regular => serve_file(full_path, head_only, conn)
-          _ => send_text(conn, 404, "Not Found", "Not Found", head_only)
+          _ => serve_404(root, head_only, conn)
         }
       }
     }
@@ -57,6 +57,7 @@ async fn serve_path(
 
 ///|
 async fn serve_directory_index(
+  root : String,
   dir_path : String,
   head_only : Bool,
   conn : @http.ServerConnection,
@@ -64,6 +65,20 @@ async fn serve_directory_index(
   let index_path = @path.Path(dir_path).join("index.html").to_string()
   if @afs.exists(index_path) && @afs.kind(index_path) is Regular {
     serve_file(index_path, head_only, conn)
+  } else {
+    serve_404(root, head_only, conn)
+  }
+}
+
+///|
+async fn serve_404(
+  root : String,
+  head_only : Bool,
+  conn : @http.ServerConnection,
+) -> Unit {
+  let full_path = @path.Path(root).join("404.html").to_string()
+  if @afs.exists(full_path) && @fs.is_file(full_path) {
+    serve_file(full_path, head_only, conn)
   } else {
     send_text(conn, 404, "Not Found", "Not Found", head_only)
   }
