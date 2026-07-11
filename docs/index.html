@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MoPress — 面向 MoonBit 生态的文档与静态站点生成器</title>
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --bg-soft: #12151d;
+      --border: #232838;
+      --text: #e7e9ee;
+      --text-dim: #8b93a7;
+      --accent: #d49a84;
+      --accent-2: #eaccbf;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11, 13, 18, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-dim);
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .hero {
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 7rem 2rem 5rem;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: var(--accent);
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      line-height: 1.15;
+      margin: 0 0 1.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    h1 .grad {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      font-size: 1.15rem;
+      color: var(--text-dim);
+      max-width: 620px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 0.9rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 1.6rem;
+      border-radius: 0.6rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .code-preview {
+      max-width: 720px;
+      margin: 3.5rem auto 0;
+      text-align: left;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .code-preview .bar {
+      display: flex;
+      gap: 0.4rem;
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-preview .dot {
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 50%;
+      background: #3a3f4d;
+    }
+
+    .code-preview pre {
+      margin: 0;
+      padding: 1.1rem 1.3rem;
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: #c8d1e0;
+      overflow-x: auto;
+      font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+    }
+
+    .code-preview .tok-kw {
+      color: #ff7b72;
+    }
+
+    .code-preview .tok-fn {
+      color: #d2a8ff;
+    }
+
+    .code-preview .tok-str {
+      color: #7ee787;
+    }
+
+    .code-preview .tok-num {
+      color: #79c0ff;
+    }
+
+    .code-preview .tok-comment {
+      color: #5c6577;
+      font-style: italic;
+    }
+
+    .code-preview .tok-punct {
+      color: #8b93a7;
+    }
+
+    .code-preview .tok-type {
+      color: #ffa657;
+    }
+
+    .code-preview .tok-attr {
+      color: #6366f1;
+    }
+
+    .code-preview .cmt {
+      color: #5c6577;
+    }
+
+    .code-preview .kw {
+      color: var(--accent);
+    }
+
+    .code-preview .cmd {
+      color: #5dbb6d;
+    }
+
+    section.features {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 1rem 2rem 6rem;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 1.6rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+
+    .card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      text-decoration: none;
+      color: var(--text-dim);
+    }
+
+    footer a:hover {
+      color: var(--text);
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <a class="brand" href="/">MoPress</a>
+    <div class="nav-links">
+      <a href="/introduce.html">文档</a>
+      <a href="https://codeberg.org/lomi/mopress" target="_blank">Codeberg</a>
+      <a href="https://github.com/biyuehu/mopress" target="_blank">GitHub</a>
+      <a href="/changelog.html">日志</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <span class="eyebrow" style="color: rgb(255, 146, 246)">面向 MoonBit 生态</span>
+    <h1>写文档，或者<br><span class="grad">用代码构建站点</span>。</h1>
+    <p class="lead">MoPress 是一个现代文档与通用静态站点生成器，兼具 Book 模式的开箱即用生成文档，与 Site 模式的函数式可组合灵活性自定义原子构建生成任意静态站点。</p>
+    <div class="cta-group">
+      <a class="btn btn-primary" href="/starting.html">快速开始 →</a>
+      <a class="btn btn-secondary" href="/introduce.html">了解更多</a>
+    </div>
+
+    <div class="code-preview">
+      <div class="bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <pre><span class="tok-attr">///|</span>
+<span class="tok-kw">async fn</span> <span class="tok-fn">main</span> <span class="tok-punct">{</span>
+  <span class="tok-fn">@core.mopress</span><span class="tok-punct">([</span>
+    <span class="tok-type">Glob</span><span class="tok-punct">(</span>
+      <span class="tok-str">"**/*.md"</span><span class="tok-punct">,</span>
+      <span class="tok-type">Text</span><span class="tok-punct">(</span>raw <span class="tok-kw">=></span> <span class="tok-punct">{</span>
+        raw
+        <span class="tok-punct">|></span> <span class="tok-fn">@core.set_extension</span><span class="tok-punct">(</span><span class="tok-str">".html"</span><span class="tok-punct">)</span>
+        <span class="tok-punct">|></span> <span class="tok-fn">@core.render_markdown_and_frontmatter</span>
+        <span class="tok-punct">|></span> <span class="tok-fn">@core.load_and_apply_template</span><span class="tok-punct">(</span><span class="tok-str">"templates/default.html"</span><span class="tok-punct">)</span>
+        <span class="tok-punct">|></span> <span class="tok-fn">@core.use_js</span><span class="tok-punct">([</span><span class="tok-str">"console.log('hi, moonbit! hi, mopress!')"</span><span class="tok-punct">])</span>
+        <span class="tok-punct">|></span> <span class="tok-fn">@core.unify</span>
+      <span class="tok-punct">}),</span>
+    <span class="tok-punct">),</span>
+    <span class="tok-type">Glob</span><span class="tok-punct">(</span><span class="tok-str">"styles/**/*"</span><span class="tok-punct">,</span> <span class="tok-type">Copy</span><span class="tok-punct">),</span>
+  <span class="tok-punct">])</span>
+<span class="tok-punct">}</span>
+
+<span class="cmt">$ moon install himeno/mopress</span>
+<span class="cmt">$ mopress new my-site</span>
+<span class="cmt">$ moon run --target native site.mbtx build</span>
+<strong class="cmd"><span class="kw">✓</span> Build finished.</strong></pre>
+    </div>
+  </section>
+
+  <section class="features">
+    <h2>两种模式，一套底层</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Book 模式</h3>
+        <p>零代码，配置驱动。一份配置文件加一批 Markdown，即可构建完整站点。</p>
+      </div>
+      <div class="card">
+        <h3>Site 模式</h3>
+        <p>用可组合的代码声明处理规则与渲染管线，设计思路继承自 Hakyll。</p>
+      </div>
+      <div class="card">
+        <h3>函数式</h3>
+        <p>函数式编程，声明式内嵌 DSL 配置原子化构建流程</p>
+      </div>
+      <div class="card">
+        <h3>原子化</h3>
+        <p>原子化构建，按需组合，灵活可扩展。</p>
+      </div>
+      <div class="card">
+        <h3>多种插件系统</h3>
+        <p>外部程序、Web Components、MoonBit 模块，按需扩展，互不排斥。</p>
+      </div>
+      <div class="card">
+        <h3>原生 MoonBit</h3>
+        <p>整个工具链用 MoonBit 编写，与生态原生契合。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 MoPress - <a target="_blank" style="color: #eaccbf" href="https://himeno-sena.com">HimenoSena</a>. All
+      rights reserved.
+    </p>
+  </footer>
+
+  <script>
+    globalThis.console.log(`%c MoPress %c v0.3.0`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
+    globalThis.console.log("%c Made With Love By Arimura Sena", "color: #e7acb4;background: #333; padding:5px;font-size: 2em;font-weight: bold;")
+    globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+    globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+  </script>
+
+</body>
+
+</html>

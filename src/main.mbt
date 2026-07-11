@@ -9,7 +9,7 @@ async fn main {
         @c.chalk()
         .modifier(Bold)
         .color(Red)
-        .render("Failed to execute command!")
+        .render("× Failed to execute command!")
         |> println
         @c.chalk().color(Red).render(e.to_string()) |> println
       }

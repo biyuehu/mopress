@@ -75,7 +75,6 @@ pub async fn run_markdown_transformers(
   data : @markdown.Markdown,
   target : String,
 ) -> @markdown.Markdown {
-  println("Running transformers for \{target}")
   let mut current = data
   for script in config.extensions.transformers {
     current = run_single_markdown_transformer(config, current, target, script)
@@ -189,7 +188,6 @@ pub async fn run_markdown_preprocessors(
   data : String,
   target : String,
 ) -> String {
-  println("Running preprocessors for \{target}")
   let mut current = data
   for script in config.extensions.preprocessors {
     current = run_single_markdown_preprocessor(config, current, target, script)

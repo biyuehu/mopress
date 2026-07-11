@@ -124,6 +124,8 @@ title: Changelog
 - Update ci.yml ([e773383](https://github.com/biyuehu/mbdoc/commit/e773383))
 - Add gen-log.ts that generate changelog and rename generate.ts to gen-includes.ts ([a14cd55](https://github.com/biyuehu/mbdoc/commit/a14cd55))
 - Update lefthook.yml, moon.mod ([928b5d6](https://github.com/biyuehu/mbdoc/commit/928b5d6))
+- Add ci.yml ([107aa85](https://github.com/biyuehu/mbdoc/commit/107aa85))
+- Update README.md ([f2e4a79](https://github.com/biyuehu/mbdoc/commit/f2e4a79))
 
 ### ✅ Tests
 

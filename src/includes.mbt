@@ -138,6 +138,7 @@ let book_scripts_main_js : String =
 let book_styles_index_css : String =
   #|@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
   #|
+  #|/* @block styles */
   #|:root {
   #|	--nav-w: 16.25rem;
   #|	--font: "Inter", system-ui, sans-serif;
@@ -175,6 +176,7 @@ let book_styles_index_css : String =
   #|	margin: 0;
   #|	padding: 0;
   #|}
+  #|/* @end */
   #|
   #|html,
   #|body {
@@ -1142,19 +1144,19 @@ let book_404_md : String =
   #|  }
   #|  .wrap { padding: 2rem; }
   #|  .code {
-  #|    font-size: 6rem;
-  #|    font-weight: 700;
-  #|    line-height: 1;
-  #|    background: linear-gradient(135deg, var(--red), var(--red-bright));
-  #|    -webkit-background-clip: text;
-  #|    background-clip: text;
-  #|    color: transparent;
-  #|    margin: 0;
+  #|    font-size: 6rem !important;
+  #|    font-weight: 700 !important;
+  #|    line-height: 1 !important;
+  #|    background: linear-gradient(135deg, var(--red), var(--red-bright)) !important;
+  #|    -webkit-background-clip: text !important;
+  #|    background-clip: text !important;
+  #|    color: transparent !important;
+  #|    margin: 0 !important;
   #|  }
   #|  .msg {
-  #|    font-size: 1.1rem;
-  #|    color: var(--text-muted, #6b6b66);
-  #|    margin: 0.75rem 0 1.75rem;
+  #|    font-size: 1.1rem !important;
+  #|    color: var(--text-muted, #6b6b66) !important;
+  #|    margin: 0.75rem 0 1.75rem 0 !important;
   #|  }
   #|  .center { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
   #|  .btn {
@@ -1559,7 +1561,7 @@ let site_styles_default_css : String =
   #|
 
 ///|
-let version : String = "0.3.0"
+pub let version : String = "0.3.0"
 
 ///|
-let build_time : String = "2026/7/11 02:33:44"
+let build_time : String = "2026/7/11 23:58:44"

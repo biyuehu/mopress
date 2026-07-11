@@ -1,6 +1,17 @@
 ///|
 fn load_config() -> @config.BookConfig raise {
-  @config.file_name |> @fs.read_file_to_string |> @config.BookConfig::parse()
+  let config = @config.file_name
+    |> @fs.read_file_to_string
+    |> @config.BookConfig::parse()
+  @c.chalk().color(Magenta).render("✝ Handing site: \{config.title}")
+  |> println
+  @c.chalk()
+  .color(BlueBright)
+  .render(
+    "? Total preprocessors: \{config.extensions.preprocessors.length()} | Total transformers: \{config.extensions.transformers.length()} | Total import_css: \{config.extensions.import_css.length()} | Total import_js: \{config.extensions.import_js.length()} | Total use_css: \{config.extensions.use_css.length()} | Total use_js: \{config.extensions.use_js.length()} | Total inject_head: \{config.extensions.inject_head.length()} | Total inject_body: \{config.extensions.inject_body.length()}",
+  )
+  |> println
+  config
 }
 
 ///|
@@ -121,7 +132,6 @@ fn handle_help() -> Unit {
 
 ///|
 async fn handle_build() -> Unit {
-  println("Building site.")
   load_config() |> build_book
 }
 
@@ -187,6 +197,7 @@ pub async fn process_markdown_page(
   config : @config.BookConfig,
   summary : @summary.Summary,
 ) -> @core.Item[@core.Thing] {
+  "Rendering page \{raw.target}" |> println
   let seprated = raw |> @core.separate_frontmatter
   let text = @bridge.run_markdown_preprocessors(
     config,
@@ -276,7 +287,6 @@ pub async fn process_markdown_page(
 /// file I/O, markdown processing, or templating) rather than through a
 /// return value.
 pub async fn build_book(config : @config.BookConfig) -> Unit {
-  // TODO: print basic configuration information
   println("Parsing SUMMARY.md")
   let summary = @fs.read_file_to_string(
       @path.Path(config.src).join("SUMMARY.md").to_string(),

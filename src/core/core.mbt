@@ -64,5 +64,6 @@ pub async fn mo_build(options : Options, rules : Rules) -> Unit {
       item.data.write(options.dest, item.location())
     }
   }
-  @c.chalk().modifier(Bold).color(Green).render("Build finished.") |> println
+  @c.chalk().modifier(Bold).color(Green).render("√ Build finished.")
+  |> println
 }

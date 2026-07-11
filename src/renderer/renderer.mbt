@@ -51,7 +51,14 @@ pub fn render_markdown(
   opt? : RenderOptions = RenderOptions::default(),
 ) -> RenderedMarkdown {
   let ctx = { slug_counts: Map([]), toc: [], opt }
-  { html: render_blocks(md, ctx), toc: ctx.toc }
+  let remark =
+    #|<script>
+    #|  globalThis.console.log(`%c Mo %c Press`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
+    #|  globalThis.console.log("%c Made With Love By Arimura Sena", "color: #e7acb4;background: #333; padding:5px;font-size: 2em;font-weight: bold;")
+    #|  globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+    #|  globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+    #|</script>
+  { html: "\{render_blocks(md, ctx)}\n\{remark}", toc: ctx.toc }
 }
 
 ///|

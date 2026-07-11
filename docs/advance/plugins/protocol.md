@@ -76,9 +76,9 @@ if (!req.data.includes("{{BUILD_TIME}}")) {
 }
 ```
 
-## GitHub-Alerts
+## 预处理器示例
 
-项目中提供的 [Github-Alerts](https://github.com/biyuehu/mopress/blob/main/docs/plugins/preprocessers/github-alert.ts) 插件就是基于 TypeScript 编写、通过 Bun 运行的预处理器：
+项目中提供的 [github-alerts](https://github.com/biyuehu/mopress/blob/main/docs/plugins/preprocessers/github-alert.ts) 插件就是基于 TypeScript 编写、通过 Bun 运行的预处理器：
 
 ```toml
 # ...
@@ -88,3 +88,14 @@ preprocessors = ["bun plugins/preprocessers/github-alert"]
 ```
 
 {{@ plugins/preprocessers/github-alert.ts}}
+
+## 变换器示例
+
+项目中提供的 [link-checker](https://github.com/biyuehu/mopress/blob/main/docs/plugins/transformers/link-checker.ts) 插件会检查 MarkDown 文件中的所有相对路径链接是否有效：
+
+```toml
+[extensions]
+transformers = ["bun plugins/transformers/link-checker"]
+```
+
+{{@ plugins/transformers/link-checker.ts}}

@@ -17,7 +17,13 @@ mathjax-enabled = true
 
 [extensions]
 template = "templates/default.html"
-assets = ["images/**/", "styles/**/*", "scripts/**/*", "plugins/runtime/**/*"]
+assets = [
+  "images/**/",
+  "styles/**/*",
+  "scripts/**/*",
+  "plugins/runtime/**/*",
+  "index.html",
+]
 inject-head = []
 inject-body = []
 use-js = ["console.log('Hello, MoPress!');"]
