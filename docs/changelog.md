@@ -79,6 +79,7 @@ title: Changelog
 - Improve all of documents ([1d1e91a](https://github.com/biyuehu/mbdoc/commit/1d1e91a))
 - Improve all documents ([dbec8ac](https://github.com/biyuehu/mbdoc/commit/dbec8ac))
 - Update all documents ([3140a77](https://github.com/biyuehu/mbdoc/commit/3140a77))
+- Update documents ([5d1833f](https://github.com/biyuehu/mbdoc/commit/5d1833f))
 
 ### 🏡 Chore
 

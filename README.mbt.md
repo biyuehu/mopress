@@ -1,6 +1,11 @@
 # MoPress
 
-[![MoonBit](https://img.shields.io/badge/MoonBit-BF2586?style=flat)](https://www.moonbitlang.com/) [![License](https://img.shields.io/badge/License-GPL_v3-007ec6?style=flat)](https://www.gnu.org/licenses/gpl-3.0) [![CI](https://github.com/biyuehu/mopress/actions/workflows/ci.yml/badge.svg)](https://github.com/biyuehu/mopress/actions/workflows/ci.yml) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Codeberg](https://img.shields.io/badge/Hosted_on-Codeberg-2185D0?logo=codeberg&logoColor=white)
+<div align="center">
+
+  [![MoonBit](https://img.shields.io/badge/MoonBit-BF2586?style=flat)](https://www.moonbitlang.com/) [![License](https://img.shields.io/badge/License-GPL_v3-007ec6?style=flat)](https://www.gnu.org/licenses/gpl-3.0) [![CI](https://github.com/biyuehu/mopress/actions/workflows/ci.yml/badge.svg)](https://github.com/biyuehu/mopress/actions/workflows/ci.yml) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Codeberg](https://img.shields.io/badge/Hosted_on-Codeberg-2185D0?logo=codeberg&logoColor=white)
+
+  <a target="_blank" href="https://mo.himeno-sena.com/"><strong>👉 Reading MoPress Book 👈</strong></a>
+</div>
 
 MoPress is a modern documentation and general-purpose static site generator for the MoonBit ecosystem. Its design draws inspiration from both [mdBook](https://rust-lang.github.io/mdBook/) and [Hakyll](https://jaspervdj.be/hakyll/). At its core, MoPress uses an embedded DSL (Domain-Specific Language) for declarative configuration and functional processing pipelines to express build workflows. It also provides a rich, language-agnostic plugin system and extensive customization capabilities to accommodate a wide range of use cases.
 
@@ -60,24 +65,6 @@ language = "en"
 src = "./"
 dest = "./dest"
 repository = "https://github.com/biyuehu/mopress"
-
-[features]
-highlight-enabled = false
-highlight-theme = "github"
-mathjax-enabled = false
-
-[extensions]
-template = "templates/default.html"
-assets = ["images/**/*", "styles/**/*", "scripts/**/*", "plugins/runtime/**/*"]
-inject-head = []
-inject-body = []
-use-js = ["console.log('Hello, MoPress!');"]
-use-css = []
-import-css = []
-import-js = []
-preprocessors = []
-transformers = []
-
 ```
 
 ```text
@@ -123,7 +110,7 @@ async fn main {
 ## Supports
 
 <div align="center">
-  <a href="https://i.arimuraromi.com/donate" target="_blank"><strong style="border-radius: 5px; padding: 10px; background-color: rgb(250, 58, 33); color: white; text-decoration: none;">👉 Keep This Project Alive 👈</strong></a>
+  <a target="_blank" href="https://i.arimuraromi.com/donate" target="_blank"><strong style="border-radius: 5px; padding: 10px; background-color: rgb(250, 58, 33); color: white; text-decoration: none;">👉 Keep This Project Alive 👈</strong></a>
 </div>
 
 ## License

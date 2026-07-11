@@ -97,4 +97,4 @@ async fn main {
 ```
 
 > [!TIP]
-> 关于模板语法本身、以及模板变量是如何对应起来的，请参见 <a href="./composing-steps.html">组合 Steps</a> 与 <a href="../advance/template.html">模板引擎</a> 相关说明。
+> 关于模板语法本身、以及模板变量是如何对应起来的，请参见 <a target="_blank" href="./composing-steps.html">组合 Steps</a> 与 <a href="../advance/template.html">模板引擎</a> 相关说明。
