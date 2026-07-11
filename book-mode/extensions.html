@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<!-- biome-ignore lint: lint/a11y/useValidLang -->
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>扩展配置 - MoPress Book</title>
+  <link rel="icon" href="https://himeno-sena.com/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/styles/index.css">
+  <meta name="description" content="A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll">
+  <meta name="keywords" content="Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll">
+  <meta name="authors" content="Himeno Sena">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script></head>
+
+<body>
+  <div class="doc-root" id="docRoot">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="logo-row" style="text-decoration: none;">
+          <img class="logo-mark" src="https://himeno-sena.com/favicon.ico" alt="Logo" />
+          <span class="logo-name">MoPress Book</span>
+        </a>
+      </div>
+      <div class="nav-scroll">
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/introduce.html">
+          介绍
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        <div class="nav-section-label">指南</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/starting.html">
+          <strong>1</strong>快速开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/book-mode/index.html">
+          <strong>2</strong>Book 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/configuration.html">
+          <strong>2.1</strong>配置 (sena.toml)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/summary-file.html">
+          <strong>2.2</strong>组织章节 (SUMMARY.md)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/frontmatter.html">
+          <strong>2.3</strong>元数据
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1 active page-expanded" href="/book-mode/extensions.html">
+          <strong>2.4</strong>扩展配置
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/features.html">
+          <strong>2.5</strong>功能预设
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/pages.html">
+          <strong>2.6</strong>页面定制
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/site-mode/index.html">
+          <strong>3</strong>Site 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/starting.html">
+          <strong>3.1</strong>开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/rules-handlers-steps.html">
+          <strong>3.2</strong>Rules, Handlers 和 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/composing-steps.html">
+          <strong>3.3</strong>组合 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/output-formats.html">
+          <strong>3.4</strong>输出格式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/advance/index.html">
+          <strong>4</strong>高级
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/template.html">
+          <strong>4.1</strong>模板引擎
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/glob.html">
+          <strong>4.2</strong>Glob 匹配
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/plugins/index.html">
+          <strong>4.3</strong>多样化的插件
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/protocol.html">
+          <strong>4.3.1</strong>外部插件协议
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/web-components.html">
+          <strong>4.3.2</strong>Web Components
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/moonbit-modules.html">
+          <strong>4.3.3</strong>Moonbit 模块
+        </a>
+        
+        
+        
+        <div class="nav-section-label">参考</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/markdown.html">
+          <strong>5</strong>Markdown 演示
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/cli.html">
+          <strong>6</strong>CLI 参考
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/api.html">
+          <strong>7</strong>Api 参考
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/plugins.html">
+          插件枢纽</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/contributing.html">
+          贡献</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/changelog.html">
+          Changelog</a>
+        
+        
+      </div>
+      <div class="nav-footer">
+        <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
+            rel="noopener noreferrer">MoPress</a>
+          <span class="nav-version">0.4.0</span>
+        </span>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>toggle</title>
+              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button type="button" title="Search" id="searchOpen" aria-label="Search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>search</title>
+              <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="topbar-title" id="topbarTitle">/ Book 模式 / 扩展配置</div>
+
+        <div class="topbar-right">
+          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
+          <a class="topbar-link" title="Open GitHub" href="https://github.com/biyuehu/mopress" target="_blank" rel="noreferrer noopener">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>github</title>
+              <path
+                d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
+                fill="currentColor" opacity=".6" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <article class="content">
+        <h1 id="扩展配置（extension）"><a href="#扩展配置（extension）" aria-hidden="true">扩展配置（extension）</a></h1>
+<p><code>sena.toml</code> 中的 <code>[extensions]</code> 表用于配置模板、静态资源、注入内容以及外部插件——这是 Book 模式下自定义构建行为的主要入口。</p>
+<h2 id="字段一览"><a href="#字段一览" aria-hidden="true">字段一览</a></h2>
+<p>具体定义参考 <a href="https://mooncakes.io/docs/himeno/mopress/config#ExtensionsConfig" target="_blank"  rel="noopener noreferrer"><code>ExtensionsConfig</code></a>。</p>
+<table><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td><code>template</code></td><td>String</td><td>HTML 模板文件路径，所有页面都会套用该模板</td></tr><tr><td><code>assets</code></td><td>Array[String]</td><td>Glob 匹配模式，用于指定需要原样复制到输出目录的静态资源</td></tr><tr><td><code>inject_head</code></td><td>Array[String]</td><td>注入到每个页面 <code>&lt;head&gt;</code> 中的原始 HTML 片段</td></tr><tr><td><code>inject_body</code></td><td>Array[String]</td><td>注入到每个页面 <code>&lt;/body&gt;</code> 结束前的原始 HTML 片段</td></tr><tr><td><code>use_css</code></td><td>Array[String]</td><td>直接内联的 CSS 代码，每个元素会生成一个独立的 <code>&lt;style&gt;</code> 标签，插入到 <code>&lt;/head&gt;</code> 之前</td></tr><tr><td><code>use_js</code></td><td>Array[String]</td><td>直接内联的 JavaScript 代码，每个元素会生成一个独立的 <code>&lt;script&gt;</code> 标签，插入到 <code>&lt;/body&gt;</code> 之前</td></tr><tr><td><code>import_css</code></td><td>Array[String]</td><td>外部 CSS 文件的路径或 URL，以 <code>&lt;link&gt;</code> 的形式引入，而非内联</td></tr><tr><td><code>import_js</code></td><td>Array[String]</td><td>外部 JavaScript 文件的路径或 URL，以 <code>&lt;script src&gt;</code> 的形式引入，而非内联</td></tr><tr><td><code>preprocessors</code></td><td>Array[String]</td><td>依次执行的外部预处理命令，作用于原始 Markdown 文本</td></tr><tr><td><code>transformers</code></td><td>Array[String]</td><td>依次执行的外部转换命令，作用于已解析的 Markdown AST</td></tr></tbody></table>
+<div style="border-left:4px solid #1a7f37;padding:8px 16px;margin:16px 0;background:#1a7f371a">
+<p style="font-weight:600;color:#1a7f37;margin:0 0 4px">Tip</p>
+<p style="margin:0;white-space:pre-wrap">运用 <i>template</i>、<i>assets</i>、<i>use_*</i> 等字段可以高度定制页面，详细说明请参见 <a href="./pages.html">页面定制</a>。</p>
+</div>
+<h2 id="模板"><a href="#模板" aria-hidden="true">模板</a></h2>
+<p><code>template</code> 字段指向的文件决定了页面的整体 HTML 结构。模板语法与变量系统的完整说明请参见 <a href="/advance/template.html"  rel="noopener noreferrer">模板引擎</a>。</p>
+<h2 id="静态资源"><a href="#静态资源" aria-hidden="true">静态资源</a></h2>
+<p><code>assets</code> 使用 Glob 匹配需要原样复制的文件（如图片、字体等），这些文件不会经过 Markdown 处理，只是从源目录复制到 <code>dest</code> 目录下的对应位置。Glob 语法的完整说明请参见 <a href="/advance/glob.html"  rel="noopener noreferrer">Glob 匹配</a>。</p>
+<h2 id="内联注入-vs-外部引入"><a href="#内联注入-vs-外部引入" aria-hidden="true">内联注入 vs 外部引入</a></h2>
+<p><code>use_css</code>、<code>use_js</code> 与 <code>import_css</code>、<code>import_js</code> 都是用于给页面添加样式或脚本，但两者的语义完全不同：</p>
+<ul><li><p><code>use_css</code>、<code>use_js</code> 中的每一项都是<strong>代码本体</strong>，会被原样包裹进 <code>&lt;style&gt;</code>、<code>&lt;script&gt;</code> 标签直接嵌入页面中。</p>
+</li><li><p><code>import_css</code>、<code>import_js</code> 中的每一项都是<strong>文件路径或 URL</strong>，会以 <code>&lt;link&gt;</code>、<code>&lt;script src&gt;</code> 的形式引用外部资源。</p>
+</li></ul>
+<p>选择哪一种取决于你的使用场景：内联适合少量、页面强相关的样式或脚本；外部引入适合体积较大、或希望利用浏览器缓存的公共资源。</p>
+<div style="border-left:4px solid #0969da;padding:8px 16px;margin:16px 0;background:#0969da1a">
+<p style="font-weight:600;color:#0969da;margin:0 0 4px">Note</p>
+<p style="margin:0;white-space:pre-wrap">当引用外部资源时，如果是本地资源，请确保其包含在 <i>assets</i> 中，否则相应资源不会被复制到输出目录。</p>
+</div>
+<h2 id="头部与正文注入"><a href="#头部与正文注入" aria-hidden="true">头部与正文注入</a></h2>
+<p><code>inject_head</code> 与 <code>inject_body</code> 允许你插入任意原始 HTML 片段——如统计脚本、Open Graph 元标签、第三方组件、Google Analytics 的初始化代码等。</p>
+<p>理论上额外引用内容借助 <code>use_css</code>、<code>use_js</code> 或 <code>import_css</code>、<code>import_js</code> 即可满足大部分需求，例外的是 <code>use_*</code> 引入 CSS 或 JavaScript 代码的生成的 HTML 位于 <code>import_*</code> 导入 CSS 或 JavaScript 资源生成的 HTML 之后，而某些 JavaScript 库要求引入前得先有配置代码，故此即可使用 <code>inject_*</code> 自由地插入这些内容。如 MoPress 对 MathJax 功能的处理：</p>
+<pre><code class="language-moonbit">  if self.features.mathjax_enabled {
+    self.extensions.inject_head.push(
+      (
+        #|&lt;script&gt;MathJax={tex:{inlineMath:[[&#39;$&#39;,&#39;$&#39;]],displayMath:[[&#39;$$&#39;,&#39;$$&#39;]]}};&lt;/script&gt;
+        #|&lt;script src=&quot;https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js&quot;&gt;&lt;/script&gt;
+      ),
+    )
+  }
+</code></pre>
+<h2 id="预处理器与转换器"><a href="#预处理器与转换器" aria-hidden="true">预处理器与转换器</a></h2>
+<p><code>preprocessors</code> 与 <code>transformers</code> 分别对应两个不同的处理阶段：</p>
+<ul><li><p><strong>预处理器</strong>（preprocessors）在 Markdown 文本被解析为 AST <strong>之前</strong>执行，操作对象是原始文本，适合处理自定义语法（如将某种特殊标记转换为标准 Markdown 或 HTML）。</p>
+</li><li><p><strong>转换器</strong>（transformers）在 Markdown 文本被解析为 AST <strong>之后</strong>执行，操作对象是结构化的语法树，适合做更精确的结构级修改（如重写某种特定的节点）。</p>
+</li></ul>
+<p>两者都以数组形式配置，数组中的每一项是一条外部命令；命令会按数组顺序依次执行，前一个命令的输出会作为后一个命令的输入。这些命令与 MoPress 之间通过标准输入、标准输出上的 JSON 协议通信，完整说明请参见 <a href="/advance/plugins/protocol.html"  rel="noopener noreferrer">外部插件协议</a>；更多插件形式（不局限于外部进程）请参见 <a href="/advance/plugins/index.html"  rel="noopener noreferrer">插件系统</a>。</p>
+<h2 id="使用插件"><a href="#使用插件" aria-hidden="true">使用插件</a></h2>
+<p>在 <a href="/advance/plugins/index.html"  rel="noopener noreferrer">多样化的插件</a> 中提到 MoPress 支持三种类型插件，不过 Book 模式只会用到其中两种。对于其具体信息暂时不必关心，且可以有一套另类的角度分类插件：</p>
+<ul><li><p><strong>编译时插件</strong>：语言无关的插件，基于标准输入、标准输出与 MoPress 通信，在构建时触发。具体信息参考 <a href="/advance/plugins/protocol.html"  rel="noopener noreferrer">外部插件协议</a>。</p>
+<ul><li><p><strong>预处理器</strong>：处理对象为 Markdown 文本。</p>
+</li><li><p><strong>转换器</strong>：处理对象为 <a href="https://mooncakes.io/docs/himeno/mopress/markdown#Markdown" target="_blank"  rel="noopener noreferrer">Markdown 语法树</a>。</p>
+</li></ul>
+</li><li><p><strong>运行时插件</strong>：某种意义上也是语言无关的，只要编译目标是 JavaScript 或 WebAssembly 即可。系作用于浏览器的 JavaScript 代码。</p>
+<ul><li><p><strong>Web Components</strong>：听说过 <a href="https://mdxjs.com/" target="_blank"  rel="noopener noreferrer">MDX</a> 嘛？没错就是那个非要和 React 绑死还很臃肿的东西。神来一笔的 Web Components 插件解决了其许多问题，具体参考 <a href="/advance/plugins/web-components.html"  rel="noopener noreferrer">Web Components</a>。</p>
+</li><li><p>其他的 JavaScript、CSS 内容等</p>
+</li></ul>
+</li></ul>
+<p>MoPress 提供的编译时插件几乎都使用 TypeScript 编写与 Bun 运行，Node.js 用户请注意。</p>
+<div style="border-left:4px solid #1a7f37;padding:8px 16px;margin:16px 0;background:#1a7f371a">
+<p style="font-weight:600;color:#1a7f37;margin:0 0 4px">Tip</p>
+<p style="margin:0;white-space:pre-wrap">运行时插件的最直接形式是使用 JavaScript，不过仍建议使用 TypeScript 提高开发体验，除非你真得不想有一点 JavaScript/TypeScript 工具链编译处理等杂事。</p>
+</div>
+<p>对于编译时插件分别将执行命令写入 <code>extensions.preprocessors</code> 与 <code>extensions.converters</code> 中即可。</p>
+<p>对于运行时插件则分别将路径或代码写入 <code>extensions.import-*</code>、<code>extensions.use-*</code>、<code>extensions.inject-*</code> 即可。</p>
+<h2 id="寻觅插件"><a href="#寻觅插件" aria-hidden="true">寻觅插件</a></h2>
+<p>插件可在开源社区中寻求，也可以在 <a href="/plugins.html"  rel="noopener noreferrer">插件中枢</a> 寻找被 MoPress 收录的插件。</p>
+
+<script>
+  globalThis.console.log(`%c Mo %c Press`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
+  globalThis.console.log("%c Made With Love By Arimura Sena", "color: #e7acb4;background: #333; padding:5px;font-size: 2em;font-weight: bold;")
+  globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+  globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+</script>
+        <div class="page-nav">
+          
+          <a class="page-nav-btn" href="/book-mode/frontmatter.html">
+            <div class="page-nav-dir">← Prev</div>
+            <div class="page-nav-title">元数据</div>
+          </a>
+          
+          
+          <a class="page-nav-btn next" href="/book-mode/features.html">
+            <div class="page-nav-dir">Next →</div>
+            <div class="page-nav-title">功能预设</div>
+          </a>
+          
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="search-overlay" id="searchOverlay" hidden>
+    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchDialogTitle">
+      <div class="search-head">
+        <div class="search-head-left">
+          <div class="search-head-title" id="searchDialogTitle">Search</div>
+          <div class="search-head-hint">Ctrl / ⌘ + K</div>
+        </div>
+
+        <button type="button" title="Close Search" class="search-close" id="searchClose"
+          aria-label="Close search">Esc</button>
+      </div>
+
+      <div class="search-input-row">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <input id="searchInput" class="search-input" type="search" placeholder="Search..." autocomplete="off"
+          spellcheck="false" />
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <script src="/scripts/main.js"></script>
+<script src="/plugins/runtime/bili-video.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Kaida-Amethyst/highlightjs-moonbit/dist/moonbit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/haskell.min.js"></script>
+<script>console.log('Hello, MoPress!');</script>
+<script>hljs.highlightAll()</script>
+</body>
+
+</html>

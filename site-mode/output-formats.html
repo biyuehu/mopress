@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<!-- biome-ignore lint: lint/a11y/useValidLang -->
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>输出格式 - MoPress Book</title>
+  <link rel="icon" href="https://himeno-sena.com/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/styles/index.css">
+  <meta name="description" content="A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll">
+  <meta name="keywords" content="Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll">
+  <meta name="authors" content="Himeno Sena">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script></head>
+
+<body>
+  <div class="doc-root" id="docRoot">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="logo-row" style="text-decoration: none;">
+          <img class="logo-mark" src="https://himeno-sena.com/favicon.ico" alt="Logo" />
+          <span class="logo-name">MoPress Book</span>
+        </a>
+      </div>
+      <div class="nav-scroll">
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/introduce.html">
+          介绍
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        <div class="nav-section-label">指南</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/starting.html">
+          <strong>1</strong>快速开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/book-mode/index.html">
+          <strong>2</strong>Book 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/configuration.html">
+          <strong>2.1</strong>配置 (sena.toml)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/summary-file.html">
+          <strong>2.2</strong>组织章节 (SUMMARY.md)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/frontmatter.html">
+          <strong>2.3</strong>元数据
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/extensions.html">
+          <strong>2.4</strong>扩展配置
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/features.html">
+          <strong>2.5</strong>功能预设
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/pages.html">
+          <strong>2.6</strong>页面定制
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/site-mode/index.html">
+          <strong>3</strong>Site 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/starting.html">
+          <strong>3.1</strong>开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/rules-handlers-steps.html">
+          <strong>3.2</strong>Rules, Handlers 和 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/composing-steps.html">
+          <strong>3.3</strong>组合 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1 active page-expanded" href="/site-mode/output-formats.html">
+          <strong>3.4</strong>输出格式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/advance/index.html">
+          <strong>4</strong>高级
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/template.html">
+          <strong>4.1</strong>模板引擎
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/glob.html">
+          <strong>4.2</strong>Glob 匹配
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/plugins/index.html">
+          <strong>4.3</strong>多样化的插件
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/protocol.html">
+          <strong>4.3.1</strong>外部插件协议
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/web-components.html">
+          <strong>4.3.2</strong>Web Components
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/moonbit-modules.html">
+          <strong>4.3.3</strong>Moonbit 模块
+        </a>
+        
+        
+        
+        <div class="nav-section-label">参考</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/markdown.html">
+          <strong>5</strong>Markdown 演示
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/cli.html">
+          <strong>6</strong>CLI 参考
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/api.html">
+          <strong>7</strong>Api 参考
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/plugins.html">
+          插件枢纽</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/contributing.html">
+          贡献</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/changelog.html">
+          Changelog</a>
+        
+        
+      </div>
+      <div class="nav-footer">
+        <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
+            rel="noopener noreferrer">MoPress</a>
+          <span class="nav-version">0.4.0</span>
+        </span>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>toggle</title>
+              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button type="button" title="Search" id="searchOpen" aria-label="Search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>search</title>
+              <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="topbar-title" id="topbarTitle">/ Site 模式 / 输出格式</div>
+
+        <div class="topbar-right">
+          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
+          <a class="topbar-link" title="Open GitHub" href="https://github.com/biyuehu/mopress" target="_blank" rel="noreferrer noopener">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>github</title>
+              <path
+                d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
+                fill="currentColor" opacity=".6" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <article class="content">
+        <h1 id="输出格式"><a href="#输出格式" aria-hidden="true">输出格式</a></h1>
+<p>管线处理完成后，最终需要落地为实际写入磁盘的文件——这一层由 <a href="https://mooncakes.io/docs/himeno/mopress/core#Thing" target="_blank"  rel="noopener noreferrer"><code>Thing</code></a> 类型描述。</p>
+<h2 id="thing-的四种形态"><a href="#thing-的四种形态" aria-hidden="true">Thing 的四种形态</a></h2>
+<pre><code class="language-moonbit">
+///|
+/// The final, writable output produced for a build item.
+pub(all) enum Thing {
+  /// A text document, e.g. rendered HTML.
+  Doc(String)
+  /// A binary asset, e.g. an image or other file copied/produced as raw
+  /// bytes.
+  Asset(Bytes)
+  /// Several named outputs produced from a single build item; each tuple
+  /// pairs a file name (including its extension) with the `Thing` to be
+  /// written under that name.
+  Multiple(Array[(String, Thing)])
+  /// No output should be written for this item.
+  Empty
+} derive(Eq, Debug)
+</code></pre>
+<ul><li><p><strong><code>Doc(String)</code></strong>：文本类输出，如渲染完成的 HTML 页面、生成的 JSON 文本等，会被作为文本文件写入磁盘。</p>
+</li><li><p><strong><code>Asset(Bytes)</code></strong>：二进制输出，如图片、字体等，会被作为二进制文件写入磁盘。</p>
+</li><li><p><strong><code>Multiple(Array[(String, Thing)])</code></strong>：一个 item 同时产出多个具名输出——数组中的每一项是一对“文件名, Thing”，文件名需要包含扩展名。这在希望一份源文件同时生成多份不同用途的输出时非常有用。</p>
+</li><li><p><strong><code>Empty</code></strong>：不产出任何文件。适用于某些只是 <code>参与计算但本身不需要落地</code> 的中间 item。</p>
+</li></ul>
+<p><code>unify</code> 这个 step（要求数据类型实现 <code>Thingable</code> 类型类）通常是管线的最后一步，负责把最终的数据（ <code>String</code>、 <code>Bytes</code>，或者 <code>Json</code>）转换为对应的 <code>Thing</code>。 <code>Thingable</code> 目前为这三种类型提供了默认实现，分别对应转换为 <code>Doc</code>、 <code>Asset</code>，以及 <code>Json</code> 自身的相应表示。</p>
+<h2 id="写入磁盘"><a href="#写入磁盘" aria-hidden="true">写入磁盘</a></h2>
+<pre><code class="language-moonbit">pub fn Thing::write(self : Self, dest : String, name : String) -&gt; Unit raise @fs.IOError
+</code></pre>
+<p><code>Thing::write</code> 负责把一个 <code>Thing</code> 实际写入输出目录下、以 <code>name</code> 命名的位置：对于 <code>Doc</code>、<code>Asset</code> 会直接写入对应的文本/二进制文件；对于 <code>Multiple</code>，则会把 <code>name</code> 当作一个子目录，将数组中的每一项按各自的文件名递归写入该子目录下； <code>Empty</code> 则不执行任何写入操作。这个方法是对底层文件系统写入能力的一层薄封装，本身不做任何额外的内容处理。</p>
+<p>通常不需要手动调用 <code>Thing::write</code> ——构建函数会在遍历完所有匹配的规则后自动完成写入；只有在需要更细粒度地控制“何时写、写到哪”时，才需要直接使用它。</p>
+<h2 id="多个输出"><a href="#多个输出" aria-hidden="true">多个输出</a></h2>
+<p>通过 <code>Multiple</code> 可声明多个产出文件，以下是将 <code>SUMMARY.md</code> 同时渲染为一份搜索索引 JSON 和一份 404 页面的示例：</p>
+<pre><code class="language-moonbit">Glob(
+  &quot;SUMMARY.md&quot;,
+  Text(raw =&gt; {
+    raw
+    |&gt; @core.set_extension(&quot;.json&quot;)
+    |&gt; x =&gt; {
+      x.map_with_raise(_ =&gt; {
+        @core.Multiple([
+          (
+            &quot;index.json&quot;,
+            summary.index_articles(config.src).to_json().stringify()
+            |&gt; @core.Doc,
+          ),
+          (&quot;404.html&quot;, not_found_page.data),
+        ])
+      })
+    }
+  }),
+)
+</code></pre>
+<p>这条规则匹配到 <code>SUMMARY.md</code> 文件后，并不会将其渲染为对应的 <code>SUMMARY.html</code>，而是借助 <code>Multiple</code> 一次性产出了两个完全不同用途的文件：一份用于站内搜索的索引数据，以及一份 404 兜底页面。这个例子也说明了 <code>Rule</code> 匹配的文件路径与最终产出的文件名之间并不需要有直接对应关系。</p>
+<h2 id="重命名文件"><a href="#重命名文件" aria-hidden="true">重命名文件</a></h2>
+<p>一般地，MoPress 只允许有限地修改输出文件的扩展名而不允许修改文件名本身。若需修改可技巧性借助 <code>Multiple</code>，如：</p>
+<pre><code class="language-moonbit">Glob(
+  &quot;foo.md&quot;,
+  Text(raw =&gt; {
+    raw.map(text =&gt; {
+      @core.Multiple([(&quot;bar.html&quot;, text |&gt; @core.Doc)])
+    })
+  })
+)
+</code></pre>
+
+<script>
+  globalThis.console.log(`%c Mo %c Press`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
+  globalThis.console.log("%c Made With Love By Arimura Sena", "color: #e7acb4;background: #333; padding:5px;font-size: 2em;font-weight: bold;")
+  globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+  globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+</script>
+        <div class="page-nav">
+          
+          <a class="page-nav-btn" href="/site-mode/composing-steps.html">
+            <div class="page-nav-dir">← Prev</div>
+            <div class="page-nav-title">组合 Steps</div>
+          </a>
+          
+          
+          <a class="page-nav-btn next" href="/advance/index.html">
+            <div class="page-nav-dir">Next →</div>
+            <div class="page-nav-title">高级</div>
+          </a>
+          
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="search-overlay" id="searchOverlay" hidden>
+    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchDialogTitle">
+      <div class="search-head">
+        <div class="search-head-left">
+          <div class="search-head-title" id="searchDialogTitle">Search</div>
+          <div class="search-head-hint">Ctrl / ⌘ + K</div>
+        </div>
+
+        <button type="button" title="Close Search" class="search-close" id="searchClose"
+          aria-label="Close search">Esc</button>
+      </div>
+
+      <div class="search-input-row">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <input id="searchInput" class="search-input" type="search" placeholder="Search..." autocomplete="off"
+          spellcheck="false" />
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <script src="/scripts/main.js"></script>
+<script src="/plugins/runtime/bili-video.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Kaida-Amethyst/highlightjs-moonbit/dist/moonbit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/haskell.min.js"></script>
+<script>console.log('Hello, MoPress!');</script>
+<script>hljs.highlightAll()</script>
+</body>
+
+</html>

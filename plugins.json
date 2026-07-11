@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Relative to Absolute",
+    "url": "https://github.com/biyuehu/mopress/blob/main/docs/plugins/transformers/relative2absolute.ts",
+    "type": "Transformers",
+    "description": "将本地 .md 相对链接转换为指向 HTML 页面的绝对 URL，支持自定义 base_url。"
+  },
+  {
+    "name": "Refer File",
+    "url": "https://github.com/biyuehu/mopress/blob/main/docs/plugins/preprocessers/refer-file.ts",
+    "type": "Preprocessers",
+    "description": "引用本地文件内容作为代码块，支持指定行数范围。"
+  },
+  {
+    "name": "GitHub Alerts",
+    "url": "https://github.com/biyuehu/mopress/blob/main/docs/plugins/preprocessers/github-alert.ts",
+    "type": "Preprocessers",
+    "description": "将 GitHub 风格的 Alert 语法转换为带样式的提示框。"
+  },
+  {
+    "name": "Local Link Checker",
+    "url": "https://github.com/biyuehu/mopress/blob/main/docs/plugins/transformers/link-checker.ts",
+    "type": "Transformers",
+    "description": "检查文档中所有本地相对链接是否指向存在的文件。"
+  },
+  {
+    "name": "Bili Video",
+    "url": "https://github.com/biyuehu/mopress/blob/main/docs/plugins/runtime/bili-video.js",
+    "type": "WebComponents",
+    "description": "输入 BV 号即可嵌入 Bilibili 视频播放器。"
+  },
+  {
+    "name": "Callout Boxes",
+    "url": "https://github.com/example/mopress-mod-callouts",
+    "type": "MoonBit",
+    "description": "可复用的 MoonBit step 库，提供多种自定义提示框渲染逻辑。"
+  }
+]

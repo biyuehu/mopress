@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<!-- biome-ignore lint: lint/a11y/useValidLang -->
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面定制 - MoPress Book</title>
+  <link rel="icon" href="https://himeno-sena.com/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/styles/index.css">
+  <meta name="description" content="A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll">
+  <meta name="keywords" content="Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll">
+  <meta name="authors" content="Himeno Sena">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script></head>
+
+<body>
+  <div class="doc-root" id="docRoot">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="logo-row" style="text-decoration: none;">
+          <img class="logo-mark" src="https://himeno-sena.com/favicon.ico" alt="Logo" />
+          <span class="logo-name">MoPress Book</span>
+        </a>
+      </div>
+      <div class="nav-scroll">
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/introduce.html">
+          介绍
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        <div class="nav-section-label">指南</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/starting.html">
+          <strong>1</strong>快速开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/book-mode/index.html">
+          <strong>2</strong>Book 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/configuration.html">
+          <strong>2.1</strong>配置 (sena.toml)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/summary-file.html">
+          <strong>2.2</strong>组织章节 (SUMMARY.md)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/frontmatter.html">
+          <strong>2.3</strong>元数据
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/extensions.html">
+          <strong>2.4</strong>扩展配置
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/features.html">
+          <strong>2.5</strong>功能预设
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1 active page-expanded" href="/book-mode/pages.html">
+          <strong>2.6</strong>页面定制
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/site-mode/index.html">
+          <strong>3</strong>Site 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/starting.html">
+          <strong>3.1</strong>开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/rules-handlers-steps.html">
+          <strong>3.2</strong>Rules, Handlers 和 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/composing-steps.html">
+          <strong>3.3</strong>组合 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/output-formats.html">
+          <strong>3.4</strong>输出格式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/advance/index.html">
+          <strong>4</strong>高级
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/template.html">
+          <strong>4.1</strong>模板引擎
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/glob.html">
+          <strong>4.2</strong>Glob 匹配
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/plugins/index.html">
+          <strong>4.3</strong>多样化的插件
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/protocol.html">
+          <strong>4.3.1</strong>外部插件协议
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/web-components.html">
+          <strong>4.3.2</strong>Web Components
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/moonbit-modules.html">
+          <strong>4.3.3</strong>Moonbit 模块
+        </a>
+        
+        
+        
+        <div class="nav-section-label">参考</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/markdown.html">
+          <strong>5</strong>Markdown 演示
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/cli.html">
+          <strong>6</strong>CLI 参考
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/api.html">
+          <strong>7</strong>Api 参考
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/plugins.html">
+          插件枢纽</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/contributing.html">
+          贡献</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/changelog.html">
+          Changelog</a>
+        
+        
+      </div>
+      <div class="nav-footer">
+        <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
+            rel="noopener noreferrer">MoPress</a>
+          <span class="nav-version">0.4.0</span>
+        </span>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>toggle</title>
+              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button type="button" title="Search" id="searchOpen" aria-label="Search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>search</title>
+              <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="topbar-title" id="topbarTitle">/ Book 模式 / 页面定制</div>
+
+        <div class="topbar-right">
+          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
+          <a class="topbar-link" title="Open GitHub" href="https://github.com/biyuehu/mopress" target="_blank" rel="noreferrer noopener">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>github</title>
+              <path
+                d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
+                fill="currentColor" opacity=".6" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <article class="content">
+        <h1 id="页面定制"><a href="#页面定制" aria-hidden="true">页面定制</a></h1>
+<p>本文将介绍在 Book 模式下定制化页面以及 <code>extensions</code> 配置的高级用法</p>
+<p>关于模板语法请参考 <a href="/advance/template.html"  rel="noopener noreferrer">模板引擎</a>。</p>
+<h2 id="自定义模板"><a href="#自定义模板" aria-hidden="true">自定义模板</a></h2>
+<p>通过 <code>extensions.template</code> 可定义文章使用的 HTML 模板。默认值为 <code>&quot;templates/default.html&quot;</code>，此处称之为默认模板。你可以基于默认模板进行修改、添加、删除，也可以完全重写一套自己的模板。</p>
+<h2 id="html-模板中的变量"><a href="#html-模板中的变量" aria-hidden="true">HTML 模板中的变量</a></h2>
+<p>模板的核心是数据，数据的核心是变量，以下提供了在 Book 模式中注册的变量及其行为：</p>
+<table><thead><tr><th>变量名</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td><code>body</code></td><td>String</td><td>当前页面正文，即 Markdown 转换为 HTML 后的结果</td></tr><tr><td><code>section</code></td><td>Json</td><td>当前页面在导航树中所处位置的结构化数据，通常用于渲染侧边栏、目录树</td></tr><tr><td><code>site_title</code></td><td>String</td><td>站点标题，对应配置中的 <code>title</code> 字段</td></tr><tr><td><code>site_description</code></td><td>String</td><td>站点简介，对应配置中的 <code>description</code> 字段</td></tr><tr><td><code>site_keywords</code></td><td>String</td><td>站点关键词，对应配置中的 <code>keywords</code> 字段</td></tr><tr><td><code>site_authors</code></td><td>String</td><td>作者列表，对应配置中的 <code>authors</code> 字段，多个作者以顿号拼接的逗号连接</td></tr><tr><td><code>site_language</code></td><td>String</td><td>站点主语言，对应配置中的 <code>language</code> 字段</td></tr><tr><td><code>favicon</code></td><td>String</td><td>favicon 路径，对应配置中的 <code>favicon</code> 字段</td></tr><tr><td><code>logo</code></td><td>String</td><td>站点 Logo 路径，对应配置中的 <code>logo</code> 字段</td></tr><tr><td><code>repository</code></td><td>String</td><td>源码仓库地址，对应配置中的 <code>repository</code> 字段，未配置时为空String</td></tr><tr><td><code>src</code></td><td>String</td><td>源目录路径，对应配置中的 <code>src</code> 字段</td></tr><tr><td><code>dest</code></td><td>String</td><td>输出目录路径，对应配置中的 <code>dest</code> 字段</td></tr><tr><td><code>base_url</code></td><td>String</td><td>站点基础 URL，对应配置中的 <code>base_url</code> 字段</td></tr><tr><td><code>build_time</code></td><td>String</td><td>本次构建发生的时间</td></tr><tr><td><code>version</code></td><td>String</td><td>当前 MoPress 的版本号</td></tr><tr><td><code>breadcrumb</code></td><td>String</td><td>当前页面的面包屑路径</td></tr><tr><td><code>current</code></td><td>String</td><td>当前页面自身的路径</td></tr><tr><td><code>prev</code></td><td>Json?</td><td>上一篇文章，包含 <code>title</code>、<code>location</code> 两个字段；不存在时为空字符串</td></tr><tr><td><code>next</code></td><td>Json?</td><td>下一篇文章，包含 <code>title</code>、<code>location</code> 两个字段；不存在时为空字符串</td></tr></tbody></table>
+<p>其中 <code>prev</code>、<code>next</code> 在模板中需要先判断是否存在再访问其字段，例如：</p>
+<pre><code class="language-html">$if(next)$
+&lt;a class=&quot;page-nav-btn next&quot; href=&quot;$next.location$&quot;&gt;
+  &lt;div class=&quot;page-nav-dir&quot;&gt;Next →&lt;/div&gt;
+  &lt;div class=&quot;page-nav-title&quot;&gt;$next.title$&lt;/div&gt;
+&lt;/a&gt;
+$endif$
+</code></pre>
+<p><code>prefix_chapters</code>、<code>suffix_chapters</code>、<code>numbered_chapters</code> 分别对应导航结构中的前言章节、后记章节、主体编号章节。</p>
+<p><code>prev</code>、<code>next</code>、<code>section</code> 具体结构如下：</p>
+<pre><code class="language-typescript">interface PrevAndNext {
+  title: string;
+  location: string;
+}
+
+interface Section {
+  title: string;
+  prefix_chapters: SectionItem[];
+  numbered_chapters: SectionItem[];
+  suffix_chapters: SectionItem[];
+}
+
+type SectionItem = SeparatorItem | PartTitleItem | LinkItem;
+
+interface SeparatorItem {
+  is_separator: true;
+}
+
+interface PartTitleItem {
+  is_part_title: true;
+  title: string;
+}
+
+interface LinkItem {
+  is_link: true;
+  title: string;
+  location: string;
+  source: string;
+  depth: number;
+  is_current: boolean;
+  number?: string;
+}
+</code></pre>
+<p>仅编号章节会在 <code>LinkItem</code> 中携带此字段，形如 <code>1</code>、<code>1.2</code>、<code>1.2.1</code>。</p>
+<h3 id="元数据字段的注入"><a href="#元数据字段的注入" aria-hidden="true">元数据字段的注入</a></h3>
+<p>一篇文章的元数据键值对，不管具体有哪些字段，都会被整体注入到该页面的模板变量中。元数据本身的键值是不固定的，自定义模板可以按需读取任意自定义字段。</p>
+<p>默认模板对元数据中的 <code>title</code>、<code>description</code>、<code>keywords</code>、<code>authors</code>、<code>language</code> 这几个字段做了有效处理，部分字段行为是较于 <code>site_*</code> 变量优先选择，而另一部分字段行为是与 <code>site_*</code> 变量并并列处理。如：</p>
+<pre><code class="language-html">&lt;html lang=&quot;$if(language)$$language$$else$$site_language$$endif$&quot;&gt;
+
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+  &lt;title&gt;$if(title)$$title$ - $site_title$$else$$site_title$$endif$&lt;/title&gt;
+  &lt;link rel=&quot;icon&quot; href=&quot;$favicon$&quot; type=&quot;image/x-icon&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;/styles/index.css&quot;&gt;
+  &lt;meta name=&quot;description&quot; content=&quot;$if(description)$$site_description$,$description$$else$$site_description$$endif$&quot;&gt;
+  &lt;meta name=&quot;keywords&quot; content=&quot;$if(keywords)$$site_keywords$,$keywords$$else$$site_keywords$$endif$&quot;&gt;
+  &lt;meta name=&quot;authors&quot; content=&quot;$if(authors)$$site_authors$,$authors$$else$$site_authors$$endif$&quot;&gt;
+&lt;/head&gt;
+</code></pre>
+<h2 id="基于默认模板自定义主题"><a href="#基于默认模板自定义主题" aria-hidden="true">基于默认模板自定义主题</a></h2>
+<p>通过有限地修改 <code>styles/index.css</code> 样式中的根变量达到自定义配色、字体、大小等需求。所有根变量及默认值如下：</p>
+<pre><code class="language-css">:root {
+  --nav-w: 16.25rem;
+  --font: &quot;Inter&quot;, system-ui, sans-serif;
+  --mono: &quot;JetBrains Mono&quot;, &quot;Fira Code&quot;, monospace;
+
+  --bg: #fafaf9;
+  --bg-secondary: #f4f3f0;
+  --bg-code: #f0efec;
+  --text: #1a1a18;
+  --text-muted: #6b6b66;
+  --text-faint: #a8a8a2;
+  --accent: #d49a84;
+  --accent-bg: #f5e8e0;
+  --accent-light: #eaccbf;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+
+  --bg-dark: #141413;
+  --bg-secondary-dark: #1e1e1c;
+  --bg-code-dark: #252523;
+  --text-dark: #e8e8e4;
+  --text-muted-dark: #9a9a94;
+  --text-faint-dark: #5a5a56;
+  --accent-dark: #f0c4b0;
+  --accent-bg-dark: #2a1e1a;
+  --accent-light-dark: #3d2d26;
+  --border-dark: rgba(255, 255, 255, 0.07);
+  --border-strong-dark: rgba(255, 255, 255, 0.12);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+</code></pre>
+<p>不要忘记将你的新变量添加到 <code>extensions.use-css</code>：</p>
+<pre><code class="language-toml">[extensions]
+use-css = [&quot;&quot;&quot;
+:root {
+  --accent: pink;
+}
+&quot;&quot;&quot;]
+</code></pre>
+<p>当然，自行大改样式文件也可以，但不在此处的讨论范围。</p>
+<h2 id="自定义主页"><a href="#自定义主页" aria-hidden="true">自定义主页</a></h2>
+<p>主页的本质上是源目录 <code>/index.md</code> 渲染为 <code>/index.html</code>。在 MarkDown 中可自由地使用 CSS 与 HTML 定制化你的主页。</p>
+<p>当然，若你想更自由一点，可直接在源目录重命名 <code>/index.md</code> 并新建 <code>/index.html</code>，在其中完全不受限制于既定文档书籍页面骨架。</p>
+<div style="border-left:4px solid #cf222e;padding:8px 16px;margin:16px 0;background:#cf222e1a">
+<p style="font-weight:600;color:#cf222e;margin:0 0 4px">Caution</p>
+<p style="margin:0;white-space:pre-wrap">应当强调的是，此处的 HTML 均不是模板环境而是普通的 HTML 文件，意味着模板变量、模板语法完全不可用。</p>
+</div>
+<p>不过，最重要的是应将 <code>/index.html</code> 添加到 <code>extensions.assets</code> 中，否则将不会被 MoPress 处理。</p>
+<h2 id="自定义-404-页面"><a href="#自定义-404-页面" aria-hidden="true">自定义 404 页面</a></h2>
+<p>同理，新建 <code>/404.md</code> 或 <code>/404.html</code> 即可。如本书的：</p>
+<pre><code class="language-markdown">---
+title: 404
+---
+&lt;style&gt;
+  :root {
+    --red: #ffba9c;
+    --red-bright: #e7b5a0;
+  }
+  .wrap { padding: 2rem; }
+  .code {
+    font-size: 6rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    background: linear-gradient(135deg, var(--red), var(--red-bright)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    margin: 0 !important;
+  }
+  .msg {
+    font-size: 1.1rem !important;
+    color: var(--text-muted, #6b6b66) !important;
+    margin: 0.75rem 0 1.75rem 0 !important;
+  }
+  .center { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    padding: 0.6rem 1.4rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary {
+    background: var(--red);
+    color: #fff;
+  }
+  .btn-secondary {
+    background: var(--bg-secondary, #f4f3f0);
+    color: var(--text, #1a1a18);
+    border: 0.5px solid var(--border-strong, rgba(0,0,0,0.14));
+  }
+  .dark .btn-secondary {
+    background: var(--bg-secondary-dark, #1e1e1c);
+    color: var(--text-dark, #e8e8e4);
+    border-color: var(--border-strong-dark, rgba(255,255,255,0.12));
+  }
+&lt;/style&gt;
+
+&lt;div class=&quot;wrap&quot;&gt;
+  &lt;p class=&quot;center code&quot;&gt;404&lt;/p&gt;
+  &lt;img src=&quot;https://img0.huoshen80.top/i/2026/07/11/6a523e94c0adb.png&quot; alt=&quot;404&quot; class=&quot;center&quot; width=&quot;200&quot; height=&quot;200&quot;&gt;
+  &lt;p class=&quot;msg center&quot;&gt;呜哇...你要找的页面她走了(ノ｀Д)ノ&lt;/p&gt;
+  &lt;div class=&quot;center&quot;&gt;
+    &lt;a class=&quot;btn btn-primary&quot; href=&quot;/&quot;&gt;返回首页&lt;/a&gt;
+    &lt;a class=&quot;btn btn-secondary&quot; href=&quot;javascript:history.back()&quot;&gt;返回上一页&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+</code></pre>
+<h2 id="插件"><a href="#插件" aria-hidden="true">插件</a></h2>
+<p>通过 <code>extensions.import-js</code> 或 <code>extensions.use-js</code> 可以引入 JavaScript 代码为页面添加各种功能、效果，如鼠标点击、整页粒子效果等。</p>
+<p>通过 Web Components 与外部协议插件可以自定义更多的 MarkDown 语法及功能。</p>
+
+<script>
+  globalThis.console.log(`%c Mo %c Press`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
+  globalThis.console.log("%c Made With Love By Arimura Sena", "color: #e7acb4;background: #333; padding:5px;font-size: 2em;font-weight: bold;")
+  globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+  globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+</script>
+        <div class="page-nav">
+          
+          <a class="page-nav-btn" href="/book-mode/features.html">
+            <div class="page-nav-dir">← Prev</div>
+            <div class="page-nav-title">功能预设</div>
+          </a>
+          
+          
+          <a class="page-nav-btn next" href="/site-mode/index.html">
+            <div class="page-nav-dir">Next →</div>
+            <div class="page-nav-title">Site 模式</div>
+          </a>
+          
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="search-overlay" id="searchOverlay" hidden>
+    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchDialogTitle">
+      <div class="search-head">
+        <div class="search-head-left">
+          <div class="search-head-title" id="searchDialogTitle">Search</div>
+          <div class="search-head-hint">Ctrl / ⌘ + K</div>
+        </div>
+
+        <button type="button" title="Close Search" class="search-close" id="searchClose"
+          aria-label="Close search">Esc</button>
+      </div>
+
+      <div class="search-input-row">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <input id="searchInput" class="search-input" type="search" placeholder="Search..." autocomplete="off"
+          spellcheck="false" />
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <script src="/scripts/main.js"></script>
+<script src="/plugins/runtime/bili-video.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Kaida-Amethyst/highlightjs-moonbit/dist/moonbit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/haskell.min.js"></script>
+<script>console.log('Hello, MoPress!');</script>
+<script>hljs.highlightAll()</script>
+</body>
+
+</html>
