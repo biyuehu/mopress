@@ -113,7 +113,20 @@ interface LinkItem {
 
 ## 基于默认模板自定义主题
 
-通过有限地修改 `styles/index.css` 样式中的根变量达到自定义配色、字体、大小等需求。
+通过有限地修改 `styles/index.css` 样式中的根变量达到自定义配色、字体、大小等需求。所有根变量及默认值如下：
+
+{{@ styles/index.css#styles }}
+
+不要忘记将你的新变量添加到 `extensions.use-css`：
+
+```toml
+[extensions]
+use-css = ["""
+:root {
+  --accent: pink;
+}
+"""]
+```
 
 当然，自行大改样式文件也可以，但不在此处的讨论范围。
 

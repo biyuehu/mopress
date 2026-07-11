@@ -30,7 +30,7 @@ inject-body = []
 use-js = ["console.log('Hello, MoPress!');"]
 use-css = []
 import-css = []
-import-js = ["plugins/runtime/bili-video.js"]
+import-js = ["/plugins/runtime/bili-video.js"]
 preprocessors = [
   "bun plugins/preprocessers/github-alert",
   "bun plugins/preprocessers/refer-file",

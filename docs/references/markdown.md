@@ -127,3 +127,11 @@ main = do
 
 > [!IMPORTANT]
 > 重要信息
+
+## Bilibili 视频
+
+```markdown
+<bili-video bv="BV1SRcCztERB"></bili-video>
+```
+
+<bili-video bv="BV1SRcCztERB"></bili-video>

@@ -54,6 +54,7 @@ title: Changelog
 - Add TextRequest struct, implement Show trait for ProcessError, add log information ([267161a](https://github.com/biyuehu/mbdoc/commit/267161a))
 - Implement Show for suberrors and add log information ([15e7c7d](https://github.com/biyuehu/mbdoc/commit/15e7c7d))
 - **plugins:** Add link-checker, relative2absolute and improve github-alert, refer-file ([f1741f2](https://github.com/biyuehu/mbdoc/commit/f1741f2))
+- Improve logger information for cli ([1636c32](https://github.com/biyuehu/mbdoc/commit/1636c32))
 
 ### 🩹 Fixes
 
@@ -77,6 +78,7 @@ title: Changelog
 - Update all documents ([6dfdfeb](https://github.com/biyuehu/mbdoc/commit/6dfdfeb))
 - Improve all of documents ([1d1e91a](https://github.com/biyuehu/mbdoc/commit/1d1e91a))
 - Improve all documents ([dbec8ac](https://github.com/biyuehu/mbdoc/commit/dbec8ac))
+- Update all documents ([3140a77](https://github.com/biyuehu/mbdoc/commit/3140a77))
 
 ### 🏡 Chore
 

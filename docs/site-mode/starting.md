@@ -18,6 +18,7 @@ Site 模式下，项目的入口是一份 MoonBit 源文件（文件名可以自
 
 ```bash
 mopress new <dir>
+cd <dir>
 ```
 
 生成以下 `<dir>` 目录结构：

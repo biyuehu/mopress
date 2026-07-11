@@ -38,6 +38,6 @@
 
 ---
 
-[插件哈布](./plugins.md)
+[插件枢纽](./plugins.md)
 [贡献](./contributing.md)
 [Changelog](./changelog.md)

@@ -26,8 +26,6 @@ MoPress 是一个面向 MoonBit 生态的现代文档与通用静态站点生成
 - 之后给出了几篇参考说明。
 - 最后是本书的若干篇附录。
 
-<bili-video bv="BV1xx411c7mD"></bili-video>
-
 ## 支持 MoPress
 
 <div align="center">
