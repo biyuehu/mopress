@@ -50,6 +50,7 @@
 - Add TextRequest struct, implement Show trait for ProcessError, add log information ([267161a](https://github.com/biyuehu/mbdoc/commit/267161a))
 - Implement Show for suberrors and add log information ([15e7c7d](https://github.com/biyuehu/mbdoc/commit/15e7c7d))
 - **plugins:** Add link-checker, relative2absolute and improve github-alert, refer-file ([f1741f2](https://github.com/biyuehu/mbdoc/commit/f1741f2))
+- Improve logger information for cli ([1636c32](https://github.com/biyuehu/mbdoc/commit/1636c32))
 
 ### 🩹 Fixes
 
@@ -121,6 +122,7 @@
 - Add gen-log.ts that generate changelog and rename generate.ts to gen-includes.ts ([a14cd55](https://github.com/biyuehu/mbdoc/commit/a14cd55))
 - Update lefthook.yml, moon.mod ([928b5d6](https://github.com/biyuehu/mbdoc/commit/928b5d6))
 - Add ci.yml ([107aa85](https://github.com/biyuehu/mbdoc/commit/107aa85))
+- Update README.md ([f2e4a79](https://github.com/biyuehu/mbdoc/commit/f2e4a79))
 
 ### ✅ Tests
 
@@ -135,6 +137,6 @@
 
 - Romi ([@biyuehu](https://github.com/biyuehu))
 - 有村ロミ ([@biyuehu](https://github.com/biyuehu))
-- Hotaru ([@biyuehu](https://github.com/biyuehu))
+- Hotaru <biyuehuya@gmail.com>
 
 

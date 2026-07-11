@@ -23,6 +23,7 @@ assets = [
   "scripts/**/*",
   "plugins/runtime/**/*",
   "index.html",
+  "plugins.json",
 ]
 inject-head = []
 inject-body = []

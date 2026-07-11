@@ -37,5 +37,5 @@ writeFileSync(
 		)
 		.join(
 			"\n",
-		)}\n///|\nlet version : String = "${version}"\n\n///|\nlet build_time : String = "${new Date().toLocaleString()}"\n`,
+		)}\n///|\npub let version : String = "${version}"\n\n///|\nlet build_time : String = "${new Date().toLocaleString()}"\n`,
 );

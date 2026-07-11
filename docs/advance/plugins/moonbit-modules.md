@@ -4,7 +4,7 @@ title: MoonBit 模块
 
 # MoonBit 模块插件
 
-本节内容仅适用于 [Site 模式](../../site-mode/index.md)。Book 模式的配置文件无法引用 MoonBit 代码，如果扩展逻辑需要在 Book 模式下使用，请阅读 [外部 stdin、stdout 程序](./protocol.md)。
+本节内容仅适用于 [Site 模式](../../site-mode/index.md)。Book 模式的配置文件无法引用 MoonBit 代码。
 
 ## 核心思路
 
@@ -22,7 +22,7 @@ pub fn use_transformer(
 ) -> Item[Array[@markdown.Block]] raise
 ```
 
-如果反复在多个项目中编写类似的处理逻辑，最自然的做法就是把这些函数，或者更广义地说，任何符合 `(Item[T]) -> Item[R] raise` 形状的 step，不局限于预处理器、转换器，提取到一个独立的 MoonBit 包中，作为库发布，供其他构建脚本通过包管理器引入复用。
+如果反复在多个项目中编写类似的处理逻辑，最自然的做法就是把这些函数，或者更广义地说，任何符合 `(Item[T]) -> Item[R] raise` 形状的 step，不局限于预处理器、转换器，提取到一个独立的 MoonBit 模块、包中，作为库发布到 [mooncakes](https://mooncakes.io/)，供其他构建脚本通过 MoonBit 包管理器引入复用。
 
 ## 与外部程序插件的对比
 
@@ -36,7 +36,9 @@ pub fn use_transformer(
 
 如果扩展逻辑只会在 Site 模式项目中使用、且愿意用 MoonBit 编写，选择打包为 MoonBit 模块通常能获得更好的性能与更直接的调试体验；如果需要复用已有的、用其他语言编写的处理逻辑，或者希望这份扩展逻辑同时能在 Book 模式中使用，外部程序仍然是更合适的选择。
 
-## 打包建议
+## 编写与建议
+
+本质上是一个普通的 MoonBit Lib，关于 MoonBit 项目初始化操作此处不作赘述，请参考 [MoonBit](https://www.moonbitlang.com/)。
 
 一个设计良好的 step 组合库，通常会以独立函数的形式导出一个或多个 step，而不是强行捆绑成单一的巨大函数，这样使用者可以按需挑选、自由组合，与 MoPress 自身可组合的设计哲学保持一致。如：
 
@@ -49,6 +51,16 @@ pub fn use_callout_boxes(item : Item[String]) -> Item[String] raise {
 ```
 
 使用者只需要将其接入自己的管线：
+
+```bash
+moon add username/callouts
+```
+
+```moonbit
+import {
+  "username/callouts/lib" @callouts,
+}
+```
 
 ```moonbit
 raw

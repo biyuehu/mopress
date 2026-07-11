@@ -15,7 +15,6 @@
   - [扩展配置](./book-mode/extensions.md)
   - [功能预设](./book-mode/features.md)
   - [页面定制](./book-mode/pages.md)
-  - [使用插件](./book-mode/plugins.md)
 
 - [Site 模式](./site-mode/index.md)
   - [开始](./site-mode/starting.md)
@@ -39,5 +38,6 @@
 
 ---
 
+[插件哈布](./plugins.md)
 [贡献](./contributing.md)
 [Changelog](./changelog.md)

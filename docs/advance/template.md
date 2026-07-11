@@ -77,7 +77,9 @@ $partial("path/header.html")$
 
 {{@ ../src/template/template.mbt#value}}
 
-`Array` 类型的值可以配合 `$for$` 循环使用；`Object` 类型的值可以配合点号访问其字段，如上面循环示例中的 `item.title`；
+`Array` 类型的值可以配合 `$for$` 循环使用；`Object` 类型的值可以配合点号访问其字段，如上面循环示例中的 `item.title`。
+
+`""`、`false`、`[]`、未定义值（宽松模式）会被条件判断为假，其他值均为真。
 
 ## 渲染函数
 

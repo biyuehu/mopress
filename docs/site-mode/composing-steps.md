@@ -127,7 +127,7 @@ pub fn use_transformer(
 
 ## 模板变量从哪里来
 
-在 Site 模式中模板渲染的上下文变量通过 `Item::add_vars`、`Item::set_var`，或者其他 step 内部隐式设置。举例来说，。
+在 Site 模式中模板渲染的上下文变量通过 `Item::add_vars`、`Item::set_var`，或者其他 step 内部隐式设置。举例来说，`apply_template`、`apply_template_strict` 会隐式地设置变量 `body`，值为 MarkDown 内容转换为 HTML 的结果，在模板用于显示文章主体。
 
 如果希望像 Book 模式那样，自动把元数据的字段暴露为模板变量，可以使用 `render_markdown_and_frontmatter`、 `render_markdown_and_frontmatter_from_ast` step 或：
 

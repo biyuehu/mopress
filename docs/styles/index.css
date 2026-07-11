@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
 
+/* @block styles */
 :root {
 	--nav-w: 16.25rem;
 	--font: "Inter", system-ui, sans-serif;
@@ -37,6 +38,7 @@
 	margin: 0;
 	padding: 0;
 }
+/* @end */
 
 html,
 body {

@@ -12,6 +12,8 @@ pub async fn build_book(@config.BookConfig) -> Unit
 
 pub async fn process_markdown_page(@core.Item[String], @config.BookConfig, @summary.Summary) -> @core.Item[@core.Thing]
 
+pub let version : String
+
 // Errors
 
 // Types and methods
