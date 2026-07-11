@@ -1,20 +1,26 @@
-# himeno/mopress
+# MoPress
 
 [![MoonBit](https://img.shields.io/badge/MoonBit-BF2586?style=flat)](https://www.moonbitlang.com/) [![License](https://img.shields.io/badge/License-GPL_v3-007ec6?style=flat)](https://www.gnu.org/licenses/gpl-3.0) [![CI](https://github.com/biyuehu/mopress/actions/workflows/ci.yml/badge.svg)](https://github.com/biyuehu/mopress/actions/workflows/ci.yml) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Codeberg](https://img.shields.io/badge/Hosted_on-Codeberg-2185D0?logo=codeberg&logoColor=white)
 
-MoPress is a modern document and static site generator for the MoonBit ecosystem, designed with reference to both [mdBook](https://rust-lang.github.io/mdBook/) and [Hakyll](https://jaspervdj.be/hakyll/). At its core, it uses an embedded DSL (Domain Specific Language) to declare configurations, while also offering a rich plugin system and customization capabilities to meet various needs.
+MoPress is a modern documentation and general-purpose static site generator for the MoonBit ecosystem. Its design draws inspiration from both [mdBook](https://rust-lang.github.io/mdBook/) and [Hakyll](https://jaspervdj.be/hakyll/). At its core, MoPress uses an embedded DSL (Domain-Specific Language) for declarative configuration and functional processing pipelines to express build workflows. It also provides a rich, language-agnostic plugin system and extensive customization capabilities to accommodate a wide range of use cases.
 
-## Overview
+## Why MoPress?
 
-MoPress offers two usage modes:
+If all you want is to quickly write some documentation or publish a blog, you should not have to reinvent the wheel by building an entire build system from scratch. But when your requirements go beyond writing Markdown and applying templates, your tools should not get in your way—nor should you have to repeatedly deal with tedious implementation details.
 
-**Book mode** — out-of-the-box experience similar to mdBook. Configure via `sena.toml` and write Markdown. No code required.
+MoPress attempts to serve both cases by providing two complementary modes of use:
 
-**Site mode** — declare rules and pipelines by DSL in `site.mbtx` for full control over how your content is processed and rendered. Inspired by Hakyll's composable compiler design.
+- [**Book Mode**](./book-mode/index.md): An out-of-the-box experience similar to mdBook. All you need is a `sena.toml` configuration file and a collection of Markdown files—no code required. At the same time, it provides many capabilities beyond mdBook, including multiple plugin systems, code injection, custom templates, front matter, and AST transformations (i.e. transformers).
+
+- [**Site Mode**](./site-mode/index.md): Declare Rules and processing Pipelines through a DSL in `site.mbtx`. Build workflows are expressed using a rich set of atomic Steps, giving you complete control over how content is processed and rendered. Through functional composition, Steps can be combined freely and flexibly for virtually unlimited expressiveness, without requiring you to concern yourself with tedious low-level implementation details. ~~Combined with MoonBit's elegant syntax, this declarative style might be particularly exciting for functional programming enthusiasts.~~
+
+Both modes share the same underlying capabilities, including Markdown parsing, the template engine, and the external plugin protocol. In fact, Site Mode is designed as a general-purpose static site generator, while Book Mode is both a best-practice example built on top of Site Mode and an out-of-the-box generator that presets a complete build workflow for book-style documentation websites.
 
 ## Features
 
 - Composable pipeline API — chain transforms with `|>`
+- Functional programming style
+- DSL for configuration and pipeline definition
 - Front matter support
 - Built-in preprocessors: callout blocks, math (LaTeX), file includes
 - External preprocessor protocol (stdin/stdout, language-agnostic)
@@ -23,35 +29,55 @@ MoPress offers two usage modes:
 - Lightweight template engine built-in
 - Outputs clean static HTML
 
-## Development
+## Installation
 
-### Environment
-
-- MoonBit
-- Just
-- Bun
-- Lefthook
-
-### Build
-
-```bash
-just init
-just build
-just test
-```
-
-<!-- ## Installation
+### By MoonBit
 
 ```bash
 moon add himeno/mopress
 ```
 
-## Quick Start
+### Release
+
+Please refer to the [release page](https://github.com/biyuehu/mopress/releases) for the latest release.
+
+## Start By Book Mode
+
+```bash
+mopress init
+mopress build
+mopress serve
+```
 
 ```toml
-# sena.toml
-title = "My Book"
-src = "src"
+title = "MoPress Doc"
+description = "A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll"
+keywords = "Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll"
+favicon = "https://himeno-sena.com/favicon.ico"
+logo = "https://himeno-sena.com/favicon.ico"
+authors = ["Himeno Sena"]
+language = "en"
+src = "./"
+dest = "./dest"
+repository = "https://github.com/biyuehu/mopress"
+
+[features]
+highlight-enabled = false
+highlight-theme = "github"
+mathjax-enabled = false
+
+[extensions]
+template = "templates/default.html"
+assets = ["images/**/*", "styles/**/*", "scripts/**/*", "plugins/runtime/**/*"]
+inject-head = []
+inject-body = []
+use-js = ["console.log('Hello, MoPress!');"]
+use-css = []
+import-css = []
+import-js = []
+preprocessors = []
+transformers = []
+
 ```
 
 ```text
@@ -60,34 +86,45 @@ src/
 └── intro.md
 ```
 
-```bash
-mopress build
-``` -->
+## Start By Site Mode
 
-## Example
+```bash
+mopress new my-book
+cd my-book
+moon run --target native site.mbtx build
+moon run --target native site.mbtx serve
+```
 
 ```moonbit
-fn main {
-  mopress([
+import {
+  "himeno/mopress/core",
+  "moonbitlang/async",
+}
+
+///|
+async fn main {
+  @core.mopress([
     Glob(
-      "*.markdown",
+      "**/*.md",
       Text(raw => {
         raw
-        |> set_extension("html")
-        |> render_markdown_and_frontmatter
-        |> load_and_apply_template("test/src/templates/default.html")
-        |> import_js("./custom.js")
-        |> import_css("./custom.css")
-        |> use_js("console.log('hi, moonbit! hi, mopress!')")
-        |> use_css("some css code")
-        |> unify
+        |> @core.set_extension(".html")
+        |> @core.render_markdown_and_frontmatter
+        |> @core.load_and_apply_template("templates/default.html")
+        |> @core.use_js(["console.log('hi, moonbit! hi, mopress!')"])
+        |> @core.unify
       }),
     ),
-  Glob("images/*", Binary(raw => raw |> unify)),
-  Glob("css/*", Copy),
+    Glob("styles/**/*", Copy),
   ])
 }
 ```
+
+## Supports
+
+<div align="center">
+  <a href="https://i.arimuraromi.com/donate" target="_blank"><strong style="border-radius: 5px; padding: 10px; background-color: rgb(250, 58, 33); color: white; text-decoration: none;">👉 Keep This Project Alive 👈</strong></a>
+</div>
 
 ## License
 

@@ -1,6 +1,6 @@
 name = "himeno/mopress"
 
-version = "0.3.0"
+version = "0.4.0"
 
 import {
   "bobzhang/toml@0.2.1",
