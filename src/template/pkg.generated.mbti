@@ -16,6 +16,11 @@ pub fn[T : Show] parse_template(T) -> Array[TemplateNode] raise TemplateParseErr
 pub suberror TemplateParseError {
   TemplateParseError(String)
 } derive(Eq, @debug.Debug)
+pub fn TemplateParseError::equal(Self, Self) -> Bool
+pub fn TemplateParseError::not_equal(Self, Self) -> Bool
+pub fn TemplateParseError::output(Self, &Logger) -> Unit
+pub fn TemplateParseError::to_repr(Self) -> @debug.Repr
+pub fn TemplateParseError::to_string(Self) -> String
 pub impl Show for TemplateParseError
 
 pub suberror TemplateRenderError {
@@ -25,6 +30,12 @@ pub suberror TemplateRenderError {
   PartialParseError(String)
   RecursivePartialError(String)
 } derive(Eq, @debug.Debug)
+pub fn TemplateRenderError::equal(Self, Self) -> Bool
+pub fn TemplateRenderError::not_equal(Self, Self) -> Bool
+pub fn TemplateRenderError::output(Self, &Logger) -> Unit
+pub fn TemplateRenderError::to_repr(Self) -> @debug.Repr
+pub fn TemplateRenderError::to_string(Self) -> String
+pub impl Show for TemplateRenderError
 
 // Types and methods
 pub(all) enum TemplateNode {
@@ -34,6 +45,9 @@ pub(all) enum TemplateNode {
   For(String, Array[TemplateNode])
   Partial(String)
 } derive(Eq, @debug.Debug)
+pub fn TemplateNode::equal(Self, Self) -> Bool
+pub fn TemplateNode::not_equal(Self, Self) -> Bool
+pub fn TemplateNode::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Value {
   String(String)
@@ -42,7 +56,12 @@ pub(all) enum Value {
   Array(Array[Value])
   Object(Map[String, Value])
 } derive(Eq, @debug.Debug)
+pub fn Value::equal(Self, Self) -> Bool
 pub fn Value::from_json(Json) -> Self
+pub fn Value::not_equal(Self, Self) -> Bool
+pub fn Value::output(Self, &Logger) -> Unit
+pub fn Value::to_repr(Self) -> @debug.Repr
+pub fn Value::to_string(Self) -> String
 pub impl Show for Value
 
 // Type aliases
@@ -51,4 +70,3 @@ pub type Context = Map[String, Value]
 pub type Template = Array[TemplateNode]
 
 // Traits
-

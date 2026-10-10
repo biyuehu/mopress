@@ -8,13 +8,10 @@ import {
   "moonbitlang/x/fs",
   "moonbitlang/x/path",
   "moonbitlang/core/env",
-  "moonbitlang/core/debug",
   "moonbitlang/async",
   "Lampese/moonbit-chalk" @c,
 }
 
 formatter(ignore: [ "includes.mbt" ])
 
-options(
-  "is-main": true,
-)
+pkgtype(kind: "executable")

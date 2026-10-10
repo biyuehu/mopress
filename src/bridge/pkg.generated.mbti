@@ -19,18 +19,26 @@ pub suberror ProcessorError {
   StderrReported(command~ : String, message~ : String)
   InvalidStdout(command~ : String, raw~ : String, reason~ : String)
 } derive(Eq, @debug.Debug)
+pub fn ProcessorError::equal(Self, Self) -> Bool
+pub fn ProcessorError::not_equal(Self, Self) -> Bool
+pub fn ProcessorError::output(Self, &Logger) -> Unit
+pub fn ProcessorError::to_repr(Self) -> @debug.Repr
+pub fn ProcessorError::to_string(Self) -> String
 pub impl Show for ProcessorError
 
 // Types and methods
 type MarkdownRequest derive(ToJson)
+pub fn MarkdownRequest::to_json(Self) -> Json
 
 type MarkdownResponse derive(@json.FromJson)
+pub fn MarkdownResponse::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
 
 type TextRequest derive(ToJson)
+pub fn TextRequest::to_json(Self) -> Json
 
 type TextResponse derive(@json.FromJson)
+pub fn TextResponse::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
 
 // Type aliases
 
 // Traits
-

@@ -7,16 +7,25 @@ pub(all) struct Options {
 } derive(Eq, Debug)
 
 ///|
+pub extend Options with Eq::{not_equal, equal}
+
+///|
+pub extend Options with @debug.Debug::{to_repr}
+
+///|
 /// The default build options.
 pub impl Default for Options with fn default() -> Options {
-  { src: "./", dest: "./dest" }
+  { src: "./", dest: "./dest", }
 }
+
+///|
+pub extend Options with Default::{default}
 
 ///|
 /// Derives build `Options` (source/destination directories) from a
 /// project's `BookConfig`.
 pub fn Options::from_config(config : @config.BookConfig) -> Options {
-  { src: config.src, dest: config.dest }
+  { src: config.src, dest: config.dest, }
 }
 
 ///|
@@ -37,6 +46,9 @@ pub(all) enum Rule {
   /// file's full relative path (consistent with `@glob.glob_match_with`).
   Guard(String, (String) -> Bool, Handler)
 } derive(Debug)
+
+///|
+pub extend Rule with @debug.Debug::{to_repr}
 // @end
 
 ///|
@@ -79,6 +91,12 @@ pub struct Item[T] {
   vars : Vars
   target : String
 } derive(Eq, Debug)
+
+///|
+pub extend Item with Eq::{not_equal, equal}
+
+///|
+pub extend Item with @debug.Debug::{to_repr}
 
 ///|
 /// Creates a new item with the given `data` and `target` path, optionally
@@ -254,6 +272,12 @@ pub(all) enum Thing {
   /// No output should be written for this item.
   Empty
 } derive(Eq, Debug)
+
+///|
+pub extend Thing with Eq::{not_equal, equal}
+
+///|
+pub extend Thing with @debug.Debug::{to_repr}
 // @end
 
 ///|
@@ -328,6 +352,9 @@ pub(all) enum Handler {
   /// any processing.
   Copy
 } derive(Debug)
+
+///|
+pub extend Handler with @debug.Debug::{to_repr}
 // @end
 
 ///|

@@ -9,6 +9,12 @@ pub(all) struct SummaryLink {
 } derive(Eq, Debug)
 
 ///|
+pub extend SummaryLink with Eq::{not_equal, equal}
+
+///|
+pub extend SummaryLink with @debug.Debug::{to_repr}
+
+///|
 /// A single entry in a table of contents.
 pub(all) enum SummaryItem {
   /// A link to a chapter.
@@ -18,6 +24,12 @@ pub(all) enum SummaryItem {
   /// A visual separator between groups of chapters.
   Separator
 } derive(Eq, Debug)
+
+///|
+pub extend SummaryItem with Eq::{not_equal, equal}
+
+///|
+pub extend SummaryItem with @debug.Debug::{to_repr}
 
 ///|
 /// The parsed structure of a book's table of contents (`SUMMARY.md`),
@@ -32,6 +44,12 @@ pub(all) struct Summary {
 } derive(Eq, Debug)
 
 ///|
+pub extend Summary with Eq::{not_equal, equal}
+
+///|
+pub extend Summary with @debug.Debug::{to_repr}
+
+///|
 /// A single article's indexed content, e.g. for building a client-side
 /// search index over the site's pages.
 pub(all) struct ArticleIndex {
@@ -39,6 +57,15 @@ pub(all) struct ArticleIndex {
   location : String
   content : String
 } derive(Eq, Debug, ToJson)
+
+///|
+pub extend ArticleIndex with Eq::{not_equal, equal}
+
+///|
+pub extend ArticleIndex with @debug.Debug::{to_repr}
+
+///|
+pub extend ArticleIndex with ToJson::{to_json}
 
 ///|
 fn flatten_items(
@@ -248,7 +275,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
     }
   }
 
-  { title, prefix_chapters, numbered_chapters, suffix_chapters }
+  { title, prefix_chapters, numbered_chapters, suffix_chapters, }
 }
 
 ///|
@@ -266,6 +293,7 @@ fn unify_url(url : String) -> String {
       ".html",
     )
     |> Show::to_string
+    |> s => { s.replace_all(old="\\", new="/") }
   if result[0:2] == "./" {
     "/" + (result[2:] |> Show::to_string)
   } else if result[0:1] == "/" {
@@ -336,7 +364,7 @@ fn extract_root_link_items(
 /// all Markdown/HTML markup), e.g. for use in generating search indexes
 /// or previews from summary/article content.
 pub fn md_to_plain(input : String) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   let mut i = 0
   while i < input.length() {
     let ch = input[i]

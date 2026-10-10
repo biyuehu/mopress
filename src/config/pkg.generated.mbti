@@ -12,6 +12,11 @@ pub let file_name : String
 pub suberror ConfigParseError {
   ConfigParseError(String)
 } derive(Eq, @debug.Debug)
+pub fn ConfigParseError::equal(Self, Self) -> Bool
+pub fn ConfigParseError::not_equal(Self, Self) -> Bool
+pub fn ConfigParseError::output(Self, &Logger) -> Unit
+pub fn ConfigParseError::to_repr(Self) -> @debug.Repr
+pub fn ConfigParseError::to_string(Self) -> String
 pub impl Show for ConfigParseError
 
 // Types and methods
@@ -31,7 +36,12 @@ pub(all) struct BookConfig {
   extensions : ExtensionsConfig
 } derive(Eq, ToJson, @debug.Debug)
 pub fn BookConfig::apply_feature_presets(Self) -> Self
+pub fn BookConfig::default() -> Self
+pub fn BookConfig::equal(Self, Self) -> Bool
+pub fn BookConfig::not_equal(Self, Self) -> Bool
 pub fn BookConfig::parse(String) -> Self raise ConfigParseError
+pub fn BookConfig::to_json(Self) -> Json
+pub fn BookConfig::to_repr(Self) -> @debug.Repr
 pub fn BookConfig::to_toml(Self) -> String
 pub impl Default for BookConfig
 
@@ -47,6 +57,11 @@ pub(all) struct ExtensionsConfig {
   preprocessors : Array[String]
   transformers : Array[String]
 } derive(Eq, ToJson, @debug.Debug)
+pub fn ExtensionsConfig::default() -> Self
+pub fn ExtensionsConfig::equal(Self, Self) -> Bool
+pub fn ExtensionsConfig::not_equal(Self, Self) -> Bool
+pub fn ExtensionsConfig::to_json(Self) -> Json
+pub fn ExtensionsConfig::to_repr(Self) -> @debug.Repr
 pub impl Default for ExtensionsConfig
 
 pub(all) struct FeaturesConfig {
@@ -54,9 +69,13 @@ pub(all) struct FeaturesConfig {
   highlight_theme : String
   mathjax_enabled : Bool
 } derive(Eq, ToJson, @debug.Debug)
+pub fn FeaturesConfig::default() -> Self
+pub fn FeaturesConfig::equal(Self, Self) -> Bool
+pub fn FeaturesConfig::not_equal(Self, Self) -> Bool
+pub fn FeaturesConfig::to_json(Self) -> Json
+pub fn FeaturesConfig::to_repr(Self) -> @debug.Repr
 pub impl Default for FeaturesConfig
 
 // Type aliases
 
 // Traits
-

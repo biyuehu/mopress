@@ -9,6 +9,12 @@ pub suberror ProcessorError {
   StderrReported(command~ : String, message~ : String)
   InvalidStdout(command~ : String, raw~ : String, reason~ : String)
 } derive(Debug, Eq)
+
+///|
+pub extend ProcessorError with @debug.Debug::{to_repr}
+
+///|
+pub extend ProcessorError with Eq::{not_equal, equal}
 // @end
 
 ///|
@@ -24,6 +30,9 @@ pub impl Show for ProcessorError with fn to_string(self : ProcessorError) -> Str
 }
 
 ///|
+pub extend ProcessorError with Show::{to_string, output}
+
+///|
 struct MarkdownRequest {
   config : @config.BookConfig
   type_ : String
@@ -32,9 +41,15 @@ struct MarkdownRequest {
 } derive(ToJson(fields(type_(rename="type"))))
 
 ///|
+pub extend MarkdownRequest with ToJson::{to_json}
+
+///|
 struct MarkdownResponse {
   data : @markdown.Markdown
 } derive(FromJson)
+
+///|
+pub extend MarkdownResponse with @json.FromJson::{from_json}
 
 ///|
 struct TextRequest {
@@ -45,9 +60,15 @@ struct TextRequest {
 } derive(ToJson(fields(type_(rename="type"))))
 
 ///|
+pub extend TextRequest with ToJson::{to_json}
+
+///|
 struct TextResponse {
   data : String
 } derive(FromJson)
+
+///|
+pub extend TextResponse with @json.FromJson::{from_json}
 
 ///|
 /// Runs a chain of external "transformer" commands over a Markdown AST,
@@ -207,7 +228,7 @@ async fn run_single_markdown_preprocessor(
   } else {
     (script, [])
   }
-  let request : TextRequest = { config, type_: "markdown-text", data, target }
+  let request : TextRequest = { config, type_: "markdown-text", data, target, }
   let input_json = request.to_json().stringify()
   let (stdin_r, stdin_w) = @process.write_to_process()
   let (stdout_r, stdout_w) = @process.read_from_process()

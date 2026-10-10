@@ -22,6 +22,12 @@ pub(all) enum Block {
   HtmlBlock(String)
   Table(TableBlock)
 } derive(Eq, ToJson, @debug.Debug, @json.FromJson)
+pub fn Block::equal(Self, Self) -> Bool
+pub fn Block::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Block::not_equal(Self, Self) -> Bool
+pub fn Block::to_json(Self) -> Json
+pub fn Block::to_plain(Self) -> String
+pub fn Block::to_repr(Self) -> @debug.Repr
 pub impl Plainable for Block
 
 pub(all) enum Inline {
@@ -35,6 +41,12 @@ pub(all) enum Inline {
   SoftBreak
   HardBreak
 } derive(Eq, ToJson, @debug.Debug, @json.FromJson)
+pub fn Inline::equal(Self, Self) -> Bool
+pub fn Inline::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Inline::not_equal(Self, Self) -> Bool
+pub fn Inline::to_json(Self) -> Json
+pub fn Inline::to_plain(Self) -> String
+pub fn Inline::to_repr(Self) -> @debug.Repr
 pub impl Plainable for Inline
 
 pub(all) struct ListBlock {
@@ -42,12 +54,24 @@ pub(all) struct ListBlock {
   start : Int?
   items : Array[Array[Block]]
 } derive(Eq, ToJson, @debug.Debug, @json.FromJson)
+pub fn ListBlock::equal(Self, Self) -> Bool
+pub fn ListBlock::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn ListBlock::not_equal(Self, Self) -> Bool
+pub fn ListBlock::to_json(Self) -> Json
+pub fn ListBlock::to_plain(Self) -> String
+pub fn ListBlock::to_repr(Self) -> @debug.Repr
 pub impl Plainable for ListBlock
 
 pub(all) struct TableBlock {
   headers : Array[Array[Inline]]
   rows : Array[Array[Array[Inline]]]
 } derive(Eq, ToJson, @debug.Debug, @json.FromJson)
+pub fn TableBlock::equal(Self, Self) -> Bool
+pub fn TableBlock::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn TableBlock::not_equal(Self, Self) -> Bool
+pub fn TableBlock::to_json(Self) -> Json
+pub fn TableBlock::to_plain(Self) -> String
+pub fn TableBlock::to_repr(Self) -> @debug.Repr
 pub impl Plainable for TableBlock
 
 // Type aliases
@@ -58,4 +82,3 @@ pub trait Plainable {
   fn to_plain(Self) -> String
 }
 pub impl[T : Plainable] Plainable for Array[T]
-

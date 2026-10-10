@@ -1,3 +1,4 @@
 import {
   "himeno/mopress/markdown",
+  "moonbitlang/core/debug",
 }

@@ -5,19 +5,19 @@ test "parse headings paragraphs and inline emphasis" {
     #|
     #|Hello **MoonBit** and *books*.
     #|
-  let doc = parse_markdown(source)
+  let doc = @markdown.parse_markdown(source)
   assert_eq(doc.length(), 2)
-  guard doc[0] is Heading(1, [Text("Title")]) else {
+  guard doc[0] is @markdown.Heading(1, [@markdown.Text("Title")]) else {
     fail("expected level-1 heading")
   }
   guard doc[1]
-    is Paragraph(
+    is @markdown.Paragraph(
       [
-        Text("Hello "),
-        Strong([Text("MoonBit")]),
-        Text(" and "),
-        Emphasis([Text("books")]),
-        Text("."),
+        @markdown.Text("Hello "),
+        @markdown.Strong([@markdown.Text("MoonBit")]),
+        @markdown.Text(" and "),
+        @markdown.Emphasis([@markdown.Text("books")]),
+        @markdown.Text("."),
       ]
     ) else {
     fail("expected paragraph with strong and emphasis")
@@ -33,9 +33,9 @@ test "parse fenced code and preserve info string" {
     #|}
     #|```
     #|
-  let doc = parse_markdown(source)
+  let doc = @markdown.parse_markdown(source)
   assert_eq(doc.length(), 1)
-  guard doc[0] is CodeBlock(Some("moonbit"), content) else {
+  guard doc[0] is @markdown.CodeBlock(Some("moonbit"), content) else {
     fail("expected fenced moonbit code block")
   }
   assert_true(content.contains("println"))
@@ -47,19 +47,19 @@ test "parse links images html and soft breaks" {
     #|See [docs](guide.md)
     #|and ![logo](logo.png) <x-demo enabled></x-demo>
     #|
-  let doc = parse_markdown(source)
+  let doc = @markdown.parse_markdown(source)
   assert_eq(doc.length(), 1)
   guard doc[0]
-    is Paragraph(
+    is @markdown.Paragraph(
       [
-        Text("See "),
-        Link([Text("docs")], "guide.md"),
-        SoftBreak,
-        Text("and "),
-        Image("logo", "logo.png"),
-        Text(" "),
-        Html("<x-demo enabled>"),
-        Html("</x-demo>"),
+        @markdown.Text("See "),
+        @markdown.Link([@markdown.Text("docs")], "guide.md"),
+        @markdown.SoftBreak,
+        @markdown.Text("and "),
+        @markdown.Image("logo", "logo.png"),
+        @markdown.Text(" "),
+        @markdown.Html("<x-demo enabled>"),
+        @markdown.Html("</x-demo>"),
       ]
     ) else {
     fail("expected paragraph with link image html and soft break")
@@ -77,22 +77,32 @@ test "parse block quotes lists and thematic breaks" {
     #|
     #|---
     #|
-  let doc = parse_markdown(source)
+  let doc = @markdown.parse_markdown(source)
   assert_eq(doc.length(), 3)
   guard doc[0]
-    is BlockQuote([Paragraph([Text("Quote"), SoftBreak, Text("continued")])]) else {
+    is @markdown.BlockQuote(
+      [
+        @markdown.Paragraph(
+          [
+            @markdown.Text("Quote"),
+            @markdown.SoftBreak,
+            @markdown.Text("continued"),
+          ]
+        ),
+      ]
+    ) else {
     fail("expected block quote")
   }
-  guard doc[1] is List({ ordered: false, items, .. }) else {
+  guard doc[1] is @markdown.List({ ordered: false, items, .. }) else {
     fail("expected unordered list")
   }
   assert_eq(items.length(), 2)
-  assert_true(doc[2] is ThematicBreak)
+  assert_true(doc[2] is @markdown.ThematicBreak)
 }
 
 ///|
 test "parse table" {
-  let basic = parse_markdown(
+  let basic = @markdown.parse_markdown(
     (
       #|| A | B |
       #|| - | - |
@@ -101,16 +111,16 @@ test "parse table" {
     ),
   )
   @debug.assert_eq(basic, [
-    Block::Table({
-      headers: [[Inline::Text("A")], [Inline::Text("B")]],
+    @markdown.Block::Table({
+      headers: [[@markdown.Inline::Text("A")], [@markdown.Inline::Text("B")]],
       rows: [
-        [[Inline::Text("1")], [Inline::Text("2")]],
-        [[Inline::Text("3")], [Inline::Text("4")]],
+        [[@markdown.Inline::Text("1")], [@markdown.Inline::Text("2")]],
+        [[@markdown.Inline::Text("3")], [@markdown.Inline::Text("4")]],
       ],
     }),
   ])
 
-  let inline_content = parse_markdown(
+  let inline_content = @markdown.parse_markdown(
     (
       #|| **bold** | `code` |
       #|| -------- | ------ |
@@ -118,26 +128,29 @@ test "parse table" {
     ),
   )
   @debug.assert_eq(inline_content, [
-    Block::Table({
+    @markdown.Block::Table({
       headers: [
-        [Inline::Strong([Inline::Text("bold")])],
-        [Inline::Code("code")],
+        [@markdown.Inline::Strong([@markdown.Inline::Text("bold")])],
+        [@markdown.Inline::Code("code")],
       ],
       rows: [
-        [[Inline::Text("normal")], [Inline::Emphasis([Inline::Text("em")])]],
+        [
+          [@markdown.Inline::Text("normal")],
+          [@markdown.Inline::Emphasis([@markdown.Inline::Text("em")])],
+        ],
       ],
     }),
   ])
 
-  let no_body = parse_markdown(
+  let no_body = @markdown.parse_markdown(
     (
       #|| H1 | H2 |
       #||:--:|:--:|
     ),
   )
   @debug.assert_eq(no_body, [
-    Block::Table({
-      headers: [[Inline::Text("H1")], [Inline::Text("H2")]],
+    @markdown.Block::Table({
+      headers: [[@markdown.Inline::Text("H1")], [@markdown.Inline::Text("H2")]],
       rows: [],
     }),
   ])

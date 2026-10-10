@@ -11,55 +11,74 @@ test "parse simple summary" {
   // [Appendix](appendix.md)
 
   let doc : @markdown.Markdown = [
-    Heading(1, [Text("Summary")]),
-    Paragraph([Link([Text("Preface")], "preface.md")]),
-    ThematicBreak,
-    Heading(1, [Text("Part One")]),
-    List({
+    @markdown.Heading(1, [@markdown.Text("Summary")]),
+    @markdown.Paragraph([
+      @markdown.Link([@markdown.Text("Preface")], "preface.md"),
+    ]),
+    @markdown.ThematicBreak,
+    @markdown.Heading(1, [@markdown.Text("Part One")]),
+    @markdown.List({
       ordered: false,
       start: None,
       items: [
         [
-          Paragraph([Link([Text("Chapter 1")], "ch1.md")]),
-          List({
+          @markdown.Paragraph([
+            @markdown.Link([@markdown.Text("Chapter 1")], "ch1.md"),
+          ]),
+          @markdown.List({
             ordered: false,
             start: None,
-            items: [[Paragraph([Link([Text("Sub 1.1")], "ch1/sub.md")])]],
+            items: [
+              [
+                @markdown.Paragraph([
+                  @markdown.Link([@markdown.Text("Sub 1.1")], "ch1/sub.md"),
+                ]),
+              ],
+            ],
           }),
         ],
-        [Paragraph([Link([Text("Chapter 2")], "ch2.md")])],
+        [
+          @markdown.Paragraph([
+            @markdown.Link([@markdown.Text("Chapter 2")], "ch2.md"),
+          ]),
+        ],
       ],
     }),
-    ThematicBreak,
-    Paragraph([Link([Text("Appendix")], "appendix.md")]),
+    @markdown.ThematicBreak,
+    @markdown.Paragraph([
+      @markdown.Link([@markdown.Text("Appendix")], "appendix.md"),
+    ]),
   ]
 
-  let summary = parse_summary(doc)
+  let summary = @summary.parse_summary(doc)
 
   @debug.assert_eq(summary.title, "Summary")
 
   @debug.assert_eq(summary.prefix_chapters, [
-    Link({
+    @summary.SummaryItem::Link({
       title: "Preface",
       location: "/preface.html",
       source: "preface.md",
       nested_items: [],
     }),
-    Separator,
+    @summary.SummaryItem::Separator,
   ])
 
   @debug.assert_eq(summary.numbered_chapters.length(), 4)
 
-  @debug.assert_eq(summary.numbered_chapters[0], PartTitle("Part One"))
+  @debug.assert_eq(
+    summary.numbered_chapters[0],
+    @summary.SummaryItem::PartTitle("Part One"),
+  )
 
   match summary.numbered_chapters[1] {
-    Link(ch1) => {
+    @summary.SummaryItem::Link(ch1) => {
       @debug.assert_eq(ch1.title, "Chapter 1")
       @debug.assert_eq(ch1.location, "/ch1.html")
       @debug.assert_eq(ch1.nested_items.length(), 1)
 
       match ch1.nested_items[0] {
-        Link(sub) => {
+        @summary.SummaryItem::Link(sub) => {
           @debug.assert_eq(sub.title, "Sub 1.1")
           @debug.assert_eq(sub.location, "/ch1/sub.html")
           @debug.assert_eq(sub.nested_items.length(), 0)
@@ -71,7 +90,7 @@ test "parse simple summary" {
   }
 
   match summary.numbered_chapters[2] {
-    Link(ch2) => {
+    @summary.SummaryItem::Link(ch2) => {
       @debug.assert_eq(ch2.title, "Chapter 2")
       @debug.assert_eq(ch2.location, "/ch2.html")
       @debug.assert_eq(ch2.nested_items.length(), 0)
@@ -79,10 +98,13 @@ test "parse simple summary" {
     _ => panic()
   }
 
-  @debug.assert_eq(summary.numbered_chapters[3], Separator)
+  @debug.assert_eq(
+    summary.numbered_chapters[3],
+    @summary.SummaryItem::Separator,
+  )
 
   @debug.assert_eq(summary.suffix_chapters, [
-    Link({
+    @summary.SummaryItem::Link({
       title: "Appendix",
       location: "/appendix.html",
       source: "appendix.md",
@@ -98,25 +120,33 @@ test "parse summary no parts just flat list" {
   // - [Guide](guide.md)
 
   let doc : @markdown.Markdown = [
-    Heading(1, [Text("Summary")]),
-    List({
+    @markdown.Heading(1, [@markdown.Text("Summary")]),
+    @markdown.List({
       ordered: false,
       start: None,
       items: [
-        [Paragraph([Link([Text("Intro")], "intro.md")])],
-        [Paragraph([Link([Text("Guide")], "guide.md")])],
+        [
+          @markdown.Paragraph([
+            @markdown.Link([@markdown.Text("Intro")], "intro.md"),
+          ]),
+        ],
+        [
+          @markdown.Paragraph([
+            @markdown.Link([@markdown.Text("Guide")], "guide.md"),
+          ]),
+        ],
       ],
     }),
   ]
 
-  let summary = parse_summary(doc)
+  let summary = @summary.parse_summary(doc)
 
   @debug.assert_eq(summary.prefix_chapters.length(), 0)
   @debug.assert_eq(summary.suffix_chapters.length(), 0)
   @debug.assert_eq(summary.numbered_chapters.length(), 2)
 
   match summary.numbered_chapters[0] {
-    Link(item) => {
+    @summary.SummaryItem::Link(item) => {
       @debug.assert_eq(item.title, "Intro")
       @debug.assert_eq(item.location, "/intro.html")
       @debug.assert_eq(item.nested_items.length(), 0)
@@ -125,7 +155,7 @@ test "parse summary no parts just flat list" {
   }
 
   match summary.numbered_chapters[1] {
-    Link(item) => {
+    @summary.SummaryItem::Link(item) => {
       @debug.assert_eq(item.title, "Guide")
       @debug.assert_eq(item.location, "/guide.html")
       @debug.assert_eq(item.nested_items.length(), 0)
@@ -137,23 +167,29 @@ test "parse summary no parts just flat list" {
 ///|
 test "parse summary no title fallback" {
   let doc : @markdown.Markdown = [
-    List({
+    @markdown.List({
       ordered: false,
       start: None,
-      items: [[Paragraph([Link([Text("Page")], "page.html")])]],
+      items: [
+        [
+          @markdown.Paragraph([
+            @markdown.Link([@markdown.Text("Page")], "page.html"),
+          ]),
+        ],
+      ],
     }),
   ]
 
-  let summary = parse_summary(doc)
+  let summary = @summary.parse_summary(doc)
   @debug.assert_eq(summary.title, "Summary")
 }
 
 ///|
 test "breadcrumb" {
-  let s : Summary = {
+  let s : @summary.Summary = {
     title: "",
     prefix_chapters: [
-      SummaryItem::Link({
+      @summary.SummaryItem::Link({
         title: "说明",
         location: "/intro.html",
         source: "./intro.md",
@@ -161,12 +197,12 @@ test "breadcrumb" {
       }),
     ],
     numbered_chapters: [
-      SummaryItem::Link({
+      @summary.SummaryItem::Link({
         title: "指南",
         location: "/guide.html",
         source: "./guide.md",
         nested_items: [
-          SummaryItem::Link({
+          @summary.SummaryItem::Link({
             title: "命令",
             location: "/cmd.html",
             source: "./cmd.md",
@@ -185,10 +221,10 @@ test "breadcrumb" {
 
 ///|
 test "prev_next" {
-  let s : Summary = {
+  let s : @summary.Summary = {
     title: "",
     prefix_chapters: [
-      SummaryItem::Link({
+      @summary.SummaryItem::Link({
         title: "A",
         location: "./a.html",
         source: "./a.md",
@@ -196,14 +232,14 @@ test "prev_next" {
       }),
     ],
     numbered_chapters: [
-      SummaryItem::PartTitle("x"),
-      SummaryItem::Link({
+      @summary.SummaryItem::PartTitle("x"),
+      @summary.SummaryItem::Link({
         title: "B",
         location: "/b.html",
         source: "./b.md",
         nested_items: [],
       }),
-      SummaryItem::Link({
+      @summary.SummaryItem::Link({
         title: "C",
         location: "/c.html",
         source: "./c.md",

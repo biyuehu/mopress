@@ -16,6 +16,18 @@ pub(all) struct ListBlock {
   items : Array[Array[Block]]
 } derive(Eq, Debug, FromJson, ToJson)
 
+///|
+pub extend ListBlock with Eq::{not_equal, equal}
+
+///|
+pub extend ListBlock with @debug.Debug::{to_repr}
+
+///|
+pub extend ListBlock with @json.FromJson::{from_json}
+
+///|
+pub extend ListBlock with ToJson::{to_json}
+
 // @block block
 
 ///|
@@ -39,6 +51,18 @@ pub(all) enum Block {
   /// A table.
   Table(TableBlock)
 } derive(Eq, ToJson, Debug, FromJson)
+
+///|
+pub extend Block with Eq::{not_equal, equal}
+
+///|
+pub extend Block with ToJson::{to_json}
+
+///|
+pub extend Block with @debug.Debug::{to_repr}
+
+///|
+pub extend Block with @json.FromJson::{from_json}
 // @end
 
 ///|
@@ -65,12 +89,36 @@ pub(all) enum Inline {
 } derive(Eq, Debug, FromJson, ToJson)
 
 ///|
+pub extend Inline with Eq::{not_equal, equal}
+
+///|
+pub extend Inline with @debug.Debug::{to_repr}
+
+///|
+pub extend Inline with @json.FromJson::{from_json}
+
+///|
+pub extend Inline with ToJson::{to_json}
+
+///|
 /// A table block, with its header row and body rows, each cell holding
 /// inline content.
 pub(all) struct TableBlock {
   headers : Array[Array[Inline]]
   rows : Array[Array[Array[Inline]]]
 } derive(Eq, Debug, FromJson, ToJson)
+
+///|
+pub extend TableBlock with Eq::{not_equal, equal}
+
+///|
+pub extend TableBlock with @debug.Debug::{to_repr}
+
+///|
+pub extend TableBlock with @json.FromJson::{from_json}
+
+///|
+pub extend TableBlock with ToJson::{to_json}
 
 ///|
 /// Types that can be rendered to a plain-text representation with all
@@ -103,6 +151,9 @@ pub impl Plainable for Block with fn to_plain(self : Block) -> String {
 }
 
 ///|
+pub extend Block with Plainable::{to_plain}
+
+///|
 /// Renders an `Inline` to its plain-text (non-HTML) representation.
 pub impl Plainable for Inline with fn to_plain(self : Inline) -> String {
   match self {
@@ -119,11 +170,17 @@ pub impl Plainable for Inline with fn to_plain(self : Inline) -> String {
 }
 
 ///|
+pub extend Inline with Plainable::{to_plain}
+
+///|
 /// Renders a `ListBlock` to its plain-text (non-HTML) representation.
 pub impl Plainable for ListBlock with fn to_plain(self : ListBlock) -> String {
   (if self.start is Some(start) { start.to_string() + " " } else { "" }) +
   Plainable::to_plain(self.items)
 }
+
+///|
+pub extend ListBlock with Plainable::{to_plain}
 
 ///|
 /// Renders a `TableBlock` to its plain-text (non-HTML) representation.
@@ -132,6 +189,9 @@ pub impl Plainable for TableBlock with fn to_plain(self : TableBlock) -> String 
   " " +
   self.rows.map(row => Plainable::to_plain(row)).join(" ")
 }
+
+///|
+pub extend TableBlock with Plainable::{to_plain}
 
 ///|
 /// Parses `input` (any `Show`-able value, typically a `String` of raw
@@ -207,7 +267,7 @@ fn parse_fenced_code(lines : Array[String], start : Int) -> (Block, Int) {
   let marker = char_at(opening, 0)
   let fence_len = count_prefix(opening, marker)
   let info = opening_suffix(opening, fence_len).trim().to_owned()
-  let content = StringBuilder::new()
+  let content = StringBuilder()
   let mut index = start + 1
   while index < lines.length() {
     let line = lines[index]
@@ -287,12 +347,12 @@ fn parse_list(lines : Array[String], start : Int) -> (Block, Int) {
       _ => break
     }
   }
-  (List({ ordered: first.ordered, start: first.start, items }), index)
+  (List({ ordered: first.ordered, start: first.start, items, }), index)
 }
 
 ///|
 fn parse_html_block(lines : Array[String], start : Int) -> (Block, Int) {
-  let content = StringBuilder::new()
+  let content = StringBuilder()
   let mut index = start
   while index < lines.length() {
     let line = lines[index]
@@ -310,7 +370,7 @@ fn parse_html_block(lines : Array[String], start : Int) -> (Block, Int) {
 
 ///|
 fn parse_paragraph(lines : Array[String], start : Int) -> (Block, Int) {
-  let content = StringBuilder::new()
+  let content = StringBuilder()
   let mut index = start
   while index < lines.length() {
     let line = lines[index]
@@ -330,7 +390,7 @@ fn parse_paragraph(lines : Array[String], start : Int) -> (Block, Int) {
 ///|
 fn parse_inlines(input : String) -> Array[Inline] {
   let nodes : Array[Inline] = []
-  let mut text = StringBuilder::new()
+  let mut text = StringBuilder()
   let mut index = 0
   while index < input.length() {
     if starts_at(input, index, "  \n") {
@@ -487,7 +547,7 @@ fn flush_text(buffer : StringBuilder, output : Array[Inline]) -> StringBuilder {
   if text != "" {
     output.push(Text(text))
   }
-  StringBuilder::new()
+  StringBuilder()
 }
 
 ///|
@@ -690,7 +750,7 @@ fn parse_table(lines : Array[String], start : Int) -> (Block, Int) {
       break
     }
   }
-  (Table({ headers, rows }), index)
+  (Table({ headers, rows, }), index)
 }
 
 ///|
@@ -706,7 +766,7 @@ fn normalize_lines(input : String) -> Array[String] {
 
 ///|
 fn replace_crlf(input : String) -> String {
-  let output = StringBuilder::new()
+  let output = StringBuilder()
   let mut index = 0
   while index < input.length() {
     if char_at(input, index) == '\r' {
@@ -727,7 +787,7 @@ fn replace_crlf(input : String) -> String {
 
 ///|
 fn remove_spaces(input : String) -> String {
-  let output = StringBuilder::new()
+  let output = StringBuilder()
   for ch in input {
     if ch != ' ' && ch != '\t' {
       output.write_char(ch)
@@ -820,7 +880,7 @@ fn find_string(input : String, needle : String, start : Int) -> Int? {
 
 ///|
 fn substring(input : String, start : Int, end : Int) -> String {
-  let output = StringBuilder::new()
+  let output = StringBuilder()
   let mut index = start
   while index < end && index < input.length() {
     output.write_char(char_at(input, index))

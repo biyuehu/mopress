@@ -49,6 +49,15 @@ pub(all) struct BookConfig {
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
+pub extend BookConfig with Eq::{not_equal, equal}
+
+///|
+pub extend BookConfig with ToJson::{to_json}
+
+///|
+pub extend BookConfig with @debug.Debug::{to_repr}
+
+///|
 /// Toggles for optional, built-in rendering features.
 pub(all) struct FeaturesConfig {
   /// Whether syntax highlighting of fenced code blocks is enabled.
@@ -59,6 +68,15 @@ pub(all) struct FeaturesConfig {
   /// Whether MathJax rendering of mathematical notation is enabled.
   mathjax_enabled : Bool
 } derive(Eq, ToJson, @debug.Debug)
+
+///|
+pub extend FeaturesConfig with Eq::{not_equal, equal}
+
+///|
+pub extend FeaturesConfig with ToJson::{to_json}
+
+///|
+pub extend FeaturesConfig with @debug.Debug::{to_repr}
 
 ///|
 /// Configuration for extension points that customize how a site is built:
@@ -102,6 +120,15 @@ pub(all) struct ExtensionsConfig {
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
+pub extend ExtensionsConfig with Eq::{not_equal, equal}
+
+///|
+pub extend ExtensionsConfig with ToJson::{to_json}
+
+///|
+pub extend ExtensionsConfig with @debug.Debug::{to_repr}
+
+///|
 /// Error raised when a configuration file's contents cannot be parsed into
 /// a `BookConfig`. The associated `String` carries a human-readable
 /// description of the parse failure.
@@ -110,11 +137,20 @@ pub suberror ConfigParseError {
 } derive(Eq, Debug)
 
 ///|
+pub extend ConfigParseError with Eq::{not_equal, equal}
+
+///|
+pub extend ConfigParseError with @debug.Debug::{to_repr}
+
+///|
 pub impl Show for ConfigParseError with fn to_string(self : ConfigParseError) -> String {
   match self {
     ConfigParseError(s) => "ConfigParseError: \{s}"
   }
 }
+
+///|
+pub extend ConfigParseError with Show::{to_string, output}
 
 ///|
 /// The file name (relative to the current working directory) that mopress
@@ -167,7 +203,7 @@ pub fn BookConfig::apply_feature_presets(self : BookConfig) -> BookConfig {
 /// for writing out to the project's configuration file (see `file_name`)
 /// during `mopress init` or when persisting configuration changes.
 pub fn BookConfig::to_toml(self : BookConfig) -> String {
-  let b = StringBuilder::new()
+  let b = StringBuilder()
   b.write_string("title = \{toml_string(self.title)}\n")
   b.write_string("description = \{toml_string(self.description)}\n")
   b.write_string("keywords = \{toml_string(self.keywords)}\n")
@@ -299,6 +335,9 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
 }
 
 ///|
+pub extend BookConfig with Default::{default}
+
+///|
 /// The default feature configuration used to scaffold a new project.
 ///
 /// # Uncertainty
@@ -313,6 +352,9 @@ pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
     mathjax_enabled: false,
   }
 }
+
+///|
+pub extend FeaturesConfig with Default::{default}
 
 ///|
 /// The default extension configuration used to scaffold a new project,
@@ -334,6 +376,9 @@ pub impl Default for ExtensionsConfig with fn default() -> ExtensionsConfig {
     transformers: [],
   }
 }
+
+///|
+pub extend ExtensionsConfig with Default::{default}
 
 ///|
 fn read_table(

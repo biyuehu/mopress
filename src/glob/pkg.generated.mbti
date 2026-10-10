@@ -21,4 +21,3 @@ pub fn scan_files_with(String, String, (String) -> Bool) -> Array[String] raise 
 // Type aliases
 
 // Traits
-

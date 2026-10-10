@@ -161,7 +161,7 @@ fn strip_query_and_fragment(target : String) -> String {
 
 ///|
 fn percent_decode_unreserved(part : String) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   let mut index = 0
   while index < part.length() {
     if part[index] == '%' && index + 2 < part.length() {

@@ -67,6 +67,7 @@ pub(all) enum Handler {
   Copy
 } derive(@debug.Debug)
 pub async fn Handler::run(Self, Options, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing]
+pub fn Handler::to_repr(Self) -> @debug.Repr
 
 pub struct Item[T] {
   data : T
@@ -77,17 +78,24 @@ pub struct Item[T] {
 pub fn[T] Item::add_vars(Self[T], Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::base(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
+pub fn[T : Eq] Item::equal(Self[T], Self[T]) -> Bool
 pub fn[T] Item::location(Self[T]) -> String
 pub fn[T, R] Item::map(Self[T], (T) -> R, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R]
 pub fn[T, R] Item::map_with_raise(Self[T], (T) -> R raise, target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[R] raise
 pub fn[T] Item::new(T, String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
+pub fn[T : Eq] Item::not_equal(Self[T], Self[T]) -> Bool
 pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
+pub fn[T : @debug.Debug] Item::to_repr(Self[T]) -> @debug.Repr
 
 pub(all) struct Options {
   src : String
   dest : String
 } derive(Eq, @debug.Debug)
+pub fn Options::default() -> Self
+pub fn Options::equal(Self, Self) -> Bool
 pub fn Options::from_config(@config.BookConfig) -> Self
+pub fn Options::not_equal(Self, Self) -> Bool
+pub fn Options::to_repr(Self) -> @debug.Repr
 pub impl Default for Options
 
 pub(all) enum Rule {
@@ -96,6 +104,7 @@ pub(all) enum Rule {
 } derive(@debug.Debug)
 pub fn Rule::check(Self, String) -> Bool
 pub fn Rule::handler(Self) -> Handler
+pub fn Rule::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Thing {
   Doc(String)
@@ -103,6 +112,9 @@ pub(all) enum Thing {
   Multiple(Array[(String, Thing)])
   Empty
 } derive(Eq, @debug.Debug)
+pub fn Thing::equal(Self, Self) -> Bool
+pub fn Thing::not_equal(Self, Self) -> Bool
+pub fn Thing::to_repr(Self) -> @debug.Repr
 pub fn Thing::write(Self, String, String) -> Unit raise @fs.IOError
 
 // Type aliases
@@ -123,4 +135,3 @@ pub trait Thingable {
 pub impl Thingable for String
 pub impl Thingable for Bytes
 pub impl Thingable for Json
-

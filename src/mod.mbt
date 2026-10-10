@@ -301,7 +301,7 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
   )
 
   @core.mo_build(
-    { src: config.src, dest: config.dest },
+    { src: config.src, dest: config.dest, },
     [
       Glob(
         "SUMMARY.md",

@@ -17,7 +17,7 @@ test "parse full config" {
     #|import-js = ["app.js"]
     #|preprocessors = ["katex"]
     #|transformers = ["highlight"]
-  let config = BookConfig::parse(toml)
+  let config = @config.BookConfig::parse(toml)
   assert_eq(config.title, "MyBook")
   @debug.assert_eq(config.authors, ["Alice", "Bob"])
   assert_eq(config.description, "A test book")
@@ -35,7 +35,7 @@ test "parse full config" {
 
 ///|
 test "parse only title" {
-  let config = BookConfig::parse(
+  let config = @config.BookConfig::parse(
     (
       #|title = "OnlyTitle"
     ),
@@ -47,7 +47,7 @@ test "parse only title" {
 
 ///|
 test "parse missing extension section" {
-  let config = BookConfig::parse(
+  let config = @config.BookConfig::parse(
     (
       #|title = "NoExt"
       #|language = "ja"
@@ -62,13 +62,13 @@ test "parse missing extension section" {
 
 ///|
 test "parse invalid toml syntax" {
-  let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse("title = "),
+  let result : Result[@config.BookConfig, @config.ConfigParseError] = Ok(
+    @config.BookConfig::parse("title = "),
   ) catch {
     e => Err(e)
   }
   match result {
-    Err(ConfigParseError(msg)) =>
+    Err(@config.ConfigParseError(msg)) =>
       @debug.assert_eq(msg.has_prefix("Parse config error:"), true)
     Ok(_) => fail("Expected parse error")
   }
@@ -76,8 +76,8 @@ test "parse invalid toml syntax" {
 
 ///|
 test "parse title is not string" {
-  let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse("title = 123"),
+  let result : Result[@config.BookConfig, @config.ConfigParseError] = Ok(
+    @config.BookConfig::parse("title = 123"),
   ) catch {
     e => Err(e)
   }
@@ -89,13 +89,13 @@ test "parse title is not string" {
 
 ///|
 test "parse extension is not table" {
-  let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse("extensions = \"not_a_table\""),
+  let result : Result[@config.BookConfig, @config.ConfigParseError] = Ok(
+    @config.BookConfig::parse("extensions = \"not_a_table\""),
   ) catch {
     e => Err(e)
   }
   match result {
-    Err(ConfigParseError(msg)) =>
+    Err(@config.ConfigParseError(msg)) =>
       @debug.assert_eq(msg.has_prefix("[extensions] must be a table"), true)
     Ok(_) => fail("Expected error for non-table extension")
   }
@@ -103,8 +103,8 @@ test "parse extension is not table" {
 
 ///|
 test "parse import-css is not array" {
-  let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse(
+  let result : Result[@config.BookConfig, @config.ConfigParseError] = Ok(
+    @config.BookConfig::parse(
       (
         #|title = "sena!"
         #|[extensions]
@@ -116,7 +116,7 @@ test "parse import-css is not array" {
     e => Err(e)
   }
   match result {
-    Err(ConfigParseError(msg)) =>
+    Err(@config.ConfigParseError(msg)) =>
       @debug.assert_eq(msg.has_prefix("`import-css` must be an array"), true)
     Ok(_) => fail("Expected error for non-array import-css")
   }
@@ -124,8 +124,8 @@ test "parse import-css is not array" {
 
 ///|
 test "parse import-js array contains non-string" {
-  let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse(
+  let result : Result[@config.BookConfig, @config.ConfigParseError] = Ok(
+    @config.BookConfig::parse(
       (
         #|title = "sena!"
         #|[extensions]
@@ -137,7 +137,7 @@ test "parse import-js array contains non-string" {
     e => Err(e)
   }
   match result {
-    Err(ConfigParseError(msg)) =>
+    Err(@config.ConfigParseError(msg)) =>
       @debug.assert_eq(
         msg.has_prefix("`import-js` must be an array of strings"),
         true,
@@ -148,8 +148,8 @@ test "parse import-js array contains non-string" {
 
 ///|
 test "parse preprocessors array contains non-string" {
-  let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse(
+  let result : Result[@config.BookConfig, @config.ConfigParseError] = Ok(
+    @config.BookConfig::parse(
       (
         #|title = "sena!"
         #|[extensions]
@@ -161,7 +161,7 @@ test "parse preprocessors array contains non-string" {
     e => Err(e)
   }
   match result {
-    Err(ConfigParseError(msg)) =>
+    Err(@config.ConfigParseError(msg)) =>
       @debug.assert_eq(
         msg.has_prefix("`preprocessors` must be an array of strings"),
         true,
@@ -172,8 +172,8 @@ test "parse preprocessors array contains non-string" {
 
 ///|
 test "parse transformers is not array" {
-  let result : Result[BookConfig, ConfigParseError] = Ok(
-    BookConfig::parse(
+  let result : Result[@config.BookConfig, @config.ConfigParseError] = Ok(
+    @config.BookConfig::parse(
       (
         #|title = "sena!"
         #|[extensions]
@@ -185,7 +185,7 @@ test "parse transformers is not array" {
     e => Err(e)
   }
   match result {
-    Err(ConfigParseError(msg)) =>
+    Err(@config.ConfigParseError(msg)) =>
       assert_eq(msg.has_prefix("`transformers` must be an array"), true)
     Ok(_) => fail("Expected error for non-array transformers")
   }

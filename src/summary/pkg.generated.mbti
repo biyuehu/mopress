@@ -19,6 +19,10 @@ pub(all) struct ArticleIndex {
   location : String
   content : String
 } derive(Eq, ToJson, @debug.Debug)
+pub fn ArticleIndex::equal(Self, Self) -> Bool
+pub fn ArticleIndex::not_equal(Self, Self) -> Bool
+pub fn ArticleIndex::to_json(Self) -> Json
+pub fn ArticleIndex::to_repr(Self) -> @debug.Repr
 
 pub(all) struct Summary {
   title : String
@@ -27,15 +31,21 @@ pub(all) struct Summary {
   suffix_chapters : Array[SummaryItem]
 } derive(Eq, @debug.Debug)
 pub fn Summary::breadcrumb(Self, String) -> String
+pub fn Summary::equal(Self, Self) -> Bool
 pub fn Summary::flatten(Self, String, String) -> Json
 pub fn Summary::index_articles(Self, String) -> Array[ArticleIndex] raise
+pub fn Summary::not_equal(Self, Self) -> Bool
 pub fn Summary::prev_next(Self, String) -> ((String, String)?, (String, String)?)
+pub fn Summary::to_repr(Self) -> @debug.Repr
 
 pub(all) enum SummaryItem {
   Link(SummaryLink)
   PartTitle(String)
   Separator
 } derive(Eq, @debug.Debug)
+pub fn SummaryItem::equal(Self, Self) -> Bool
+pub fn SummaryItem::not_equal(Self, Self) -> Bool
+pub fn SummaryItem::to_repr(Self) -> @debug.Repr
 
 pub(all) struct SummaryLink {
   title : String
@@ -43,8 +53,10 @@ pub(all) struct SummaryLink {
   source : String
   nested_items : Array[SummaryItem]
 } derive(Eq, @debug.Debug)
+pub fn SummaryLink::equal(Self, Self) -> Bool
+pub fn SummaryLink::not_equal(Self, Self) -> Bool
+pub fn SummaryLink::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 
 // Traits
-

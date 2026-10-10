@@ -3,9 +3,9 @@ name = "himeno/mopress"
 version = "0.4.0"
 
 import {
-  "bobzhang/toml@0.2.1",
-  "moonbitlang/x@0.4.43",
-  "moonbitlang/async@0.19.3",
+  "moonbit-community/toml@0.4.3",
+  "moonbitlang/x@0.5.5",
+  "moonbitlang/async@0.22.4",
   "Lampese/moonbit-chalk@0.5.0",
 }
 
@@ -24,7 +24,3 @@ preferred_target = "native"
 supported_targets = "native"
 
 source = "src"
-
-options(
-  exclude: [ "docs", "scripts" ],
-)

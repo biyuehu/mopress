@@ -12,6 +12,12 @@ pub(all) struct RenderOptions {
 } derive(Eq, Debug)
 
 ///|
+pub extend RenderOptions with Eq::{not_equal, equal}
+
+///|
+pub extend RenderOptions with @debug.Debug::{to_repr}
+
+///|
 /// An entry in a document's table of contents, corresponding to a
 /// rendered heading.
 pub(all) struct TocItem {
@@ -21,11 +27,26 @@ pub(all) struct TocItem {
 } derive(Eq, Debug, ToJson)
 
 ///|
+pub extend TocItem with Eq::{not_equal, equal}
+
+///|
+pub extend TocItem with @debug.Debug::{to_repr}
+
+///|
+pub extend TocItem with ToJson::{to_json}
+
+///|
 struct RenderContext {
   slug_counts : Map[String, Int]
   toc : Toc
   opt : RenderOptions
 } derive(Eq, Debug)
+
+///|
+pub extend RenderContext with Eq::{not_equal, equal}
+
+///|
+pub extend RenderContext with @debug.Debug::{to_repr}
 
 ///|
 /// The result of rendering a Markdown AST to HTML.
@@ -35,13 +56,22 @@ pub(all) struct RenderedMarkdown {
 } derive(Eq, Debug)
 
 ///|
+pub extend RenderedMarkdown with Eq::{not_equal, equal}
+
+///|
+pub extend RenderedMarkdown with @debug.Debug::{to_repr}
+
+///|
 pub type Toc = Array[TocItem]
 
 ///|
 /// The default rendering options.
 pub impl Default for RenderOptions with fn default() -> RenderOptions {
-  { heading_anchor_prefix: "", allow_raw_html: true }
+  { heading_anchor_prefix: "", allow_raw_html: true, }
 }
+
+///|
+pub extend RenderOptions with Default::{default}
 
 ///|
 /// Renders a Markdown AST to HTML, using the given rendering options
@@ -50,7 +80,7 @@ pub fn render_markdown(
   md : @markdown.Markdown,
   opt? : RenderOptions = RenderOptions::default(),
 ) -> RenderedMarkdown {
-  let ctx = { slug_counts: Map([]), toc: [], opt }
+  let ctx = { slug_counts: Map([]), toc: [], opt, }
   let remark =
     #|<script>
     #|  globalThis.console.log(`%c Mo %c Press`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
@@ -58,12 +88,12 @@ pub fn render_markdown(
     #|  globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
     #|  globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
     #|</script>
-  { html: "\{render_blocks(md, ctx)}\n\{remark}", toc: ctx.toc }
+  { html: "\{render_blocks(md, ctx)}\n\{remark}", toc: ctx.toc, }
 }
 
 ///|
 fn render_blocks(blocks : @markdown.Markdown, ctx : RenderContext) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   for block in blocks {
     out.write_string(render_block(block, ctx))
     out.write_char('\n')
@@ -100,7 +130,7 @@ fn render_heading(
   let title_text = plain_text_from_inlines(inlines)
   let anchor = unique_slug(slugify(title_text), ctx.slug_counts)
   let full_anchor = ctx.opt.heading_anchor_prefix + anchor
-  ctx.toc.push({ level, title: title_text, anchor: full_anchor })
+  ctx.toc.push({ level, title: title_text, anchor: full_anchor, })
   let tag = heading_tag(level)
   "<" +
   tag +
@@ -121,7 +151,7 @@ fn render_inlines(
   inlines : Array[@markdown.Inline],
   ctx : RenderContext,
 ) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   for inline in inlines {
     out.write_string(render_inline(inline, ctx))
   }
@@ -185,7 +215,7 @@ fn render_list(list : @markdown.ListBlock, ctx : RenderContext) -> String {
       None => ()
     }
   }
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   out.write_string("<\{tag + attrs}>")
   for item in list.items {
     out.write_string("<li>\{render_blocks(item, ctx)}</li>")
@@ -196,7 +226,7 @@ fn render_list(list : @markdown.ListBlock, ctx : RenderContext) -> String {
 
 ///|
 fn render_table(table : @markdown.TableBlock, ctx : RenderContext) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   out.write_string("<table>")
   out.write_string("<thead><tr>")
   for header in table.headers {
@@ -235,7 +265,7 @@ fn heading_tag(level : Int) -> String {
 
 ///|
 fn plain_text_from_inlines(inlines : Array[@markdown.Inline]) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   for inline in inlines {
     out.write_string(plain_text_from_inline(inline))
   }
@@ -259,7 +289,7 @@ fn plain_text_from_inline(inline : @markdown.Inline) -> String {
 
 ///|
 fn slugify(input : String) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   let mut prev_dash = true
   for raw in input.to_lower() {
     if is_slug_char(raw) {
@@ -295,7 +325,7 @@ fn unique_slug(base : String, counts : Map[String, Int]) -> String {
 
 ///|
 fn escape_html(input : String) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   for ch in input {
     match ch {
       '<' => out.write_string("&lt;")
@@ -337,7 +367,7 @@ fn trim_dashes(input : String) -> String {
 
 ///|
 fn substring(input : String, start : Int, end : Int) -> String {
-  let out = StringBuilder::new()
+  let out = StringBuilder()
   let mut index = start
   while index < end && index < input.length() {
     out.write_char(char_at(input, index))

@@ -22,6 +22,12 @@ pub(all) enum TemplateNode {
   /// position.
   Partial(String)
 } derive(Eq, Debug)
+
+///|
+pub extend TemplateNode with Eq::{not_equal, equal}
+
+///|
+pub extend TemplateNode with @debug.Debug::{to_repr}
 // @end
 
 // @block template-parse-error
@@ -33,6 +39,12 @@ pub(all) enum TemplateNode {
 pub suberror TemplateParseError {
   TemplateParseError(String)
 } derive(Eq, Debug)
+
+///|
+pub extend TemplateParseError with Eq::{not_equal, equal}
+
+///|
+pub extend TemplateParseError with @debug.Debug::{to_repr}
 // @end
 
 ///|
@@ -43,6 +55,9 @@ pub impl Show for TemplateParseError with fn to_string(
     TemplateParseError(s) => "TemplateParseError: \{s}"
   }
 }
+
+///|
+pub extend TemplateParseError with Show::{to_string, output}
 
 ///|
 /// A named set of template variables, as passed to `apply_template` /
@@ -61,6 +76,12 @@ pub(all) enum Value {
   Array(Array[Value])
   Object(Map[String, Value])
 } derive(Eq, Debug)
+
+///|
+pub extend Value with Eq::{not_equal, equal}
+
+///|
+pub extend Value with @debug.Debug::{to_repr}
 // @end
 
 ///|
@@ -79,7 +100,7 @@ pub impl Show for Value with fn to_string(self : Value) -> String {
     Bool(b) => b.to_string()
     Array(a) => "[\{a.map(v => v |> to_string_spec).join(", ")}]"
     Object(x) => {
-      let output = StringBuilder::new()
+      let output = StringBuilder()
       output.write_string("{")
       let mut is_first = true
       for item in x {
@@ -97,6 +118,9 @@ pub impl Show for Value with fn to_string(self : Value) -> String {
     }
   }
 }
+
+///|
+pub extend Value with Show::{to_string, output}
 
 ///|
 /// Converts a `Json` value into its corresponding `Value` representation,
@@ -332,7 +356,7 @@ fn find_char(input : String, needle : Char, start : Int) -> Int? {
 
 ///|
 fn substring(input : String, start : Int, end : Int) -> String {
-  let output = StringBuilder::new()
+  let output = StringBuilder()
   let mut index = start
   while index < end && index < input.length() {
     output.write_char(char_at(input, index))
@@ -366,10 +390,18 @@ pub suberror TemplateRenderError {
   /// resulting in unbounded recursion.
   RecursivePartialError(String)
 } derive(Eq, Debug)
+
+///|
+pub extend TemplateRenderError with Eq::{not_equal, equal}
+
+///|
+pub extend TemplateRenderError with @debug.Debug::{to_repr}
 // @end
 
 ///|
-impl Show for TemplateRenderError with fn to_string(self : TemplateRenderError) -> String {
+pub impl Show for TemplateRenderError with fn to_string(
+  self : TemplateRenderError,
+) -> String {
   match self {
     UndefinedVariableError(name) =>
       "UndefinedVariableError: missing variable: \{name}"
@@ -384,6 +416,9 @@ impl Show for TemplateRenderError with fn to_string(self : TemplateRenderError) 
 }
 
 ///|
+pub extend TemplateRenderError with Show::{to_string, output}
+
+///|
 /// Renders a parsed template against the given variable context,
 /// producing the final output string.
 ///
@@ -394,7 +429,7 @@ impl Show for TemplateRenderError with fn to_string(self : TemplateRenderError) 
 /// `apply_template_strict` if such errors should instead abort rendering
 /// entirely.
 pub fn apply_template(template : Template, context : Context) -> String {
-  let output = StringBuilder::new()
+  let output = StringBuilder()
   render_nodes(template, context, false, output, []) catch {
     _ => panic()
   }
@@ -411,7 +446,7 @@ pub fn apply_template_strict(
   template : Template,
   context : Context,
 ) -> String raise TemplateRenderError {
-  let output = StringBuilder::new()
+  let output = StringBuilder()
   render_nodes(template, context, true, output, [])
   output.to_string()
 }

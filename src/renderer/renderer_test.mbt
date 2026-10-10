@@ -8,7 +8,7 @@ test "render_markdown emits escaped content anchors and toc" {
     #|## Hello & World
     #|
   let md = @markdown.parse_markdown(source)
-  let rendered = render_markdown(md)
+  let rendered = @renderer.render_markdown(md)
   assert_true(rendered.html.contains("id=\"hello-world\""))
   assert_true(rendered.html.contains("id=\"hello-world-2\""))
   assert_true(rendered.html.contains("Hello &amp; World"))
@@ -24,7 +24,7 @@ test "render_markdown can escape raw html" {
     #|<script>alert(1)</script>
     #|
   let md = @markdown.parse_markdown(source)
-  let rendered = render_markdown(md, opt={
+  let rendered = @renderer.render_markdown(md, opt={
     heading_anchor_prefix: "",
     allow_raw_html: false,
   })

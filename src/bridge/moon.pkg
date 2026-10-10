@@ -2,7 +2,7 @@ import {
   "himeno/mopress/config",
   "himeno/mopress/markdown",
   "moonbitlang/core/json",
+  "moonbitlang/core/debug",
   "moonbitlang/async",
   "moonbitlang/async/process",
-  "moonbitlang/async/io",
 }
