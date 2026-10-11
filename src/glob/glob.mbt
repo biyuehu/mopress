@@ -183,7 +183,7 @@ fn scan_recursive(
       }
     } else if glob_match(
         pattern,
-        Show::to_string(full_path[base.length() + 1:]),
+        Show::to_string(@path.Path(full_path).relative(base=@path.Path(base))),
       ) &&
       ((f is Some(f) && f(full_path)) || f is None) {
       results.push(full_path)
