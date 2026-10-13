@@ -89,7 +89,7 @@ fn flatten_items(
       Link(link) => {
         counter += 1
         let number = prefix + counter.to_string()
-        let location = if base_url[-1:] == "/" {
+        let location = if base_url.has_suffix("/") {
           base_url[0:base_url.length() - 1] + link.location
         } else {
           base_url + link.location

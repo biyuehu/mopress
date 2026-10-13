@@ -82,3 +82,11 @@ fn ensure_dir_for_file(filepath : String) -> Unit raise @fs.IOError {
     ensure_dir(dir)
   }
 }
+
+///|
+/// Marker to keep `moonbitlang/async` as a declared dependency of this
+/// package: the package is only referenced by whitebox tests (`async test`
+/// in `steps_wbtest.mbt`), which the `unused_package` lint does not scan.
+fn _mopress_async_import_guard() -> Unit {
+  ignore(@async.is_being_cancelled())
+}

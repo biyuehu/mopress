@@ -268,6 +268,7 @@ fn parse_fenced_code(lines : Array[String], start : Int) -> (Block, Int) {
   let fence_len = count_prefix(opening, marker)
   let info = opening_suffix(opening, fence_len).trim().to_owned()
   let content = StringBuilder()
+  let mut first_line = true
   let mut index = start + 1
   while index < lines.length() {
     let line = lines[index]
@@ -285,10 +286,11 @@ fn parse_fenced_code(lines : Array[String], start : Int) -> (Block, Int) {
         index + 1,
       )
     }
-    content.write_string(line)
-    if index + 1 < lines.length() {
+    if !first_line {
       content.write_char('\n')
     }
+    first_line = false
+    content.write_string(line)
     index = index + 1
   }
   (

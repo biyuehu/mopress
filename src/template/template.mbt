@@ -552,6 +552,15 @@ fn split_path(path : String) -> Array[String] {
 }
 
 ///|
+/// Marker to keep `moonbitlang/core/json` as a declared dependency of this
+/// package: the package is only referenced by blackbox tests (`@json.parse`
+/// in `template_extra_test.mbt`), which the `unused_package` lint does not
+/// scan.
+fn _mopress_json_import_guard() -> Unit raise {
+  ignore(@json.parse("null"))
+}
+
+///|
 fn render_partial(
   path : String,
   context : Context,

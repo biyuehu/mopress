@@ -257,3 +257,148 @@ test "render detects recursive partials" {
   }
   assert_true(message.contains("recursive partial"))
 }
+
+///|
+test "whitespace inside tag is trimmed" {
+  guard @template.parse_template("$ title $") is [@template.Variable("title")] else {
+    fail("expected single variable")
+  }
+}
+
+///|
+test "dotted identifier is a variable" {
+  guard @template.parse_template("$a.b$") is [@template.Variable("a.b")] else {
+    fail("expected dotted variable")
+  }
+}
+
+///|
+test "unterminated tag" {
+  let message = try @template.parse_template("a $b") catch {
+    @template.TemplateParseError(m) => m
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(message.contains("unterminated"))
+}
+
+///|
+test "dangling endif and missing endfor" {
+  let m1 = try @template.parse_template("$endif$") catch {
+    @template.TemplateParseError(m) => m
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(m1.contains("unexpected $endif$"))
+  let m2 = try @template.parse_template("$for(x)$a") catch {
+    @template.TemplateParseError(m) => m
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(m2.contains("missing $endfor$"))
+}
+
+///|
+test "partial requires quoted path" {
+  let message = try @template.parse_template("$partial(a.html)$") catch {
+    @template.TemplateParseError(m) => m
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(message.contains("partial expects a quoted path"))
+}
+
+///|
+test "invalid tag" {
+  let message = try @template.parse_template("$a b$") catch {
+    @template.TemplateParseError(m) => m
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(message.contains("invalid template tag"))
+}
+
+///|
+test "lenient render of missing variable and loop" {
+  let t1 = @template.parse_template("a$x$b")
+  assert_eq(@template.apply_template(t1, {}), "ab")
+  let t2 = @template.parse_template("a$for(x)$z$endfor$b")
+  assert_eq(@template.apply_template(t2, { "x": @template.String("no") }), "ab")
+}
+
+///|
+test "strict reports non array loop" {
+  let t = @template.parse_template("$for(x)$z$endfor$")
+  let message = try
+    @template.apply_template_strict(t, { "x": @template.String("no") })
+  catch {
+    @template.NonArrayForLoopError(m) => m
+    _ => abort("expected non-array error")
+  } noraise {
+    _ => abort("expected error")
+  }
+  assert_true(message.contains("expected array for loop"))
+}
+
+///|
+test "truthiness of numbers and strings" {
+  let t = @template.parse_template("$if(n)$y$else$n$endif$")
+  assert_eq(@template.apply_template(t, { "n": @template.Number(0) }), "y")
+  assert_eq(@template.apply_template(t, { "n": @template.String("x") }), "y")
+  assert_eq(
+    @template.apply_template(t, {
+      "n": @template.Array([@template.Bool(false)]),
+    }),
+    "y",
+  )
+}
+
+///|
+test "nested if inside for" {
+  let t = @template.parse_template(
+    "$for(xs)$$if(item.on)$[$item.name$]$endif$$endfor$",
+  )
+  let result = @template.apply_template(t, {
+    "xs": @template.Array([
+      @template.Object({
+        "on": @template.Bool(true),
+        "name": @template.String("a"),
+      }),
+      @template.Object({
+        "on": @template.Bool(false),
+        "name": @template.String("b"),
+      }),
+    ]),
+  })
+  assert_eq(result, "[a]")
+}
+
+///|
+test "value to_string" {
+  assert_eq(@template.Bool(true).to_string(), "true")
+  assert_eq(@template.String("s").to_string(), "s")
+  assert_eq(
+    @template.Array([@template.String("a"), @template.Bool(true)]).to_string(),
+    "[\"a\", true]",
+  )
+  assert_eq(
+    @template.Object({ "k": @template.String("v") }).to_string(),
+    "{k: \"v\"}",
+  )
+}
+
+///|
+test "value from json" {
+  let json = @json.parse("{\"a\":[1,true,null,\"s\"]}")
+  @debug.assert_eq(
+    @template.Value::from_json(json),
+    @template.Object({
+      "a": @template.Array([
+        @template.Number(1),
+        @template.Bool(true),
+        @template.String(""),
+        @template.String("s"),
+      ]),
+    }),
+  )
+}

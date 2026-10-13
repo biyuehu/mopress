@@ -258,3 +258,131 @@ test "prev_next" {
     _ => fail("expected prev=A next=C")
   }
 }
+
+///|
+fn sample_summary() -> @summary.Summary {
+  {
+    title: "S",
+    prefix_chapters: [],
+    numbered_chapters: [
+      @summary.SummaryItem::Link({
+        title: "A",
+        location: "/a.html",
+        source: "a.md",
+        nested_items: [
+          @summary.SummaryItem::Link({
+            title: "A1",
+            location: "/a1.html",
+            source: "a1.md",
+            nested_items: [],
+          }),
+        ],
+      }),
+      @summary.SummaryItem::Link({
+        title: "B",
+        location: "/b.html",
+        source: "b.md",
+        nested_items: [],
+      }),
+    ],
+    suffix_chapters: [],
+  }
+}
+
+///|
+test "prev_next at both ends" {
+  let s = sample_summary()
+  @debug.assert_eq(s.prev_next("/a.html"), (None, Some(("A1", "/a1.html"))))
+  @debug.assert_eq(s.prev_next("/b.html"), (Some(("A1", "/a1.html")), None))
+}
+
+///|
+test "prev_next follows nested order" {
+  let s = sample_summary()
+  @debug.assert_eq(
+    s.prev_next("/a1.html"),
+    (Some(("A", "/a.html")), Some(("B", "/b.html"))),
+  )
+}
+
+///|
+test "breadcrumb nested" {
+  let s = sample_summary()
+  assert_eq(s.breadcrumb("/a1.html"), "/ A / A1")
+  assert_eq(s.breadcrumb("./b.md"), "/ B")
+}
+
+///|
+test "flatten marks numbers and current" {
+  let json = sample_summary().flatten("./a.html", "/").stringify()
+  assert_true(json.contains("\"title\":\"S\""))
+  assert_true(json.contains("\"number\":\"1\""))
+  assert_true(json.contains("\"number\":\"1.1\""))
+  assert_true(json.contains("\"number\":\"2\""))
+  assert_true(json.contains("\"location\":\"/a.html\""))
+  assert_true(json.contains("\"is_current\":true"))
+}
+
+///|
+test "flatten applies base url" {
+  let json = sample_summary().flatten("./a.html", "/docs/").stringify()
+  assert_true(json.contains("\"location\":\"/docs/a.html\""))
+  let json2 = sample_summary().flatten("./a.html", "/docs").stringify()
+  assert_true(json2.contains("\"location\":\"/docs/a.html\""))
+}
+
+///|
+test "flatten includes separator and part title" {
+  let s : @summary.Summary = {
+    title: "S",
+    prefix_chapters: [@summary.SummaryItem::Separator],
+    numbered_chapters: [@summary.SummaryItem::PartTitle("P")],
+    suffix_chapters: [],
+  }
+  let json = s.flatten("/x.html", "/").stringify()
+  assert_true(json.contains("\"is_separator\":true"))
+  assert_true(json.contains("\"is_part_title\":true"))
+  assert_true(json.contains("\"title\":\"P\""))
+}
+
+///|
+test "md_to_plain strips markup" {
+  assert_eq(
+    @summary.md_to_plain("# Title\n\n**bold** and `code`"),
+    "title  bold and code",
+  )
+  assert_eq(@summary.md_to_plain("[Docs](a.md)"), "docs")
+  assert_eq(@summary.md_to_plain("![alt](x.png) hi"), "hi")
+  assert_eq(@summary.md_to_plain("a<b>c</b>d"), "acd")
+  assert_eq(@summary.md_to_plain("|a|b|"), "a b")
+  assert_eq(@summary.md_to_plain(""), "")
+}
+
+///|
+test "parse_summary ignores items without link" {
+  let doc : @markdown.Markdown = [
+    @markdown.List({
+      ordered: false,
+      start: None,
+      items: [
+        [@markdown.Paragraph([@markdown.Text("plain")])],
+        [@markdown.Paragraph([@markdown.Link([@markdown.Text("L")], "l.md")])],
+      ],
+    }),
+  ]
+  let summary = @summary.parse_summary(doc)
+  assert_eq(summary.numbered_chapters.length(), 1)
+}
+
+///|
+test "parse_summary normalizes backslash and dot paths" {
+  let doc : @markdown.Markdown = [
+    @markdown.Paragraph([@markdown.Link([@markdown.Text("P")], "./dir/p.md")]),
+  ]
+  let summary = @summary.parse_summary(doc)
+  guard summary.prefix_chapters[0] is @summary.SummaryItem::Link(link) else {
+    fail("expected link")
+  }
+  assert_eq(link.location, "/dir/p.html")
+  assert_eq(link.source, "./dir/p.md")
+}
