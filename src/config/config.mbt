@@ -25,11 +25,12 @@ pub(all) struct BookConfig {
   authors : Array[String]
   /// The site's primary language, e.g. as an HTML `lang` attribute value.
   language : String
+  /// Optional URL to the site's source repository, surfaced via the
+  /// `repository` template variable when present (defaults to an empty
+  /// string in templates when absent).
+  repository : String?
   /// Path to the directory containing the site's source Markdown content
   /// and its `SUMMARY.md` table of contents, relative to the project root.
-  repository : String?
-  /// Feature toggles controlling optional built-in behavior such as
-  /// syntax highlighting and MathJax support.
   src : String
   /// Path to the directory where the built site is written, relative to
   /// the project root.
@@ -38,9 +39,8 @@ pub(all) struct BookConfig {
   /// links and assets. This is typically the site's domain name, defaulting
   /// to `/`.
   base_url : String
-  /// Optional URL to the site's source repository, surfaced via the
-  /// `repository` template variable when present (defaults to an empty
-  /// string in templates when absent).
+  /// Feature toggles controlling optional built-in behavior such as
+  /// syntax highlighting and MathJax support.
   features : FeaturesConfig
   /// Extension points for customizing the build: templates, asset
   /// injection, and the external preprocessor/transformer command

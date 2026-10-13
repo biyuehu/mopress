@@ -79,7 +79,7 @@ MoPress 提供的编译时插件几乎都使用 TypeScript 编写与 Bun 运行�
 > [!TIP]
 > 运行时插件的最直接形式是使用 JavaScript，不过仍建议使用 TypeScript 提高开发体验，除非你真得不想有一点 JavaScript/TypeScript 工具链编译处理等杂事。
 
-对于编译时插件分别将执行命令写入 `extensions.preprocessors` 与 `extensions.converters` 中即可。
+对于编译时插件分别将执行命令写入 `extensions.preprocessors` 与 `extensions.transformers` 中即可。
 
 对于运行时插件则分别将路径或代码写入 `extensions.import-*`、`extensions.use-*`、`extensions.inject-*` 即可。
 

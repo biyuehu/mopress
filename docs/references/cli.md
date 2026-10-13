@@ -83,4 +83,4 @@ mopress help
 moon run --target native site.mbtx <args>
 ```
 
-`<args>` 仅支持 `build` 与 `serve` 两个子命令，其中 `server` 与 `mopress serve` 效果基本一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
+`<args>` 仅支持 `build` 与 `serve` 两个子命令，其中 `serve` 与 `mopress serve` 效果基本一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。

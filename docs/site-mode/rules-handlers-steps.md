@@ -29,7 +29,7 @@ pub struct Item[T] {
 
 - `Item::new(data, target, extension?, vars?)`：创建一个新的 item。
 - `Item::map(self, f, target?, extension?, vars?)`：对 `data` 应用一个不会失败的函数 `f`，得到新类型的 item，同时可以顺带覆盖 `target`、`extension`、`vars`。
-- `Item::map_with_eff(self, f, target?, extension?, vars?)`：与 `map` 类似，但 `f` 可以 `raise` 错误，错误会向外传播。
+- `Item::map_with_raise(self, f, target?, extension?, vars?)`：与 `map` 类似，但 `f` 可以 `raise` 错误，错误会向外传播。
 - `Item::base(self, target?, extension?, vars?)`：仅修改 `target`、`extension`、`vars`，`data` 保持不变。
 - `Item::add_vars`、`Item::set_var`、`Item::clear_var`：分别用于批量合并变量、设置单个变量、清除某个变量。
 - `Item::location(self)`：返回该 item 当前的 `target` 路径，常用于计算面包屑、上一页/下一页等导航信息。
@@ -72,7 +72,7 @@ raw
 `Rule` 上还提供了两个便捷方法：
 
 - `Rule::check(self, path)`：判断给定路径是否命中这条规则，可用于调试或自行实现构建预览等功能。
-- `Rule::mode(self)`：取出这条规则关联的处理方式，避免手动模式匹配 `Glob`、`Guard`两种情形。
+- `Rule::handler(self)`：取出这条规则关联的处理方式，避免手动模式匹配 `Glob`、`Guard`两种情形。
 
 多条规则会按照数组中的顺序依次匹配；一个文件一旦被某条规则匹配到，通常不会再被后续规则重复处理，具体的匹配优先级取决于构建函数的调度实现。
 
