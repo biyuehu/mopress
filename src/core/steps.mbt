@@ -140,7 +140,7 @@ pub fn apply_template_strict(
 pub fn load_and_apply_template(
   body : Item[Html],
   template_path : String,
-  strict? : Bool = false,
+  strict~ : Bool = false,
 ) -> Item[Html] raise {
   let template = template_path
     |> @fs.read_file_to_string

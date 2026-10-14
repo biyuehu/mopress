@@ -2,13 +2,13 @@
 let default_serve_host : String = "127.0.0.1"
 
 ///|
-let default_serve_port : Int = 8000
+let default_serve_port : Int32 = 8000
 
 ///|
 async fn serve_static_dir(
   root : String,
-  host? : String = default_serve_host,
-  port? : Int = default_serve_port,
+  host~ : String = default_serve_host,
+  port~ : Int32 = default_serve_port,
 ) -> Unit {
   let addr = @socket.Addr::parse("\{host}:\{port}")
   let server = @http.Server(addr, reuse_addr=true)
@@ -106,7 +106,7 @@ async fn serve_file(
 ///|
 async fn send_text(
   conn : @http.ServerConnection,
-  status : Int,
+  status : Int32,
   reason : String,
   body : String,
   head_only : Bool,
@@ -169,7 +169,7 @@ fn percent_decode_unreserved(part : String) -> String {
       match decoded {
         Some(ch) =>
           if is_unreserved_url_unit(ch) {
-            out.write_string(Int::unsafe_to_char(ch.to_int()).to_string())
+            out.write_string(Int32::unsafe_to_char(ch.to_int()).to_string())
             index = index + 3
             continue
           } else {
@@ -194,7 +194,7 @@ fn decode_percent_byte(high : UInt16, low : UInt16) -> UInt16? {
 }
 
 ///|
-fn hex_value(ch : UInt16) -> Int? {
+fn hex_value(ch : UInt16) -> Int32? {
   if ch >= '0' && ch <= '9' {
     Some(ch.to_int() - '0'.to_int())
   } else if ch >= 'a' && ch <= 'f' {

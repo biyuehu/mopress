@@ -4,7 +4,7 @@
 /// provided).
 pub async fn mopress(
   rules : Rules,
-  options? : Options = Options::default(),
+  options~ : Options = Options::default(),
 ) -> Unit {
   let args = @env.args()
   let cmd = if args.length() > 1 { args[1] } else { "" }
@@ -31,7 +31,7 @@ pub async fn mopress(
 /// summary/table of contents) that would otherwise need to be recomputed
 /// independently by the caller before constructing `rules`.
 pub async fn[E] mopress_with(
-  options? : Options = Options::default(),
+  options~ : Options = Options::default(),
   init : (Options) -> E,
   rules : (Options, E) -> Rules,
 ) -> Unit {
@@ -57,7 +57,7 @@ pub async fn mo_serve(options : Options) -> Unit {
 pub async fn mo_build(
   options : Options,
   rules : Rules,
-  no_emit? : Bool = false,
+  no_emit~ : Bool = false,
 ) -> Unit {
   if no_emit {
     println("Dry-run (no emit) from \{options.src}")
@@ -100,7 +100,7 @@ pub fn compute_explain_report(
   rules : Rules,
 ) -> ExplainReport raise @fs.IOError {
   let matches : Array[RuleMatch] = []
-  let all_matched : Map[String, Array[Int]] = Map([])
+  let all_matched : Map[String, Array[Int32]] = Map([])
   for i, rule in rules {
     let (matched, rejected) = rule.match_paths(options.src)
     for path in matched {
@@ -126,7 +126,7 @@ pub fn compute_explain_report(
     }
   }
 
-  let conflicts : Array[(String, Array[Int])] = []
+  let conflicts : Array[(String, Array[Int32])] = []
   for entry in all_matched {
     if entry.1.length() > 1 {
       conflicts.push(entry)

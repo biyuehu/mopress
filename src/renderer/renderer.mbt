@@ -21,7 +21,7 @@ pub extend RenderOptions with @debug.Debug::{to_repr}
 /// An entry in a document's table of contents, corresponding to a
 /// rendered heading.
 pub(all) struct TocItem {
-  level : Int
+  level : Int32
   title : String
   anchor : String
 } derive(Eq, Debug, ToJson)
@@ -37,7 +37,7 @@ pub extend TocItem with ToJson::{to_json}
 
 ///|
 struct RenderContext {
-  slug_counts : Map[String, Int]
+  slug_counts : Map[String, Int32]
   toc : Toc
   opt : RenderOptions
 } derive(Eq, Debug)
@@ -78,7 +78,7 @@ pub extend RenderOptions with Default::{default}
 /// (defaulting to `RenderOptions::default()` if not provided).
 pub fn render_markdown(
   md : @markdown.Markdown,
-  opt? : RenderOptions = RenderOptions::default(),
+  opt~ : RenderOptions = RenderOptions::default(),
 ) -> RenderedMarkdown {
   let ctx = { slug_counts: Map([]), toc: [], opt, }
   let remark =
@@ -123,7 +123,7 @@ fn render_block(block : @markdown.Block, ctx : RenderContext) -> String {
 
 ///|
 fn render_heading(
-  level : Int,
+  level : Int32,
   inlines : Array[@markdown.Inline],
   ctx : RenderContext,
 ) -> String {
@@ -247,7 +247,7 @@ fn render_table(table : @markdown.TableBlock, ctx : RenderContext) -> String {
 }
 
 ///|
-fn heading_tag(level : Int) -> String {
+fn heading_tag(level : Int32) -> String {
   if level <= 1 {
     "h1"
   } else if level == 2 {
@@ -309,7 +309,7 @@ fn slugify(input : String) -> String {
 }
 
 ///|
-fn unique_slug(base : String, counts : Map[String, Int]) -> String {
+fn unique_slug(base : String, counts : Map[String, Int32]) -> String {
   match counts.get(base) {
     None => {
       counts[base] = 1
@@ -366,7 +366,7 @@ fn trim_dashes(input : String) -> String {
 }
 
 ///|
-fn substring(input : String, start : Int, end : Int) -> String {
+fn substring(input : String, start : Int32, end : Int32) -> String {
   let out = StringBuilder()
   let mut index = start
   while index < end && index < input.length() {
@@ -377,6 +377,6 @@ fn substring(input : String, start : Int, end : Int) -> String {
 }
 
 ///|
-fn char_at(input : String, index : Int) -> Char {
+fn char_at(input : String, index : Int32) -> Char {
   input.code_unit_at(index).unsafe_to_char()
 }

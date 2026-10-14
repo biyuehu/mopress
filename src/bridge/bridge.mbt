@@ -5,7 +5,7 @@
 /// failed while running through `run_markdown_preprocessors` or
 /// `run_markdown_transformers`.
 pub suberror ProcessorError {
-  NonZeroExit(command~ : String, exit_code~ : Int, stderr~ : String)
+  NonZeroExit(command~ : String, exit_code~ : Int32, stderr~ : String)
   StderrReported(command~ : String, message~ : String)
   InvalidStdout(command~ : String, raw~ : String, reason~ : String)
 } derive(Debug, Eq)

@@ -162,9 +162,9 @@ fn parse_string(input : String) -> Template raise TemplateParseError {
 ///|
 fn parse_nodes(
   input : String,
-  start : Int,
+  start : Int32,
   terminators : Array[String],
-) -> (Array[TemplateNode], Int, String?) raise TemplateParseError {
+) -> (Array[TemplateNode], Int32, String?) raise TemplateParseError {
   let nodes : Array[TemplateNode] = []
   let mut index = start
   while index < input.length() {
@@ -285,7 +285,7 @@ fn trim_tag_argument(
 ///|
 fn parse_partial_path(
   tag : String,
-  offset : Int,
+  offset : Int32,
 ) -> String raise TemplateParseError {
   let raw = substring(tag, "partial(".length(), tag.length() - 1)
     .trim()
@@ -343,7 +343,7 @@ fn contains_string(items : Array[String], target : String) -> Bool {
 }
 
 ///|
-fn find_char(input : String, needle : Char, start : Int) -> Int? {
+fn find_char(input : String, needle : Char, start : Int32) -> Int32? {
   let mut index = start
   while index < input.length() {
     if char_at(input, index) == needle {
@@ -355,7 +355,7 @@ fn find_char(input : String, needle : Char, start : Int) -> Int? {
 }
 
 ///|
-fn substring(input : String, start : Int, end : Int) -> String {
+fn substring(input : String, start : Int32, end : Int32) -> String {
   let output = StringBuilder()
   let mut index = start
   while index < end && index < input.length() {
@@ -366,7 +366,7 @@ fn substring(input : String, start : Int, end : Int) -> String {
 }
 
 ///|
-fn char_at(input : String, index : Int) -> Char {
+fn char_at(input : String, index : Int32) -> Char {
   input.code_unit_at(index).unsafe_to_char()
 }
 
@@ -524,7 +524,7 @@ fn lookup_value(path : String, context : Context) -> Value? {
 fn lookup_value_part(
   value : Value,
   parts : Array[String],
-  index : Int,
+  index : Int32,
 ) -> Value? {
   if index >= parts.length() {
     Some(value)

@@ -47,7 +47,7 @@ pub(all) struct BookConfig {
   /// Whether to generate `feed.xml`. Only effective when `site_url` is set.
   feed_enabled : Bool
   /// Maximum number of entries in `feed.xml`.
-  feed_limit : Int
+  feed_limit : Int32
   /// Whether to generate `sitemap.xml`.
   sitemap_enabled : Bool
   /// Feature toggles controlling optional built-in behavior such as
@@ -497,8 +497,8 @@ fn read_bool_or(
 fn read_int_or(
   table : Map[String, @toml.TomlValue],
   key : String,
-  default : Int,
-) -> Int raise ConfigParseError {
+  default : Int32,
+) -> Int32 raise ConfigParseError {
   match table.get(key) {
     Some(@toml.TomlInteger(i)) => i.to_int()
     Some(_) => raise ConfigParseError("`\{key}` must be an integer")

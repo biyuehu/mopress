@@ -21,6 +21,7 @@ title: Changelog
 - Serialize lefthook pre-commit commands and stage test output ([ca4c45a](https://github.com/biyuehu/mbdoc/commit/ca4c45a))
 - Serialize lefthook pre-commit commands to stage prebuild artifacts ([5d106ed](https://github.com/biyuehu/mbdoc/commit/5d106ed))
 - **glob:** Degrade ** to * when not a standalone path segment ([3450466](https://github.com/biyuehu/mbdoc/commit/3450466))
+- **glob:** Normalize backslash paths across all platforms and eliminate to_json deprecation warnings ([0c17219](https://github.com/biyuehu/mbdoc/commit/0c17219))
 
 ### 📖 Documentation
 

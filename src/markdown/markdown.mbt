@@ -10,7 +10,7 @@ pub(all) struct ListBlock {
   /// Whether this is an ordered (numbered) list.
   ordered : Bool
   /// The starting number for an ordered list, if specified.
-  start : Int?
+  start : Int32?
   /// The list's items, each itself a sequence of blocks (allowing items
   /// to contain multiple paragraphs, nested lists, etc.).
   items : Array[Array[Block]]
@@ -34,7 +34,7 @@ pub extend ListBlock with ToJson::{to_json}
 /// A single block-level Markdown element.
 pub(all) enum Block {
   /// A heading, with its level (1–6) and inline content.
-  Heading(Int, Array[Inline])
+  Heading(Int32, Array[Inline])
   /// A paragraph of inline content.
   Paragraph(Array[Inline])
   /// A thematic break (horizontal rule).
@@ -262,7 +262,7 @@ fn parse_heading(line : String) -> Block {
 }
 
 ///|
-fn parse_fenced_code(lines : Array[String], start : Int) -> (Block, Int) {
+fn parse_fenced_code(lines : Array[String], start : Int32) -> (Block, Int32) {
   let opening = lines[start].trim().to_owned()
   let marker = char_at(opening, 0)
   let fence_len = count_prefix(opening, marker)
@@ -300,7 +300,7 @@ fn parse_fenced_code(lines : Array[String], start : Int) -> (Block, Int) {
 }
 
 ///|
-fn parse_block_quote(lines : Array[String], start : Int) -> (Block, Int) {
+fn parse_block_quote(lines : Array[String], start : Int32) -> (Block, Int32) {
   let quote_lines : Array[String] = []
   let mut index = start
   while index < lines.length() {
@@ -319,7 +319,7 @@ fn parse_block_quote(lines : Array[String], start : Int) -> (Block, Int) {
 }
 
 ///|
-fn parse_list(lines : Array[String], start : Int) -> (Block, Int) {
+fn parse_list(lines : Array[String], start : Int32) -> (Block, Int32) {
   let first = parse_list_marker(lines[start].trim().to_owned()).unwrap()
   let items : Array[Markdown] = []
   let mut index = start
@@ -353,7 +353,7 @@ fn parse_list(lines : Array[String], start : Int) -> (Block, Int) {
 }
 
 ///|
-fn parse_html_block(lines : Array[String], start : Int) -> (Block, Int) {
+fn parse_html_block(lines : Array[String], start : Int32) -> (Block, Int32) {
   let content = StringBuilder()
   let mut index = start
   while index < lines.length() {
@@ -371,7 +371,7 @@ fn parse_html_block(lines : Array[String], start : Int) -> (Block, Int) {
 }
 
 ///|
-fn parse_paragraph(lines : Array[String], start : Int) -> (Block, Int) {
+fn parse_paragraph(lines : Array[String], start : Int32) -> (Block, Int32) {
   let content = StringBuilder()
   let mut index = start
   while index < lines.length() {
@@ -485,7 +485,7 @@ fn parse_inlines(input : String) -> Array[Inline] {
 }
 
 ///|
-fn parse_link(input : String, start : Int) -> (Inline, Int)? {
+fn parse_link(input : String, start : Int32) -> (Inline, Int32)? {
   match find_char(input, ']', start + 1) {
     Some(label_end) if label_end + 1 < input.length() &&
       char_at(input, label_end + 1) == '(' =>
@@ -504,7 +504,7 @@ fn parse_link(input : String, start : Int) -> (Inline, Int)? {
 }
 
 ///|
-fn parse_image(input : String, start : Int) -> (Inline, Int)? {
+fn parse_image(input : String, start : Int32) -> (Inline, Int32)? {
   match find_char(input, ']', start + 2) {
     Some(label_end) if label_end + 1 < input.length() &&
       char_at(input, label_end + 1) == '(' =>
@@ -525,10 +525,10 @@ fn parse_image(input : String, start : Int) -> (Inline, Int)? {
 ///|
 fn parse_delimited(
   input : String,
-  start : Int,
+  start : Int32,
   delimiter : String,
   strong : Bool,
-) -> (Inline, Int)? {
+) -> (Inline, Int32)? {
   match find_string(input, delimiter, start + delimiter.length()) {
     Some(end) => {
       let content = substring(input, start + delimiter.length(), end)
@@ -584,7 +584,7 @@ fn is_fence_start(line : String) -> Bool {
 }
 
 ///|
-fn is_matching_fence(line : String, marker : Char, minimum : Int) -> Bool {
+fn is_matching_fence(line : String, marker : Char, minimum : Int32) -> Bool {
   line.length() >= minimum &&
   char_at(line, 0) == marker &&
   count_prefix(line, marker) >= minimum &&
@@ -646,7 +646,7 @@ fn strip_block_quote_marker(line : String) -> String {
 ///|
 priv struct ListMarker {
   ordered : Bool
-  start : Int?
+  start : Int32?
   rest : String
 }
 
@@ -685,7 +685,7 @@ fn parse_list_marker(line : String) -> ListMarker? {
 }
 
 ///|
-fn is_table(lines : Array[String], index : Int) -> Bool {
+fn is_table(lines : Array[String], index : Int32) -> Bool {
   if index + 1 >= lines.length() {
     return false
   }
@@ -739,7 +739,7 @@ fn parse_table_row(line : String) -> Array[Array[Inline]] {
 }
 
 ///|
-fn parse_table(lines : Array[String], start : Int) -> (Block, Int) {
+fn parse_table(lines : Array[String], start : Int32) -> (Block, Int32) {
   let headers = parse_table_row(lines[start].trim().to_owned())
   let mut index = start + 2
   let rows : Array[Array[Array[Inline]]] = []
@@ -809,7 +809,7 @@ fn all_chars_are(input : String, expected : Char) -> Bool {
 }
 
 ///|
-fn count_prefix(input : String, expected : Char) -> Int {
+fn count_prefix(input : String, expected : Char) -> Int32 {
   let mut count = 0
   while count < input.length() && char_at(input, count) == expected {
     count = count + 1
@@ -818,7 +818,7 @@ fn count_prefix(input : String, expected : Char) -> Int {
 }
 
 ///|
-fn count_leading_spaces(input : String) -> Int {
+fn count_leading_spaces(input : String) -> Int32 {
   let mut count = 0
   while count < input.length() && char_at(input, count) == ' ' {
     count = count + 1
@@ -827,7 +827,7 @@ fn count_leading_spaces(input : String) -> Int {
 }
 
 ///|
-fn strip_leading_spaces(input : String, max : Int) -> String {
+fn strip_leading_spaces(input : String, max : Int32) -> String {
   let mut count = 0
   while count < input.length() && count < max && char_at(input, count) == ' ' {
     count = count + 1
@@ -836,12 +836,12 @@ fn strip_leading_spaces(input : String, max : Int) -> String {
 }
 
 ///|
-fn opening_suffix(input : String, start : Int) -> String {
+fn opening_suffix(input : String, start : Int32) -> String {
   substring(input, start, input.length())
 }
 
 ///|
-fn starts_at(input : String, start : Int, needle : String) -> Bool {
+fn starts_at(input : String, start : Int32, needle : String) -> Bool {
   if start + needle.length() > input.length() {
     false
   } else {
@@ -857,7 +857,7 @@ fn starts_at(input : String, start : Int, needle : String) -> Bool {
 }
 
 ///|
-fn find_char(input : String, needle : Char, start : Int) -> Int? {
+fn find_char(input : String, needle : Char, start : Int32) -> Int32? {
   let mut index = start
   while index < input.length() {
     if char_at(input, index) == needle {
@@ -869,7 +869,7 @@ fn find_char(input : String, needle : Char, start : Int) -> Int? {
 }
 
 ///|
-fn find_string(input : String, needle : String, start : Int) -> Int? {
+fn find_string(input : String, needle : String, start : Int32) -> Int32? {
   let mut index = start
   while index + needle.length() <= input.length() {
     if starts_at(input, index, needle) {
@@ -881,7 +881,7 @@ fn find_string(input : String, needle : String, start : Int) -> Int? {
 }
 
 ///|
-fn substring(input : String, start : Int, end : Int) -> String {
+fn substring(input : String, start : Int32, end : Int32) -> String {
   let output = StringBuilder()
   let mut index = start
   while index < end && index < input.length() {
@@ -892,7 +892,7 @@ fn substring(input : String, start : Int, end : Int) -> String {
 }
 
 ///|
-fn char_at(input : String, index : Int) -> Char {
+fn char_at(input : String, index : Int32) -> Char {
   input.code_unit_at(index).unsafe_to_char()
 }
 
@@ -902,7 +902,7 @@ fn is_digit(ch : Char) -> Bool {
 }
 
 ///|
-fn parse_positive_int(input : String) -> Int {
+fn parse_positive_int(input : String) -> Int32 {
   let mut value = 0
   for ch in input {
     value = value * 10 + (ch.to_int() - '0'.to_int())

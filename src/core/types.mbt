@@ -130,7 +130,7 @@ pub fn Rule::match_paths(
 /// `compute_explain_report`.
 pub(all) struct RuleMatch {
   /// The rule's index within the `Rules` array it came from.
-  index : Int
+  index : Int32
   /// The rule's glob pattern.
   pattern : String
   /// The rule's handler kind, e.g. `"Text"`, `"Binary"`, or `"Copy"`.
@@ -163,7 +163,7 @@ pub(all) struct ExplainReport {
   /// with the list of rule indices that matched it. A non-empty
   /// `conflicts` list means a build would process those files more than
   /// once.
-  conflicts : Array[(String, Array[Int])]
+  conflicts : Array[(String, Array[Int32])]
 } derive(Eq, Debug)
 
 ///|
@@ -213,7 +213,7 @@ pub fn[T] Item::new(
   data : T,
   target : String,
   extension? : String,
-  vars? : Vars = Map([]),
+  vars~ : Vars = Map([]),
 ) -> Item[T] {
   {
     data,
@@ -474,10 +474,10 @@ pub async fn Handler::run(
   self : Handler,
   options : Options,
   path : String,
-  read_string? : (String) -> String raise = path => {
+  read_string~ : (String) -> String raise = path => {
     @fs.read_file_to_string(path)
   },
-  read_bytes? : (String) -> Bytes raise = path => @fs.read_file_to_bytes(path),
+  read_bytes~ : (String) -> Bytes raise = path => @fs.read_file_to_bytes(path),
 ) -> Item[Thing] {
   let extension = @path.Path(path).extname() |> Show::to_string
   let target = @path.Path(path).relative(base=@path.Path(options.src))
