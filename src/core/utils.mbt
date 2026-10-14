@@ -50,11 +50,12 @@ fn parse_frontmatter(content : String) -> (Frontmatter, String) {
 
 ///|
 fn ensure_dir(path : String) -> Unit raise @fs.IOError {
-  if ["", ".", @path.sep.to_string()].contains(path) {
+  let normalized = path.replace_all(old="\\", new="/")
+  if ["", ".", "/"].contains(normalized) {
     return
   }
 
-  let parts = path.split(@path.sep.to_string())
+  let parts = normalized.split("/")
   let mut current = ""
 
   for p in parts {
@@ -64,7 +65,7 @@ fn ensure_dir(path : String) -> Unit raise @fs.IOError {
     current = if current == "" {
       Show::to_string(p)
     } else {
-      current + @path.sep.to_string() + Show::to_string(p)
+      current + "/" + Show::to_string(p)
     }
 
     if !@fs.path_exists(current) {
@@ -78,7 +79,7 @@ fn ensure_dir(path : String) -> Unit raise @fs.IOError {
 ///|
 fn ensure_dir_for_file(filepath : String) -> Unit raise @fs.IOError {
   let dir = (filepath |> @path.Path).dirname().to_string()
-  if !["", ".", @path.sep.to_string()].contains(dir) && !@fs.path_exists(dir) {
+  if !["", ".", "/", "\\"].contains(dir) && !@fs.path_exists(dir) {
     ensure_dir(dir)
   }
 }

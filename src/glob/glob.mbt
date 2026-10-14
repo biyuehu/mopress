@@ -55,9 +55,9 @@ fn tokenize(pattern : String) -> Array[GlobToken] {
 ///|
 fn match_tokens(
   tokens : Array[GlobToken],
-  ti : Int,
+  ti : Int32,
   path : String,
-  pi : Int,
+  pi : Int32,
 ) -> Bool {
   if ti >= tokens.length() {
     return pi >= path.length()
@@ -119,12 +119,7 @@ fn match_tokens(
 /// patterns like `src/?.md`. No other glob syntax (such as brace
 /// expansion or character classes) is supported.
 pub fn glob_match(pattern : String, path : String) -> Bool {
-  match_tokens(
-    tokenize(pattern),
-    0,
-    path.replace_all(old=@path.sep.to_string(), new="/"),
-    0,
-  )
+  match_tokens(tokenize(pattern), 0, path.replace_all(old="\\", new="/"), 0)
 }
 
 ///|

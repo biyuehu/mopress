@@ -133,7 +133,7 @@ fn handle_help() -> Unit {
 }
 
 ///|
-async fn handle_build(no_emit? : Bool = false) -> Unit {
+async fn handle_build(no_emit~ : Bool = false) -> Unit {
   let config = load_config()
   build_book(config, no_emit~)
 }
@@ -318,7 +318,7 @@ fn build_book_rules(
             let outputs : Array[(String, @core.Thing)] = [
               (
                 "index.json",
-                summary.index_articles(config.src).to_json().stringify()
+                Json(summary.index_articles(config.src)).stringify()
                 |> @core.Doc,
               ),
               ("404.html", not_found_page.data),
@@ -377,7 +377,7 @@ pub fn explain_book(config : @config.BookConfig) -> Unit raise {
 ///|
 pub async fn build_book(
   config : @config.BookConfig,
-  no_emit? : Bool = false,
+  no_emit~ : Bool = false,
 ) -> Unit {
   println("Parsing SUMMARY.md")
   let summary = @fs.read_file_to_string(

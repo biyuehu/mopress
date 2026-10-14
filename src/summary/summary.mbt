@@ -70,22 +70,19 @@ pub extend ArticleIndex with ToJson::{to_json}
 ///|
 fn flatten_items(
   items : Array[SummaryItem],
-  depth : Int,
+  depth : Int32,
   current : String,
   base_url : String,
-  numbered? : Bool = false,
-  prefix? : String = "",
+  numbered~ : Bool = false,
+  prefix~ : String = "",
 ) -> Array[Json] {
   let result : Array[Json] = []
   let mut counter = 0
   for item in items {
     match item {
-      Separator => result.push({ "is_separator": true.to_json() })
+      Separator => result.push({ "is_separator": Json(true) })
       PartTitle(title) =>
-        result.push({
-          "is_part_title": true.to_json(),
-          "title": title.to_json(),
-        })
+        result.push({ "is_part_title": Json(true), "title": Json(title) })
       Link(link) => {
         counter += 1
         let number = prefix + counter.to_string()
@@ -96,22 +93,22 @@ fn flatten_items(
         }
         if numbered {
           result.push({
-            "is_link": true.to_json(),
-            "title": link.title.to_json(),
+            "is_link": Json(true),
+            "title": Json(link.title),
             "location": location,
             "source": link.source,
-            "depth": depth.to_json(),
-            "is_current": (link.location == current).to_json(),
-            "number": number.to_json(),
+            "depth": Json(depth),
+            "is_current": Json(link.location == current),
+            "number": Json(number),
           })
         } else {
           result.push({
-            "is_link": true.to_json(),
-            "title": link.title.to_json(),
+            "is_link": Json(true),
+            "title": Json(link.title),
             "location": location,
             "source": link.source,
-            "depth": depth.to_json(),
-            "is_current": (link.location == current).to_json(),
+            "depth": Json(depth),
+            "is_current": Json(link.location == current),
           })
         }
         result.append(
@@ -141,7 +138,7 @@ pub fn Summary::flatten(
 ) -> Json {
   let current = unify_url(current)
   {
-    "title": self.title.to_json(),
+    "title": Json(self.title),
     "prefix_chapters": Json::array(
       flatten_items(self.prefix_chapters, 0, current, base_url),
     ),
