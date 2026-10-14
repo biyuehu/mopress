@@ -1,1 +1,3 @@
-src/bridge/testdata/echo.js linguist-vendored
+src/**/*.js linguist-vendored
+src/**/*.html linguist-vendored
+src/**/*.css linguist-vendored

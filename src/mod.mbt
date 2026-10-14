@@ -314,14 +314,34 @@ fn build_book_rules(
         |> @core.set_extension(".json")
         |> x => {
           x.map_with_raise(_ => {
-            @core.Multiple([
+            let metas = summary.collect_page_meta(config.src)
+            let outputs : Array[(String, @core.Thing)] = [
               (
                 "index.json",
                 summary.index_articles(config.src).to_json().stringify()
                 |> @core.Doc,
               ),
               ("404.html", not_found_page.data),
-            ])
+            ]
+            if config.feed_enabled && config.site_url is Some(_) {
+              outputs.push(
+                (
+                  "feed.xml",
+                  @core.Doc(
+                    @summary.generate_feed_xml(config, metas, build_time),
+                  ),
+                ),
+              )
+            }
+            if config.sitemap_enabled {
+              outputs.push(
+                (
+                  "sitemap.xml",
+                  @core.Doc(@summary.generate_sitemap_xml(config, metas)),
+                ),
+              )
+            }
+            @core.Multiple(outputs)
           })
         }
       }),

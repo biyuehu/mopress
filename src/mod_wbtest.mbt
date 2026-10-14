@@ -45,3 +45,116 @@ async test "process_markdown_page: site title fallback when no frontmatter" {
   guard result.data is @core.Doc(html) else { fail("expected Doc") }
   assert_true(html.contains("<title>MoPress Doc</title>"))
 }
+
+///|
+let feed_fixture : String = "src/testdata/pages"
+
+///|
+fn feed_summary() -> @summary.Summary {
+  {
+    title: "S",
+    prefix_chapters: [],
+    numbered_chapters: [
+      @summary.SummaryItem::Link({
+        title: "Intro",
+        location: "/intro.html",
+        source: "intro.md",
+        nested_items: [],
+      }),
+      @summary.SummaryItem::Link({
+        title: "Guide",
+        location: "/guide.html",
+        source: "guide.md",
+        nested_items: [],
+      }),
+    ],
+    suffix_chapters: [],
+  }
+}
+
+///|
+fn feed_config(site_url : String?) -> @config.BookConfig {
+  { ..@config.BookConfig::default(), site_url, }
+}
+
+///|
+test "generate_feed_xml returns empty when site_url unset" {
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  assert_eq(
+    @summary.generate_feed_xml(feed_config(None), metas, build_time),
+    "",
+  )
+}
+
+///|
+test "generate_feed_xml emits Atom structure with entries" {
+  let config = { ..feed_config(Some("https://example.com")), feed_limit: 20, }
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  let xml = @summary.generate_feed_xml(config, metas, build_time)
+  assert_true(xml.contains("<?xml version=\"1.0\" encoding=\"utf-8\"?>"))
+  assert_true(xml.contains("xmlns=\"http://www.w3.org/2005/Atom\""))
+  assert_true(xml.contains("<title>MoPress Doc</title>"))
+  assert_true(xml.contains("<id>https://example.com</id>"))
+  assert_true(xml.contains("<title>Intro</title>"))
+  assert_true(xml.contains("<id>https://example.com/intro.html</id>"))
+  assert_true(xml.contains("<summary>An introduction</summary>"))
+  assert_true(xml.contains("<category term=\"intro\"/>"))
+  assert_true(xml.contains("<category term=\"welcome\"/>"))
+  assert_true(xml.contains("<updated>2026-10-01</updated>"))
+}
+
+///|
+test "generate_feed_xml respects feed_limit" {
+  let config = { ..feed_config(Some("https://example.com")), feed_limit: 1, }
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  let xml = @summary.generate_feed_xml(config, metas, build_time)
+  assert_true(xml.contains("<title>Intro</title>"))
+  assert_false(xml.contains("<title>Guide</title>"))
+}
+
+///|
+test "generate_sitemap_xml emits urlset with both pages" {
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  let xml = @summary.generate_sitemap_xml(
+    feed_config(Some("https://example.com")),
+    metas,
+  )
+  assert_true(xml.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
+  assert_true(xml.contains("http://www.sitemaps.org/schemas/sitemap/0.9"))
+  assert_true(xml.contains("<loc>https://example.com/intro.html</loc>"))
+  assert_true(xml.contains("<loc>https://example.com/guide.html</loc>"))
+  assert_true(xml.contains("<lastmod>2026-10-01</lastmod>"))
+}
+
+///|
+test "generate_sitemap_xml uses base_url when site_url unset" {
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  let base = { ..feed_config(None), base_url: "/docs/", }
+  let xml = @summary.generate_sitemap_xml(base, metas)
+  assert_true(xml.contains("<loc>/docs/intro.html</loc>"))
+}
+
+///|
+test "collect_page_meta reads frontmatter fields" {
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  assert_eq(metas.length(), 2)
+  let intro = metas[0]
+  assert_eq(intro.title, "Intro")
+  assert_eq(intro.location, "/intro.html")
+  assert_eq(intro.description, Some("An introduction"))
+  assert_eq(intro.keywords, Some("intro, welcome"))
+  assert_eq(intro.authors, Some("Alice, Bob"))
+  assert_eq(intro.language, Some("en"))
+  assert_eq(intro.date, Some("2026-10-01"))
+}
+
+///|
+test "collect_page_meta leaves absent fields as None" {
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  let guide = metas[1]
+  assert_eq(guide.description, None)
+  assert_eq(guide.keywords, None)
+  assert_eq(guide.authors, None)
+  assert_eq(guide.language, None)
+  assert_eq(guide.date, None)
+}

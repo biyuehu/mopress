@@ -563,3 +563,203 @@ pub fn Summary::prev_next(
       )
   }
 }
+
+// @block page-meta
+
+///|
+/// Per-page metadata collected from a `Summary` plus each source file's
+/// frontmatter, used for feed and sitemap generation.
+///
+/// Every frontmatter field is optional: missing values are either omitted
+/// from the generated output or fall back to site-level config. The
+/// recognized fields are `description`, `keywords`, `authors`, `language`
+/// and `date`; `title` is taken from the summary link's own title.
+pub(all) struct PageMeta {
+  title : String
+  location : String
+  description : String?
+  keywords : String?
+  authors : String?
+  language : String?
+  date : String?
+} derive(Eq, Debug)
+
+///|
+pub extend PageMeta with Eq::{not_equal, equal}
+
+///|
+pub extend PageMeta with @debug.Debug::{to_repr}
+// @end
+
+///|
+/// Collects per-page metadata for every link reachable from this summary,
+/// reading each article's source file under `src` to extract frontmatter
+/// fields.
+///
+/// Raises if any referenced source file cannot be read.
+pub fn Summary::collect_page_meta(
+  self : Summary,
+  src : String,
+) -> Array[PageMeta] raise {
+  let metas : Array[PageMeta] = []
+  fn collect(items : Array[SummaryItem]) -> Unit raise {
+    for item in items {
+      match item {
+        SummaryItem::Link(link) => {
+          let path = @path.Path(src).join(link.source) |> Show::to_string
+          let raw = @fs.read_file_to_string(path)
+          let (fm, _) = @core.separate_frontmatter(
+              @core.Item::new(raw, link.source),
+            ).data
+          metas.push({
+            title: link.title,
+            location: link.location,
+            description: fm.get("description"),
+            keywords: fm.get("keywords"),
+            authors: fm.get("authors"),
+            language: fm.get("language"),
+            date: fm.get("date"),
+          })
+          collect(link.nested_items)
+        }
+        _ => ()
+      }
+    }
+  }
+  collect(
+    [..self.prefix_chapters, ..self.numbered_chapters, ..self.suffix_chapters],
+  )
+  metas
+}
+
+///|
+fn xml_escape(s : String) -> String {
+  let out = StringBuilder()
+  for ch in s {
+    match ch {
+      '&' => out.write_string("&amp;")
+      '<' => out.write_string("&lt;")
+      '>' => out.write_string("&gt;")
+      '"' => out.write_string("&quot;")
+      '\'' => out.write_string("&apos;")
+      _ => out.write_char(ch)
+    }
+  }
+  out.to_string()
+}
+
+///|
+/// Converts a `YYYY/MM/DD HH:MM:SS` timestamp into RFC 3339 by
+/// substituting separators and appending `Z`.
+fn to_rfc3339(build_time : String) -> String {
+  build_time.replace_all(old="/", new="-").replace_all(old=" ", new="T") + "Z"
+}
+
+///|
+/// Renders an Atom feed for the given pages.
+///
+/// Returns an empty string when `config.site_url` is unset, since Atom
+/// requires absolute entry URLs and the site has no way to construct them.
+///
+/// `build_time` (a `YYYY/MM/DD HH:MM:SS` string) is used as the feed-level
+/// `<updated>` timestamp and as the fallback for entries whose source file
+/// has no `date` frontmatter field.
+pub fn generate_feed_xml(
+  config : @config.BookConfig,
+  metas : Array[PageMeta],
+  build_time : String,
+) -> String {
+  guard config.site_url is Some(site_url) else { "" }
+  let ts = to_rfc3339(build_time)
+  let author = if config.authors.length() > 0 { config.authors[0] } else { "" }
+  let out = StringBuilder()
+  out.write_string("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+  out.write_string("<feed xmlns=\"http://www.w3.org/2005/Atom\">\n")
+  out.write_string("  <title>\{xml_escape(config.title)}</title>\n")
+  out.write_string("  <id>\{xml_escape(site_url)}</id>\n")
+  out.write_string("  <link href=\"\{xml_escape(site_url)}\"/>\n")
+  out.write_string("  <updated>\{ts}</updated>\n")
+  if author != "" {
+    out.write_string("  <author><name>\{xml_escape(author)}</name></author>\n")
+  }
+  let limit = if config.feed_limit > metas.length() {
+    metas.length()
+  } else {
+    config.feed_limit
+  }
+  for i = 0; i < limit; i = i + 1 {
+    let m = metas[i]
+    let url = site_url + m.location
+    out.write_string("  <entry")
+    match m.language {
+      Some(lang) => out.write_string(" xml:lang=\"\{xml_escape(lang)}\"")
+      None => ()
+    }
+    out.write_string(">\n")
+    out.write_string("    <title>\{xml_escape(m.title)}</title>\n")
+    out.write_string("    <id>\{xml_escape(url)}</id>\n")
+    out.write_string("    <link href=\"\{xml_escape(url)}\"/>\n")
+    out.write_string("    <updated>\{m.date.unwrap_or(ts)}</updated>\n")
+    let entry_authors : Array[String] = match m.authors {
+      Some(a) => a.split(",").map(s => s.trim().to_owned()).to_array()
+      None => config.authors
+    }
+    for a in entry_authors {
+      if a != "" {
+        out.write_string("    <author><name>\{xml_escape(a)}</name></author>\n")
+      }
+    }
+    match m.description {
+      Some(d) => out.write_string("    <summary>\{xml_escape(d)}</summary>\n")
+      None => ()
+    }
+    match m.keywords {
+      Some(k) =>
+        for kw in k.split(",") {
+          let t = kw.trim().to_owned()
+          if t != "" {
+            out.write_string("    <category term=\"\{xml_escape(t)}\"/>\n")
+          }
+        }
+      None => ()
+    }
+    out.write_string("  </entry>\n")
+  }
+  out.write_string("</feed>\n")
+  out.to_string()
+}
+
+///|
+/// Renders a sitemap for the given pages, using absolute URLs when
+/// `config.site_url` is set and `base_url`-relative URLs otherwise.
+pub fn generate_sitemap_xml(
+  config : @config.BookConfig,
+  metas : Array[PageMeta],
+) -> String {
+  let out = StringBuilder()
+  out.write_string("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+  out.write_string(
+    "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n",
+  )
+  for m in metas {
+    let url = match config.site_url {
+      Some(s) => s + m.location
+      None =>
+        if config.base_url.has_suffix("/") {
+          Show::to_string(config.base_url[0:config.base_url.length() - 1]) +
+          m.location
+        } else {
+          config.base_url + m.location
+        }
+    }
+    out.write_string("  <url>\n")
+    out.write_string("    <loc>\{xml_escape(url)}</loc>\n")
+    match m.date {
+      Some(d) => out.write_string("    <lastmod>\{xml_escape(d)}</lastmod>\n")
+      None => ()
+    }
+    out.write_string("  </url>\n")
+  }
+  out.write_string("</urlset>\n")
+  out.to_string()
+}

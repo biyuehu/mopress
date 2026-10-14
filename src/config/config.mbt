@@ -39,6 +39,17 @@ pub(all) struct BookConfig {
   /// links and assets. This is typically the site's domain name, defaulting
   /// to `/`.
   base_url : String
+  /// Absolute site URL including scheme and host (e.g.
+  /// `https://example.com`), used by feed generation. Feed entries require
+  /// absolute URLs, so this is distinct from `base_url` (which is a path
+  /// prefix). When absent, feed generation is skipped.
+  site_url : String?
+  /// Whether to generate `feed.xml`. Only effective when `site_url` is set.
+  feed_enabled : Bool
+  /// Maximum number of entries in `feed.xml`.
+  feed_limit : Int
+  /// Whether to generate `sitemap.xml`.
+  sitemap_enabled : Bool
   /// Feature toggles controlling optional built-in behavior such as
   /// syntax highlighting and MathJax support.
   features : FeaturesConfig
@@ -217,6 +228,13 @@ pub fn BookConfig::to_toml(self : BookConfig) -> String {
     Some(r) => b.write_string("repository = \{toml_string(r)}\n")
     None => ()
   }
+  match self.site_url {
+    Some(u) => b.write_string("site_url = \{toml_string(u)}\n")
+    None => ()
+  }
+  b.write_string("feed_enabled = \{self.feed_enabled}\n")
+  b.write_string("feed_limit = \{self.feed_limit}\n")
+  b.write_string("sitemap_enabled = \{self.sitemap_enabled}\n")
   b.write_string("\n[features]\n")
   b.write_string("highlight-enabled = \{self.features.highlight_enabled}\n")
   b.write_string(
@@ -289,6 +307,14 @@ pub fn BookConfig::parse(
     src: read_string(root, "src", default.src),
     dest: read_string(root, "dest", default.dest),
     base_url: read_string(root, "base_url", default.base_url),
+    site_url: read_optional_string(root, "site_url"),
+    feed_enabled: read_bool_or(root, "feed_enabled", default.feed_enabled),
+    feed_limit: read_int_or(root, "feed_limit", default.feed_limit),
+    sitemap_enabled: read_bool_or(
+      root,
+      "sitemap_enabled",
+      default.sitemap_enabled,
+    ),
     features: {
       highlight_enabled: read_bool(features, "highlight-enabled"),
       highlight_theme: read_string(
@@ -329,6 +355,10 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     src: "./",
     dest: "./dest",
     base_url: "/",
+    site_url: None,
+    feed_enabled: true,
+    feed_limit: 20,
+    sitemap_enabled: true,
     features: FeaturesConfig::default(),
     extensions: ExtensionsConfig::default(),
   }
@@ -447,6 +477,32 @@ fn read_string_nonempty(
         s
       }
     None => raise ConfigParseError("Missing required string `\{key}`")
+  }
+}
+
+///|
+fn read_bool_or(
+  table : Map[String, @toml.TomlValue],
+  key : String,
+  default : Bool,
+) -> Bool raise ConfigParseError {
+  match table.get(key) {
+    Some(@toml.TomlBoolean(b)) => b
+    Some(_) => raise ConfigParseError("`\{key}` must be a boolean")
+    None => default
+  }
+}
+
+///|
+fn read_int_or(
+  table : Map[String, @toml.TomlValue],
+  key : String,
+  default : Int,
+) -> Int raise ConfigParseError {
+  match table.get(key) {
+    Some(@toml.TomlInteger(i)) => i.to_int()
+    Some(_) => raise ConfigParseError("`\{key}` must be an integer")
+    None => default
   }
 }
 

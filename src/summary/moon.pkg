@@ -1,5 +1,7 @@
 import {
   "himeno/mopress/markdown",
+  "himeno/mopress/config",
+  "himeno/mopress/core",
   "moonbitlang/core/debug",
   "moonbitlang/x/path",
   "moonbitlang/x/fs",

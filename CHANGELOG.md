@@ -21,6 +21,7 @@
 
 - Fix API name and field inconsistencies ([ab45dee](https://github.com/biyuehu/mbdoc/commit/ab45dee))
 - Update TODO with new roadmap items and test gaps ([c4dae14](https://github.com/biyuehu/mbdoc/commit/c4dae14))
+- Fix TODO.md corruption ([c1362ae](https://github.com/biyuehu/mbdoc/commit/c1362ae))
 
 ### 🏡 Chore
 
