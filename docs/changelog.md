@@ -8,11 +8,16 @@ title: Changelog
 
 [compare changes](https://github.com/biyuehu/mbdoc/compare/v4.0.0...main)
 
+### 🚀 Enhancements
+
+- Add explain and --no-emit for build rules ([44dac1e](https://github.com/biyuehu/mbdoc/commit/44dac1e))
+
 ### 🩹 Fixes
 
 - Resolve warnings and migrate toml dependency ([2c6fac6](https://github.com/biyuehu/mbdoc/commit/2c6fac6))
 - Compute relative path correctly when scanning assets for glob matching ([6102682](https://github.com/biyuehu/mbdoc/commit/6102682))
 - Correct plugins directory names in init ([5fc543c](https://github.com/biyuehu/mbdoc/commit/5fc543c))
+- Serialize lefthook pre-commit commands and stage test output ([ca4c45a](https://github.com/biyuehu/mbdoc/commit/ca4c45a))
 
 ### 📖 Documentation
 
@@ -28,6 +33,6 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi <biyuehuya@gmail.com>
+- Romi ([@biyuehu](https://github.com/biyuehu))
 
 

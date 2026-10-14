@@ -1,4 +1,5 @@
 pre-commit:
+  parallel: false
   commands:
     logen:
       run: just logen

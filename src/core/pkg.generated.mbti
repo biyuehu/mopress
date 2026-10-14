@@ -14,6 +14,10 @@ pub fn apply_template(Item[String], Array[@template.TemplateNode]) -> Item[Strin
 
 pub fn apply_template_strict(Item[String], Array[@template.TemplateNode]) -> Item[String] raise
 
+pub fn compute_explain_report(Options, Array[Rule]) -> ExplainReport raise @fs.IOError
+
+pub fn explain(Options, Array[Rule]) -> Unit raise @fs.IOError
+
 pub fn[T : Show] extract_markdown(Item[T]) -> Item[(Map[String, String], String)]
 
 pub fn import_css(Item[String], Array[String]) -> Item[String]
@@ -26,7 +30,7 @@ pub fn inject_head(Item[String], String) -> Item[String]
 
 pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
 
-pub async fn mo_build(Options, Array[Rule]) -> Unit
+pub async fn mo_build(Options, Array[Rule], no_emit? : Bool) -> Unit
 
 pub async fn mo_serve(Options) -> Unit
 
@@ -61,6 +65,16 @@ pub fn use_transformer(Item[Array[@markdown.Block]], Array[(Item[Array[@markdown
 // Errors
 
 // Types and methods
+pub(all) struct ExplainReport {
+  src : String
+  rules : Array[RuleMatch]
+  unmatched : Array[String]
+  conflicts : Array[(String, Array[Int])]
+} derive(Eq, @debug.Debug)
+pub fn ExplainReport::equal(Self, Self) -> Bool
+pub fn ExplainReport::not_equal(Self, Self) -> Bool
+pub fn ExplainReport::to_repr(Self) -> @debug.Repr
+
 pub(all) enum Handler {
   Text(async (Item[String]) -> Item[Thing])
   Binary(async (Item[Bytes]) -> Item[Thing])
@@ -104,7 +118,21 @@ pub(all) enum Rule {
 } derive(@debug.Debug)
 pub fn Rule::check(Self, String) -> Bool
 pub fn Rule::handler(Self) -> Handler
+pub fn Rule::handler_kind(Self) -> String
+pub fn Rule::match_paths(Self, String) -> (Array[String], Array[String]) raise @fs.IOError
+pub fn Rule::pattern(Self) -> String
 pub fn Rule::to_repr(Self) -> @debug.Repr
+
+pub(all) struct RuleMatch {
+  index : Int
+  pattern : String
+  handler_kind : String
+  matched : Array[String]
+  rejected : Array[String]
+} derive(Eq, @debug.Debug)
+pub fn RuleMatch::equal(Self, Self) -> Bool
+pub fn RuleMatch::not_equal(Self, Self) -> Bool
+pub fn RuleMatch::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Thing {
   Doc(String)
