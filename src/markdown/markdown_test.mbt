@@ -322,3 +322,31 @@ test "block json round trip" {
   let back : @markdown.Block = @json.from_json(block.to_json())
   assert_true(back == block)
 }
+
+///|
+test "html block terminates at blank line" {
+  @debug.assert_eq(@markdown.parse_markdown("<div>\nx\n\n<div>y</div>"), [
+    @markdown.HtmlBlock("<div>\nx"),
+    @markdown.HtmlBlock("<div>y</div>"),
+  ])
+}
+
+///|
+test "html block single line" {
+  @debug.assert_eq(@markdown.parse_markdown("<hr>"), [
+    @markdown.HtmlBlock("<hr>"),
+  ])
+}
+
+///|
+/// HTML block only ends at a blank line (CommonMark type 6). Without a
+/// blank line, subsequent lines are absorbed into the same block.
+test "html block absorbs following non-blank lines" {
+  @debug.assert_eq(@markdown.parse_markdown("<div>x</div>\ntext"), [
+    @markdown.HtmlBlock("<div>x</div>\ntext"),
+  ])
+  @debug.assert_eq(@markdown.parse_markdown("<div>x</div>\n\ntext"), [
+    @markdown.HtmlBlock("<div>x</div>"),
+    @markdown.Paragraph([@markdown.Text("text")]),
+  ])
+}

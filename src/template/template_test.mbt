@@ -402,3 +402,34 @@ test "value from json" {
     }),
   )
 }
+
+///|
+test "partial path with subdirectories" {
+  guard @template.parse_template("$partial(\"a/b/c.html\")$")
+    is [@template.Partial("a/b/c.html")] else {
+    fail("expected partial with nested path")
+  }
+}
+
+///|
+test "partial path with parent reference" {
+  guard @template.parse_template("$partial(\"../x.html\")$")
+    is [@template.Partial("../x.html")] else {
+    fail("expected partial with parent path")
+  }
+}
+
+///|
+test "partial empty path is accepted at parse time" {
+  guard @template.parse_template("$partial(\"\")$") is [@template.Partial("")] else {
+    fail("expected empty partial path")
+  }
+}
+
+///|
+test "partial path is taken literally, not resolved" {
+  guard @template.parse_template("$partial(\"./a/../b.html\")$")
+    is [@template.Partial("./a/../b.html")] else {
+    fail("expected literal partial path")
+  }
+}

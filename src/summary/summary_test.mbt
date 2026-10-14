@@ -386,3 +386,101 @@ test "parse_summary normalizes backslash and dot paths" {
   assert_eq(link.location, "/dir/p.html")
   assert_eq(link.source, "./dir/p.md")
 }
+
+///|
+let index_fixture : String = "src/summary/testdata"
+
+///|
+fn index_summary() -> @summary.Summary {
+  {
+    title: "S",
+    prefix_chapters: [
+      @summary.SummaryItem::Link({
+        title: "Intro",
+        location: "/intro.html",
+        source: "intro.md",
+        nested_items: [],
+      }),
+    ],
+    numbered_chapters: [
+      @summary.SummaryItem::Link({
+        title: "Chapter 1",
+        location: "/ch1.html",
+        source: "ch1.md",
+        nested_items: [
+          @summary.SummaryItem::Link({
+            title: "Sub",
+            location: "/sub.html",
+            source: "sub.md",
+            nested_items: [],
+          }),
+        ],
+      }),
+    ],
+    suffix_chapters: [
+      @summary.SummaryItem::Link({
+        title: "Appendix",
+        location: "/appendix.html",
+        source: "appendix.md",
+        nested_items: [],
+      }),
+    ],
+  }
+}
+
+///|
+test "index_articles collects prefix numbered nested and suffix" {
+  let articles = index_summary().index_articles(index_fixture)
+  assert_eq(articles.length(), 4)
+  @debug.assert_eq(articles[0].title, "Intro")
+  @debug.assert_eq(articles[0].location, "/intro.html")
+  @debug.assert_eq(articles[1].title, "Chapter 1")
+  @debug.assert_eq(articles[2].title, "Sub")
+  @debug.assert_eq(articles[3].title, "Appendix")
+}
+
+///|
+test "index_articles content is markdown-stripped" {
+  let articles = index_summary().index_articles(index_fixture)
+  // Paragraph breaks collapse to two spaces (matching `md_to_plain`'s
+  // existing behavior, as asserted by the `md_to_plain strips markup`
+  // test above).
+  assert_eq(articles[0].content, "intro  hello world.")
+  assert_eq(articles[1].content, "chapter 1  some code here.")
+  assert_eq(articles[2].content, "sub  nested content.")
+}
+
+///|
+test "index_articles empty summary returns empty" {
+  let s : @summary.Summary = {
+    title: "",
+    prefix_chapters: [],
+    numbered_chapters: [],
+    suffix_chapters: [],
+  }
+  assert_eq(s.index_articles(index_fixture).length(), 0)
+}
+
+///|
+test "index_articles raises on missing source file" {
+  let s : @summary.Summary = {
+    title: "",
+    prefix_chapters: [
+      @summary.SummaryItem::Link({
+        title: "Ghost",
+        location: "/ghost.html",
+        source: "does-not-exist.md",
+        nested_items: [],
+      }),
+    ],
+    numbered_chapters: [],
+    suffix_chapters: [],
+  }
+  let raised = try {
+    let _ = s.index_articles(index_fixture)
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(raised)
+}

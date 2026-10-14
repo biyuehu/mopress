@@ -364,6 +364,9 @@ fn extract_root_link_items(
 /// all Markdown/HTML markup), e.g. for use in generating search indexes
 /// or previews from summary/article content.
 pub fn md_to_plain(input : String) -> String {
+  let input = input
+    .replace_all(old="\r\n", new="\n")
+    .replace_all(old="\r", new="\n")
   let out = StringBuilder()
   let mut i = 0
   while i < input.length() {

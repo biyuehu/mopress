@@ -69,3 +69,26 @@ test "compute_explain_report: conflicting rules reported" {
   assert_true(path.has_suffix("a.md"))
   assert_eq(idxs, [0, 1])
 }
+
+///|
+async test "mo_build with no_emit writes nothing" {
+  // Destination lives under `_build/`, which is gitignored, so tests do
+  // not have to clean up after themselves.
+  let dest = "_build/test_no_emit_out"
+  let rules : @core.Rules = [@core.Glob("*.md", @core.Copy)]
+  @core.mo_build(
+    { src: "src/core/testdata/explain", dest, },
+    rules,
+    no_emit=true,
+  )
+  assert_false(@fs.path_exists(dest))
+}
+
+///|
+async test "mo_build without no_emit writes files" {
+  let dest = "_build/test_emit_out"
+  let rules : @core.Rules = [@core.Glob("*.md", @core.Copy)]
+  @core.mo_build({ src: "src/core/testdata/explain", dest, }, rules)
+  assert_true(@fs.path_exists(dest))
+  assert_true(@fs.path_exists(@path.Path(dest).join("a.md").to_string()))
+}
