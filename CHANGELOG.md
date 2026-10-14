@@ -24,6 +24,7 @@
 ### 🏡 Chore
 
 - Add development roadmap to TODO ([11c3d56](https://github.com/biyuehu/mbdoc/commit/11c3d56))
+- Stage generated artifacts via lefthook fallback ([cd0f775](https://github.com/biyuehu/mbdoc/commit/cd0f775))
 
 ### ✅ Tests
 
