@@ -12,6 +12,7 @@ title: Changelog
 
 - Resolve warnings and migrate toml dependency ([2c6fac6](https://github.com/biyuehu/mbdoc/commit/2c6fac6))
 - Compute relative path correctly when scanning assets for glob matching ([6102682](https://github.com/biyuehu/mbdoc/commit/6102682))
+- Correct plugins directory names in init ([5fc543c](https://github.com/biyuehu/mbdoc/commit/5fc543c))
 
 ### 📖 Documentation
 
@@ -21,8 +22,12 @@ title: Changelog
 
 - Add development roadmap to TODO ([11c3d56](https://github.com/biyuehu/mbdoc/commit/11c3d56))
 
+### ✅ Tests
+
+- Expand and strengthen unit test coverage ([8ea105f](https://github.com/biyuehu/mbdoc/commit/8ea105f))
+
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 
 

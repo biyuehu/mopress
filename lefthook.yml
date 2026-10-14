@@ -14,3 +14,4 @@ pre-commit:
       stage_fixed: true
     test:
       run: moon test
+      stage_fixed: true
