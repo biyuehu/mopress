@@ -14,16 +14,27 @@ fn tokenize(pattern : String) -> Array[GlobToken] {
   let mut i = 0
   while i < len {
     if chars[i] == '*' {
-      if i + 1 < len && chars[i + 1] == '*' {
+      // Count the run of consecutive `*`.
+      let mut n = 1
+      while i + n < len && chars[i + n] == '*' {
+        n = n + 1
+      }
+      // A `**` is a cross-segment wildcard only when it forms its own
+      // path segment: preceded by the start of the pattern or `/`, and
+      // followed by the end of the pattern or `/`. Otherwise, the run of
+      // stars degrades to a single-segment `*`.
+      let at_start = i == 0 || chars[i - 1] == '/'
+      let at_end = i + n >= len || chars[i + n] == '/'
+      if n >= 2 && at_start && at_end {
         tokens.push(DoubleStar)
-        i = i + 2
-        // skip trailing slash after **
+        i = i + n
+        // Skip the trailing slash, so `**/` behaves like `**`.
         if i < len && chars[i] == '/' {
           i = i + 1
         }
       } else {
         tokens.push(Star)
-        i = i + 1
+        i = i + n
       }
     } else if chars[i] == '?' {
       tokens.push(Question)
@@ -178,9 +189,7 @@ fn scan_recursive(
   for entry in @fs.read_dir(current) {
     let full_path = (current |> @path.Path).join(entry).to_string()
     if @fs.is_dir(full_path) {
-      if @fs.path_exists(full_path + @path.sep.to_string()) {
-        scan_recursive(base, full_path, pattern, results)
-      }
+      scan_recursive(base, full_path, pattern, results)
     } else if glob_match(
         pattern,
         Show::to_string(@path.Path(full_path).relative(base=@path.Path(base))),
