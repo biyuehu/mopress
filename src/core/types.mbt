@@ -71,6 +71,110 @@ pub fn Rule::handler(self : Rule) -> Handler {
 }
 
 ///|
+/// Returns this rule's glob pattern.
+pub fn Rule::pattern(self : Rule) -> String {
+  match self {
+    Glob(pattern, _) => pattern
+    Guard(pattern, _, _) => pattern
+  }
+}
+
+///|
+/// Returns a short string naming this rule's handler kind, e.g. `"Text"`,
+/// `"Binary"`, or `"Copy"`, for display in diagnostics such as `explain`.
+pub fn Rule::handler_kind(self : Rule) -> String {
+  match self.handler() {
+    Text(_) => "Text"
+    Binary(_) => "Binary"
+    Copy => "Copy"
+  }
+}
+
+///|
+/// Matches this rule against files under `src`, returning a pair of
+/// `(matched, rejected)` paths.
+///
+/// `rejected` is non-empty only for `Guard` rules: those files matched the
+/// glob pattern but were rejected by the predicate. For `Glob` rules,
+/// `rejected` is always empty.
+///
+/// This is the single matching entry point shared by `mo_build` and
+/// `explain`, so that `explain` never diverges from what a build would
+/// actually do.
+pub fn Rule::match_paths(
+  self : Rule,
+  src : String,
+) -> (Array[String], Array[String]) raise @fs.IOError {
+  match self {
+    Glob(glob, _) => (@glob.scan_files(src, glob), [])
+    Guard(glob, f, _) => {
+      let candidates = @glob.scan_files(src, glob)
+      let matched : Array[String] = []
+      let rejected : Array[String] = []
+      for path in candidates {
+        if f(path) {
+          matched.push(path)
+        } else {
+          rejected.push(path)
+        }
+      }
+      (matched, rejected)
+    }
+  }
+}
+
+// @block explain-report
+
+///|
+/// How a single rule matched against a source directory, as produced by
+/// `compute_explain_report`.
+pub(all) struct RuleMatch {
+  /// The rule's index within the `Rules` array it came from.
+  index : Int
+  /// The rule's glob pattern.
+  pattern : String
+  /// The rule's handler kind, e.g. `"Text"`, `"Binary"`, or `"Copy"`.
+  handler_kind : String
+  /// Files matched by this rule.
+  matched : Array[String]
+  /// Files that matched the rule's glob pattern but were rejected by its
+  /// predicate. Always empty for `Glob` rules; non-empty only for `Guard`
+  /// rules.
+  rejected : Array[String]
+} derive(Eq, Debug)
+
+///|
+pub extend RuleMatch with Eq::{not_equal, equal}
+
+///|
+pub extend RuleMatch with @debug.Debug::{to_repr}
+
+///|
+/// A full report of how a set of `Rules` matches against a source
+/// directory, as produced by `compute_explain_report`.
+pub(all) struct ExplainReport {
+  /// The source directory the rules were matched against.
+  src : String
+  /// One entry per rule, in the same order as the input `Rules`.
+  rules : Array[RuleMatch]
+  /// Files under `src` matched by no rule at all.
+  unmatched : Array[String]
+  /// Files matched by more than one rule; each entry pairs the file path
+  /// with the list of rule indices that matched it. A non-empty
+  /// `conflicts` list means a build would process those files more than
+  /// once.
+  conflicts : Array[(String, Array[Int])]
+} derive(Eq, Debug)
+
+///|
+pub extend ExplainReport with Eq::{not_equal, equal}
+
+///|
+pub extend ExplainReport with @debug.Debug::{to_repr}
+
+// @end
+
+///|
 /// The core unit of data flowing through a mopress build pipeline.
 ///
 /// An `Item[T]` carries a piece of data of type `T` (e.g. raw text,

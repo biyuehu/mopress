@@ -120,19 +120,28 @@ fn handle_help() -> Unit {
       #|Usage: mopress <command>
       #|
       #|Commands:
-      #|  build    Build the site
-      #|  init     Initialize a new book-mode project
-      #|  new       Create a new site-mode project
-      #|  serve    Serve the site locally
-      #|  version  Print the version number
-      #|  help     Print this help message
+      #|  build              Build the site
+      #|  build --no-emit    Build without writing files to disk
+      #|  explain            Print which files each rule matches
+      #|  init               Initialize a new book-mode project
+      #|  new                Create a new site-mode project
+      #|  serve              Serve the site locally
+      #|  version            Print the version number
+      #|  help               Print this help message
     ),
   )
 }
 
 ///|
-async fn handle_build() -> Unit {
-  load_config() |> build_book
+async fn handle_build(no_emit? : Bool = false) -> Unit {
+  let config = load_config()
+  build_book(config, no_emit~)
+}
+
+///|
+fn handle_explain() -> Unit raise {
+  let config = load_config()
+  explain_book(config)
 }
 
 ///|
@@ -162,8 +171,9 @@ async fn command_handler() -> Unit {
         @c.chalk().modifier(Bold).color(Red).render("Usage: mopress new <dir>")
         |> println
       }
-    "build" => handle_build()
+    "build" => handle_build(no_emit=args.length() > 2 && args[2] == "--no-emit")
     "serve" => handle_serve()
+    "explain" => handle_explain()
     "version" => handle_version()
     _ => handle_help()
   }
@@ -286,7 +296,69 @@ pub async fn process_markdown_page(
 /// surface as raised errors from the underlying steps (config loading,
 /// file I/O, markdown processing, or templating) rather than through a
 /// return value.
-pub async fn build_book(config : @config.BookConfig) -> Unit {
+
+///|
+/// Builds the set of rules used by Book-mode builds. Extracted so that both
+/// `build_book` and `explain_book` share the exact same rule set — the
+/// `explain` report therefore never diverges from what a build would do.
+fn build_book_rules(
+  config : @config.BookConfig,
+  summary : @summary.Summary,
+  not_found_page : @core.Item[@core.Thing],
+) -> @core.Rules {
+  [
+    Glob(
+      "SUMMARY.md",
+      Text(raw => {
+        raw
+        |> @core.set_extension(".json")
+        |> x => {
+          x.map_with_raise(_ => {
+            @core.Multiple([
+              (
+                "index.json",
+                summary.index_articles(config.src).to_json().stringify()
+                |> @core.Doc,
+              ),
+              ("404.html", not_found_page.data),
+            ])
+          })
+        }
+      }),
+    ),
+    Glob("**/*.md", Text(raw => raw |> process_markdown_page(config, summary))),
+    Glob(
+      "**/*.markdown",
+      Text(raw => raw |> process_markdown_page(config, summary)),
+    ),
+    ..config.extensions.assets.map(glob => @core.Glob(glob, Copy)),
+  ]
+}
+
+///|
+/// Prints a report of how Book-mode rules match against files under
+/// `config.src`, without building anything. The set of rules reported is
+/// exactly what `build_book` would use.
+pub fn explain_book(config : @config.BookConfig) -> Unit raise {
+  println("Parsing SUMMARY.md")
+  let summary = @fs.read_file_to_string(
+      @path.Path(config.src).join("SUMMARY.md").to_string(),
+    )
+    |> @markdown.parse_markdown
+    |> @summary.parse_summary()
+
+  let stub = @core.Item::new(@core.Empty, "404.html")
+  @core.explain(
+    { src: config.src, dest: config.dest, },
+    build_book_rules(config, summary, stub),
+  )
+}
+
+///|
+pub async fn build_book(
+  config : @config.BookConfig,
+  no_emit? : Bool = false,
+) -> Unit {
   println("Parsing SUMMARY.md")
   let summary = @fs.read_file_to_string(
       @path.Path(config.src).join("SUMMARY.md").to_string(),
@@ -302,35 +374,7 @@ pub async fn build_book(config : @config.BookConfig) -> Unit {
 
   @core.mo_build(
     { src: config.src, dest: config.dest, },
-    [
-      Glob(
-        "SUMMARY.md",
-        Text(raw => {
-          raw
-          |> @core.set_extension(".json")
-          |> x => {
-            x.map_with_raise(_ => {
-              @core.Multiple([
-                (
-                  "index.json",
-                  summary.index_articles(config.src).to_json().stringify()
-                  |> @core.Doc,
-                ),
-                ("404.html", not_found_page.data),
-              ])
-            })
-          }
-        }),
-      ),
-      Glob(
-        "**/*.md",
-        Text(raw => raw |> process_markdown_page(config, summary)),
-      ),
-      Glob(
-        "**/*.markdown",
-        Text(raw => raw |> process_markdown_page(config, summary)),
-      ),
-      ..config.extensions.assets.map(glob => @core.Glob(glob, Copy)),
-    ],
+    build_book_rules(config, summary, not_found_page),
+    no_emit~,
   )
 }
