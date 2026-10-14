@@ -32,6 +32,7 @@
 
 - Expand and strengthen unit test coverage ([8ea105f](https://github.com/biyuehu/mbdoc/commit/8ea105f))
 - **glob:** Cover tokenizer, scanner, and wildcard edge cases ([609b97b](https://github.com/biyuehu/mbdoc/commit/609b97b))
+- Expand coverage and mark test roadmap items done ([e75f926](https://github.com/biyuehu/mbdoc/commit/e75f926))
 
 ### ❤️ Contributors
 
