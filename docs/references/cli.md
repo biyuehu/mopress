@@ -20,7 +20,8 @@ mopress <command>
 | --- | --- |
 | `init` | 初始化一个新的 Book 模式项目 |
 | `new` | 创建一个新的 Site 模式项目 |
-| `build` | 构建站点 |
+| `build` | 构建站点（支持 `--no-emit` 空运行） |
+| `explain` | 打印规则匹配报告与预估输出列表（Dry-run） |
 | `serve` | 在本地启动开发服务器预览站点 |
 | `version` | 打印版本信息 |
 | `help` | 打印帮助信息 |
@@ -46,10 +47,20 @@ mopress new <dir>
 ## mopress build
 
 ```bash
-mopress build
+mopress build [--no-emit]
 ```
 
-读取当前目录下的配置文件，解析后交给 `run` 执行完整的 Book 模式构建流程：解析导航结构、生成 404 页面、渲染所有 Markdown 内容并应用模板，最终将结果写入配置中指定的输出目录。构建过程中的任何失败都会中止整个构建。
+读取当前目录下的配置文件，执行完整的 Book 模式构建流程：解析导航结构、生成 404 页面、渲染所有 Markdown 内容并应用模板，最终将结果写入配置中指定的输出目录。构建过程中的任何失败都会中止整个构建。
+
+若附加 `--no-emit` 参数，则会在内存中执行完整的构建与转换流程，但**不会将任何文件写入磁盘**，常用于 CI 测试和预检构建正确性。
+
+## mopress explain
+
+```bash
+mopress explain
+```
+
+分析当前配置与文件匹配规则，打印出哪些文件会被哪些规则匹配、以及预估会输出的文件清单，不会执行实际写文件操作。
 
 ## mopress serve
 
@@ -65,7 +76,7 @@ mopress serve
 mopress version
 ```
 
-打印当前版本号。
+打印当前版本号与构建时间。
 
 ## mopress help
 
@@ -73,14 +84,15 @@ mopress version
 mopress help
 ```
 
-打印用法说明与四个命令的简要描述。不带任何参数运行 `mopress`，或者传入一个无法识别的命令，都会得到与显式运行 `mopress help` 完全相同的输出。
+打印用法说明与所有命令的简要描述。不带任何参数运行 `mopress`，或者传入一个无法识别的命令，都会得到与显式运行 `mopress help` 完全相同的输出。
 
 ## Site 模式下的命令行
 
-以上命令均针对 `mopress` 这个预置的可执行程序，服务于 Book 模式。Site 模式下并不存在与之对应的固定命令集，构建脚本是一份独立的 MoonBit 程序，通过如下方式运行：
+以上命令均针对 `mopress` 这个预置的可执行程序，服务于 Book 模式。Site 模式下构建脚本是一份独立的 MoonBit 程序，通过如下方式运行：
 
 ```bash
 moon run --target native site.mbtx <args>
 ```
 
-`<args>` 仅支持 `build` 与 `serve` 两个子命令，其中 `serve` 与 `mopress serve` 效果基本一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
+`<args>` 支持 `build`（支持 `build --no-emit`）、`serve` 以及 `explain` 子命令，其行为与 Book 模式对应命令一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
+

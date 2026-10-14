@@ -7,7 +7,7 @@
 - [x] Refer to a local file as code block
 - [ ] MoonBit Playground
 - [x] Bilibili Video Embedding
-- [ ] Plugin list page
+- [x] Plugin list page
 - [ ] Plugin process reuse
 
 ## Book Mode
@@ -30,10 +30,10 @@
 
 ## Docs
 
-- [ ] Fix documentation inconsistencies
-- [ ] Fill in `docs/contributing.md`
-- [ ] Update hardcoded version in `docs/index.html`
-- [ ] Replace placeholder entry in `docs/plugins.json`
+- [x] Fix documentation inconsistencies
+- [x] Fill in `docs/contributing.md`
+- [x] Update hardcoded version in `docs/index.html`
+- [x] Replace placeholder entry in `docs/plugins.json`
 
 ## Tests
 

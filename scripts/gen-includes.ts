@@ -39,3 +39,13 @@ writeFileSync(
 			"\n",
 		)}\n///|\npub let version : String = "${version}"\n\n///|\nlet build_time : String = "${new Date().toLocaleString()}"\n`,
 );
+
+const indexHtmlPath = "docs/index.html";
+const indexHtml = readFileSync(indexHtmlPath, "utf-8");
+const updatedIndexHtml = indexHtml.replace(
+	/(%c\s*MoPress\s*%c)(?:\s+v[^\s`]+)?/g,
+	`$1 v${version}`,
+);
+if (updatedIndexHtml !== indexHtml) {
+	writeFileSync(indexHtmlPath, updatedIndexHtml);
+}

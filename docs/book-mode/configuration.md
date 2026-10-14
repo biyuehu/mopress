@@ -29,8 +29,20 @@ title: 配置
 | `src` | String | 源文件目录，相对于项目根目录 |
 | `dest` | String | 构建输出目录，相对于项目根目录 |
 | `base_url` | String | 基本 URL，用于构建输出的 URL 路径，默认值为 `/` |
+| `site_url` | String? | 站点完整绝对 URL（包含协议与域名，如 `https://example.com`），用于 Feed 与 Sitemap。若未设置则跳过 Feed 生成 |
+| `feed_enabled` | Bool | 是否启用 Atom Feed 生成（输出 `feed.xml`），默认值为 `true`（需设置 `site_url` 生效） |
+| `feed_limit` | Int | Feed 收录的最大条目数，默认值为 `20` |
+| `sitemap_enabled` | Bool | 是否启用站点地图生成（输出 `sitemap.xml`），默认值为 `true` |
 | `[features]` | [FeaturesConfig](https://mooncakes.io/docs/himeno/mopress/config#FeaturesConfig) | 内置功能开关，详见 [功能预设](./features.md) |
 | `[extensions]` | [ExtensionsConfig](https://mooncakes.io/docs/himeno/mopress/config#ExtensionsConfig) | 模板、资源注入与插件相关配置，详见 [扩展配置](./extensions.md) |
+
+## Feed 与 Sitemap 生成
+
+MoPress Book 模式开箱内置了站点地图（Sitemap）与 Atom 订阅源（Feed）生成能力：
+
+- **Feed（`feed.xml`）**：采用标准的 Atom 1.0 格式。构建时会自动收录 `SUMMARY.md` 中索引的全部页面（最多收录 `feed_limit` 篇）。因为 Atom 协议要求条目链接必须为完整绝对路径，**生成 Feed 前必须在顶层配置 `site_url`**；若未指定 `site_url`，则会自动跳过 Feed 生成。
+- **Sitemap（`sitemap.xml`）**：采用标准 Sitemap 0.9 格式，收录 `SUMMARY.md` 中的所有页面。当配置了 `site_url` 时使用绝对 URL，否则自动拼接 `base_url`。
+- **页面元数据识别**：Feed 与 Sitemap 会优先从页面 [Frontmatter 元数据](./frontmatter.md) 中提取 `title`、`description`（摘要）、`keywords`（分类标签，以逗号分隔）、`authors`（作者，逗号分隔）、`date`（更新时间戳）与 `language`（语言标签）。**这些字段均为可选，有则使用、无则优雅忽略**；条目时间戳若未指定 `date` 则统一回退使用站点构建时间，作者若未指定则回退使用全局 `authors`。
 
 ## 注意事项
 

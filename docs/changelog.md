@@ -34,6 +34,7 @@ title: Changelog
 - Stage generated artifacts via lefthook fallback ([cd0f775](https://github.com/biyuehu/mbdoc/commit/cd0f775))
 - Migrate chalk dependency to moonbit-community ([4d5ed82](https://github.com/biyuehu/mbdoc/commit/4d5ed82))
 - Exclude bridge test fixture from linguist stats ([f8658b9](https://github.com/biyuehu/mbdoc/commit/f8658b9))
+- Include generated mbti files in lefthook stage-generated ([35eeeae](https://github.com/biyuehu/mbdoc/commit/35eeeae))
 
 ### ✅ Tests
 
@@ -43,6 +44,6 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi <biyuehuya@gmail.com>
+- Romi ([@biyuehu](https://github.com/biyuehu))
 
 
