@@ -32,6 +32,10 @@ pub(all) struct BookConfig {
   src : String
   dest : String
   base_url : String
+  site_url : String?
+  feed_enabled : Bool
+  feed_limit : Int
+  sitemap_enabled : Bool
   features : FeaturesConfig
   extensions : ExtensionsConfig
 } derive(Eq, ToJson, @debug.Debug)

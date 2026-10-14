@@ -2,11 +2,16 @@
 package "himeno/mopress/summary"
 
 import {
+  "himeno/mopress/config",
   "himeno/mopress/markdown",
   "moonbitlang/core/debug",
 }
 
 // Values
+pub fn generate_feed_xml(@config.BookConfig, Array[PageMeta], String) -> String
+
+pub fn generate_sitemap_xml(@config.BookConfig, Array[PageMeta]) -> String
+
 pub fn md_to_plain(String) -> String
 
 pub fn parse_summary(Array[@markdown.Block]) -> Summary
@@ -24,6 +29,19 @@ pub fn ArticleIndex::not_equal(Self, Self) -> Bool
 pub fn ArticleIndex::to_json(Self) -> Json
 pub fn ArticleIndex::to_repr(Self) -> @debug.Repr
 
+pub(all) struct PageMeta {
+  title : String
+  location : String
+  description : String?
+  keywords : String?
+  authors : String?
+  language : String?
+  date : String?
+} derive(Eq, @debug.Debug)
+pub fn PageMeta::equal(Self, Self) -> Bool
+pub fn PageMeta::not_equal(Self, Self) -> Bool
+pub fn PageMeta::to_repr(Self) -> @debug.Repr
+
 pub(all) struct Summary {
   title : String
   prefix_chapters : Array[SummaryItem]
@@ -31,6 +49,7 @@ pub(all) struct Summary {
   suffix_chapters : Array[SummaryItem]
 } derive(Eq, @debug.Debug)
 pub fn Summary::breadcrumb(Self, String) -> String
+pub fn Summary::collect_page_meta(Self, String) -> Array[PageMeta] raise
 pub fn Summary::equal(Self, Self) -> Bool
 pub fn Summary::flatten(Self, String, String) -> Json
 pub fn Summary::index_articles(Self, String) -> Array[ArticleIndex] raise

@@ -7,6 +7,7 @@
 ### 🚀 Enhancements
 
 - Add explain and --no-emit for build rules ([44dac1e](https://github.com/biyuehu/mbdoc/commit/44dac1e))
+- Add feed and sitemap generation ([2462a1c](https://github.com/biyuehu/mbdoc/commit/2462a1c))
 
 ### 🩹 Fixes
 
@@ -38,6 +39,6 @@
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 
 
