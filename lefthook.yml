@@ -16,3 +16,6 @@ pre-commit:
     test:
       run: moon test
       stage_fixed: true
+    stage-generated:
+      run: git add CHANGELOG.md docs/changelog.md src/includes.mbt
+      stage_fixed: false
