@@ -65,12 +65,26 @@ pub async fn mo_build(
     println("Emitting files from \{options.src} to \{options.dest}")
   }
   for rule in rules {
-    for path in rule.match_paths(options.src).0 {
-      let item = rule.handler().run(options, path)
-      if no_emit {
-        println("  would write: \{item.location()}")
-      } else {
-        item.data.write(options.dest, item.location())
+    let paths = rule.match_paths(options.src).0
+    let mut outputs : Array[String] = []
+    @async.with_task_group(group => {
+      outputs = Array::make(paths.length(), "")
+      for i, path in paths {
+        group.spawn_bg(() => {
+          let item = rule.handler().run(options, path)
+          if no_emit {
+            outputs[i] = item.location()
+          } else {
+            item.data.write(options.dest, item.location())
+          }
+        })
+      }
+    })
+    if no_emit {
+      for loc in outputs {
+        if !loc.is_empty() {
+          println("  would write: \{loc}")
+        }
       }
     }
   }

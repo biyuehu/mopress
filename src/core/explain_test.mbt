@@ -92,3 +92,27 @@ async test "mo_build without no_emit writes files" {
   assert_true(@fs.path_exists(dest))
   assert_true(@fs.path_exists(@path.Path(dest).join("a.md").to_string()))
 }
+
+///|
+async test "mo_build concurrently processes all matched files without missing or corruption" {
+  let dest = "_build/test_concurrent_emit_out"
+  let rules : @core.Rules = [
+    @core.Glob(
+      "*.md",
+      @core.Handler::Text(item => {
+        let modified = item.data + "\n-- processed by concurrent build --"
+        @core.unify(item.map(_ => modified))
+      }),
+    ),
+  ]
+  @core.mo_build({ src: "src/core/testdata/explain", dest, }, rules)
+  assert_true(@fs.path_exists(dest))
+  let a_path = @path.Path(dest).join("a.md").to_string()
+  let b_path = @path.Path(dest).join("b.md").to_string()
+  let skip_path = @path.Path(dest).join("skip.md").to_string()
+  assert_true(@fs.path_exists(a_path))
+  assert_true(@fs.path_exists(b_path))
+  assert_true(@fs.path_exists(skip_path))
+  let a_content = @fs.read_file_to_string(a_path)
+  assert_true(a_content.contains("-- processed by concurrent build --"))
+}

@@ -8,7 +8,7 @@
 - [x] MoonBit Playground
 - [x] Bilibili Video Embedding
 - [x] Plugin list page
-- [ ] Plugin process reuse
+- [x] Plugin process reuse
 
 ## Book Mode
 
