@@ -142,6 +142,17 @@ raw
 
 反过来，如果场景不需要元数据出现在模板变量中，完全可以跳过这一步，`vars` 就不会包含任何元数据内容——这一切都在自己的掌控之中，Book 模式的自动行为只是这套机制的一种预设组合方式，而非唯一的固定行为。
 
+### 加载结构化数据（JSON / TOML）
+
+如果需要在 Site 模式中读取外部的结构化数据（如作者信息、站点配置、菜单列表等），可以使用 `@data.load_data` Step 将指定目录下的 `.json` 与 `.toml` 数据加载为全局变量 `$data.*$`：
+
+```moonbit
+raw
+|> @data.load_data("data")
+|> @core.separate_frontmatter
+// 接下来进行 Markdown 解析与模板渲染，模板中即可通过 $data.authors$ 等访问对应数据
+```
+
 ## 完整的组合示例
 
 Book 模式的 MarkDown 页面渲染函数 [`process_markdown_page`](https://mooncakes.io/docs/himeno/himeno/mopress#process_markdown_page) 就是最好的参考示例：

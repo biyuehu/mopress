@@ -124,7 +124,53 @@ pub fn[T : Show] parse_template(input : T) -> Array[TemplateNode] raise Template
 
 ## 渲染上下文：变量从哪里来
 
-模板渲染时能够访问到的所有变量，来自当前 `Item` 的 `vars`。在 Book 模式下，`vars` 中通常包含站点的基础信息（如 `site_title`、`site_description`）、元数据中声明的字段，以及导航相关信息（如 `breadcrumb`、`prev`、`next`、`section`）。在 Site 模式下，`vars` 的内容完全取决于处理管线中调用了哪些 step，请阅读 [组合 Steps](../site-mode/composing-steps.md) 中关于模板变量的详细说明。
+模板渲染时能够访问到的所有变量，来自当前 `Item` 的 `vars`。在 Book 模式下，`vars` 中通常包含站点的基础信息（如 `site_title`、`site_description`）、元数据中声明的字段、导航相关信息（如 `breadcrumb`、`prev`、`next`、`section`），以及来自 `data_dir`（默认 `data/`）的结构化数据。
+
+### 变量优先级与覆盖规则
+
+在 Book 模式构建中，上下文变量的注入顺序与覆盖优先级为：
+
+$$\text{内置基础变量（site\_* 等）} < \text{结构化数据（\$data.*\$）} < \text{页面 Frontmatter}$$
+
+也就是说，如果某篇 Markdown 文章在 Frontmatter 中显式声明了同名变量（例如 `site_title: "专用标题"`），它会覆盖全局与数据源变量。
+
+### 共享结构化数据（JSON / TOML）
+
+在项目根目录创建 `data/` 目录，放置 `.json` 或 `.toml` 文件，文件内容将自动作为全局变量注入到所有页面的模板中，统一置于 `$data$` 命名空间下：
+
+例如 `data/authors.json`：
+
+```json
+[
+  { "name": "Alice", "url": "https://example.com/alice" },
+  { "name": "Bob", "url": "https://example.com/bob" }
+]
+```
+
+模板中即可直接遍历引用：
+
+```html
+$for(data.authors)$
+  <a href="$item.url$">$item.name$</a>
+$endfor$
+```
+
+又如 `data/settings.toml`：
+
+```toml
+banner_text = "欢迎访问文档站点！"
+show_banner = true
+```
+
+模板中可通过点语法直接访问：
+
+```html
+$if(data.settings.show_banner)$
+  <div class="banner">$data.settings.banner_text$</div>
+$endif$
+```
+
+在 Site 模式下，可以使用 `@data.load_data(item, "data")` Step 将数据目录手动挂载进自定义管线。详细说明请参考 [组合 Steps](../site-mode/composing-steps.md)。
 
 ## 严格模式与宽松模式
 

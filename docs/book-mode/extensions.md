@@ -14,6 +14,7 @@ title: 扩展配置
 | --- | --- | --- |
 | `template` | String | HTML 模板文件路径，所有页面都会套用该模板 |
 | `assets` | Array[String] | Glob 匹配模式，用于指定需要原样复制到输出目录的静态资源 |
+| `data_dir` | String | 结构化数据目录（默认为 `data`），用于将 JSON / TOML 数据自动加载并暴露给模板变量 `$data.*$` |
 | `inject_head` | Array[String] | 注入到每个页面 `<head>` 中的原始 HTML 片段 |
 | `inject_body` | Array[String] | 注入到每个页面 `</body>` 结束前的原始 HTML 片段 |
 | `use_css` | Array[String] | 直接内联的 CSS 代码，每个元素会生成一个独立的 `<style>` 标签，插入到 `</head>` 之前 |
@@ -24,11 +25,19 @@ title: 扩展配置
 | `transformers` | Array[String] | 依次执行的外部转换命令，作用于已解析的 Markdown AST |
 
 > [!TIP]
-> 运用 <i>template</i>、<i>assets</i>、<i>use_*</i> 等字段可以高度定制页面，详细说明请参见 <a href="./pages.html">页面定制</a>。
+> 运用 <i>template</i>、<i>data_dir</i>、<i>assets</i>、<i>use_*</i> 等字段可以高度定制页面，详细说明请参见 <a href="./pages.html">页面定制</a> 与 <a href="../advance/template.html">模板引擎</a>。
 
 ## 模板
-
+ 
 `template` 字段指向的文件决定了页面的整体 HTML 结构。模板语法与变量系统的完整说明请参见 [模板引擎](../advance/template.md)。
+
+## 结构化数据源（data_dir）
+
+`data_dir` 指定存放全站共享结构化数据的目录（默认为 `data`）：
+
+- 支持 `.json` 与 `.toml` 格式，文件的主文件名（去掉扩展名）会自动转换为模板命名空间 `$data.<文件名>.*$`。例如 `data/authors.json` 中的数组可通过 `$for(data.authors)$` 迭代，`data/sponsors.toml` 中的字段可通过 `$data.sponsors.tier$` 访问。
+- 该目录下的数据仅在**编译期**解析并注入模板上下文，**不会**作为静态资源隐式复制到输出目录。
+- 目录不存在或为空时优雅忽略，不影响构建；子目录或非 JSON/TOML 文件自动忽略。
 
 ## 静态资源
 

@@ -37,6 +37,7 @@ title: Changelog
 - Fix TODO.md corruption ([c1362ae](https://github.com/biyuehu/mbdoc/commit/c1362ae))
 - Resolve documentation inconsistencies, add contributing guide, and automate index version update ([c9487e5](https://github.com/biyuehu/mbdoc/commit/c9487e5))
 - Document template loop variables, negation, and partial arguments ([84f34d8](https://github.com/biyuehu/mbdoc/commit/84f34d8))
+- Update TODO.md with data sources and build profiling completion ([db84b86](https://github.com/biyuehu/mbdoc/commit/db84b86))
 
 ### 🏡 Chore
 
