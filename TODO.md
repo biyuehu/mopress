@@ -5,7 +5,7 @@
 - [x] MarkDown links transform to HTML links when rendered
 - [x] Check local links
 - [x] Refer to a local file as code block
-- [ ] MoonBit Playground
+- [x] MoonBit Playground
 - [x] Bilibili Video Embedding
 - [x] Plugin list page
 - [ ] Plugin process reuse

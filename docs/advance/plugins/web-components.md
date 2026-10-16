@@ -95,3 +95,18 @@ import-js=["https://raw.githubusercontent.com/biyuehu/mopress/refs/heads/main/do
 ```
 
 {{@ plugins/runtime/bili-video.js}}
+
+基于 Web Components 实现的 MoonBit 在线交互 Playground 插件 [moonbit-playground](https://github.com/biyuehu/mopress/blob/main/docs/plugins/runtime/moonbit-playground.js)：
+
+```toml
+[extensions]
+import-js=["https://raw.githubusercontent.com/biyuehu/mopress/refs/heads/main/docs/plugins/runtime/moonbit-playground.js"]
+```
+
+{{@ plugins/runtime/moonbit-playground.js}}
+
+在 Markdown 文章中即可直接使用：
+
+```html
+<moonbit-playground height="480px"></moonbit-playground>
+```

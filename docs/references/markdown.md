@@ -1,6 +1,7 @@
 ---
 title: Markdown 演示
 ---
+<!-- markdownlint-disable -->
 
 # Markdown
 
@@ -135,3 +136,12 @@ main = do
 ```
 
 <bili-video bv="BV1SRcCztERB"></bili-video>
+
+## MoonBit Playground
+
+```markdown
+<moonbit-playground height="480px"></moonbit-playground>
+```
+
+<moonbit-playground height="480px"></moonbit-playground>
+

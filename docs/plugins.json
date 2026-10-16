@@ -30,6 +30,12 @@
     "description": "输入 BV 号即可嵌入 Bilibili 视频播放器。"
   },
   {
+    "name": "MoonBit Playground",
+    "url": "https://github.com/biyuehu/mopress/blob/main/docs/plugins/runtime/moonbit-playground.js",
+    "type": "WebComponents",
+    "description": "基于 Web Component 的 MoonBit 在线 Playground 交互式运行与体验组件。"
+  },
+  {
     "name": "Callout Boxes",
     "url": "https://github.com/biyuehu/mopress/blob/main/docs/advance/plugins/moonbit-modules.md",
     "type": "MoonBit",

@@ -26,6 +26,7 @@
 - Update TODO with new roadmap items and test gaps ([c4dae14](https://github.com/biyuehu/mbdoc/commit/c4dae14))
 - Fix TODO.md corruption ([c1362ae](https://github.com/biyuehu/mbdoc/commit/c1362ae))
 - Resolve documentation inconsistencies, add contributing guide, and automate index version update ([c9487e5](https://github.com/biyuehu/mbdoc/commit/c9487e5))
+- Document template loop variables, negation, and partial arguments ([84f34d8](https://github.com/biyuehu/mbdoc/commit/84f34d8))
 
 ### 🏡 Chore
 
