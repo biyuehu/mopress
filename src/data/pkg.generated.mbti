@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "himeno/mopress/data"
+
+import {
+  "himeno/mopress/core",
+  "himeno/mopress/template",
+  "moonbit-community/toml",
+}
+
+// Values
+pub fn[T] load_data(@core.Item[T], String) -> @core.Item[T]
+
+pub fn load_data_dir(String) -> @template.Value
+
+pub fn value_from_toml(@toml.TomlValue) -> @template.Value
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

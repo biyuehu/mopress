@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>$if(title)$$title$$else$$site_title$$endif$</title>
+</head>
+<body>
+  $for(data.authors)$
+  <div class="author">$item.name$ - $item.role$</div>
+  $endfor$
+  <div class="tier">$data.sponsors.tier$</div>
+  $body$
+</body>
+</html>

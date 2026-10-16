@@ -1,0 +1,4 @@
+tier = "gold"
+amount = 100
+active = true
+members = ["Carol", "Dave"]

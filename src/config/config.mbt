@@ -128,6 +128,9 @@ pub(all) struct ExtensionsConfig {
   /// Commands (see `@bridge.run_markdown_transformers`) to run, in order,
   /// over each page's parsed Markdown AST before it is rendered to HTML.
   transformers : Array[String]
+  /// Path (relative to the site root) to the structured data directory,
+  /// loaded as template variables under `$data.*$`.
+  data_dir : String
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
@@ -264,6 +267,7 @@ pub fn BookConfig::to_toml(self : BookConfig) -> String {
   b.write_string(
     "transformers = \{toml_string_array(self.extensions.transformers)}\n",
   )
+  b.write_string("data_dir = \{toml_string(self.extensions.data_dir)}\n")
   b.to_string()
 }
 
@@ -335,6 +339,7 @@ pub fn BookConfig::parse(
       import_js: read_string_array(extensions, "import-js"),
       preprocessors: read_string_array(extensions, "preprocessors"),
       transformers: read_string_array(extensions, "transformers"),
+      data_dir: read_string(extensions, "data_dir", default.extensions.data_dir),
     },
   }.apply_feature_presets()
 }
@@ -404,6 +409,7 @@ pub impl Default for ExtensionsConfig with fn default() -> ExtensionsConfig {
     import_js: [],
     preprocessors: [],
     transformers: [],
+    data_dir: "data",
   }
 }
 

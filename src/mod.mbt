@@ -257,7 +257,11 @@ pub async fn process_markdown_page(
     |> @core.set_extension(".html")
     |> x => {
       let (prev, next) = summary.prev_next(x.location())
-      x.add_vars(
+      let data_val = @data.load_data_dir(config.extensions.data_dir)
+      let fm_vars = seprated.data.0.map((_, v) => v |> @template.String)
+      x
+      .set_var("data", data_val)
+      .add_vars(
         Map([
           (
             "section",
@@ -307,6 +311,7 @@ pub async fn process_markdown_page(
           ),
         ]),
       )
+      .add_vars(fm_vars)
     }
   let templated = item_with_vars
     |> @core.load_and_apply_template(config.extensions.template)

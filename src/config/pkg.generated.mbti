@@ -60,6 +60,7 @@ pub(all) struct ExtensionsConfig {
   import_js : Array[String]
   preprocessors : Array[String]
   transformers : Array[String]
+  data_dir : String
 } derive(Eq, ToJson, @debug.Debug)
 pub fn ExtensionsConfig::default() -> Self
 pub fn ExtensionsConfig::equal(Self, Self) -> Bool

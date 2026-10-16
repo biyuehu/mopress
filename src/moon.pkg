@@ -5,6 +5,7 @@ import {
   "himeno/mopress/summary",
   "himeno/mopress/config",
   "himeno/mopress/bridge",
+  "himeno/mopress/data",
   "moonbitlang/x/fs",
   "moonbitlang/x/path",
   "moonbitlang/core/env",

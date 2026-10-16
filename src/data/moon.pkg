@@ -1,0 +1,8 @@
+import {
+  "himeno/mopress/template",
+  "himeno/mopress/core",
+  "moonbitlang/core/json",
+  "moonbit-community/toml",
+  "moonbitlang/x/fs",
+  "moonbitlang/x/path",
+}

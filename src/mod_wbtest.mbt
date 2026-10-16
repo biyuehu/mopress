@@ -158,3 +158,52 @@ test "collect_page_meta leaves absent fields as None" {
   assert_eq(guide.language, None)
   assert_eq(guide.date, None)
 }
+
+///|
+async test "process_markdown_page: data directory variables injected into template" {
+  let base = @config.BookConfig::default()
+  let config = {
+    ..base,
+    extensions: {
+      ..base.extensions,
+      template: "src/testdata/data_template.html",
+      data_dir: "src/data/testdata",
+    },
+  }
+  let raw = @core.Item::new(
+    "---\ntitle: Data Page\n---\nPage content", "data_page.md",
+  )
+  let result = process_markdown_page(raw, config, empty_summary())
+  guard result.data is @core.Doc(html) else { fail("expected Doc") }
+  assert_true(html.contains("<div class=\"author\">Alice - Author</div>"))
+  assert_true(html.contains("<div class=\"author\">Bob - Editor</div>"))
+  assert_true(html.contains("<div class=\"tier\">gold</div>"))
+  assert_true(html.contains("Page content"))
+}
+
+///|
+async test "process_markdown_page: priority frontmatter > data > builtin vars" {
+  let base = @config.BookConfig::default()
+  let config = {
+    ..base,
+    title: "Default Site Title",
+    extensions: {
+      ..base.extensions,
+      template: "src/testdata/data_priority_template.html",
+      data_dir: "src/data/testdata",
+    },
+  }
+  // Case 1: Page provides its own site_title in frontmatter to override builtin site_title
+  let raw1 = @core.Item::new(
+    "---\nsite_title: Overridden Site Title\n---\nbody", "p1.md",
+  )
+  let res1 = process_markdown_page(raw1, config, empty_summary())
+  guard res1.data is @core.Doc(html1) else { fail("expected Doc") }
+  assert_true(html1.contains("title: Overridden Site Title"))
+
+  // Case 2: Page without override uses default site_title
+  let raw2 = @core.Item::new("body", "p2.md")
+  let res2 = process_markdown_page(raw2, config, empty_summary())
+  guard res2.data is @core.Doc(html2) else { fail("expected Doc") }
+  assert_true(html2.contains("title: Default Site Title"))
+}
