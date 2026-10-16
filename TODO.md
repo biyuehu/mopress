@@ -18,8 +18,9 @@
 ## Features
 
 - [x] Template engine enhancements
+- [x] Build performance profiling (`mopress build --analyze` & `--analyze-json`)
 - [ ] i18n support
-- [ ] JSON / YAML data sources
+- [x] JSON / YAML / TOML data sources
 
 ## Site Mode
 
