@@ -233,6 +233,7 @@ pub async fn process_markdown_page(
   let ast = @bridge.run_markdown_transformers(config, parsed_md, raw.target)
   @core.record_step_trace("run_transformers", @async.now() - t_trans_0)
 
+  // @block steps
   let t_render_0 = @async.now()
   let rendered_html = @core.render_markdown_and_frontmatter_from_ast(
     seprated.map(_ => ast),
@@ -310,6 +311,7 @@ pub async fn process_markdown_page(
     |> @core.inject_body(config.extensions.inject_body.join("\n"))
     |> @core.unify
   @core.record_step_trace("inject_assets", @async.now() - t_assets_0)
+  // @end
   final_item
 }
 

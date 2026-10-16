@@ -11,6 +11,7 @@
 - **template:** Add loop variables, if-negation, and partial arguments ([d167b63](https://github.com/biyuehu/mbdoc/commit/d167b63))
 - **plugins:** Implement MoonBit Playground Web Component plugin ([06a411a](https://github.com/biyuehu/mbdoc/commit/06a411a))
 - **core:** Enable concurrent file processing in mo_build ([954e574](https://github.com/biyuehu/mbdoc/commit/954e574))
+- **cli:** Add --analyze flag to mopress build for performance profiling ([9914f5f](https://github.com/biyuehu/mbdoc/commit/9914f5f))
 
 ### 🩹 Fixes
 
@@ -48,6 +49,6 @@
 
 ### ❤️ Contributors
 
-- Romi <biyuehuya@gmail.com>
+- Romi ([@biyuehu](https://github.com/biyuehu))
 
 
