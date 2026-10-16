@@ -30,7 +30,7 @@ pub fn inject_head(Item[String], String) -> Item[String]
 
 pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
 
-pub async fn mo_build(Options, Array[Rule], no_emit? : Bool, analyze? : Bool) -> Unit
+pub async fn mo_build(Options, Array[Rule], no_emit? : Bool, analyze? : Bool, analyze_json? : Bool) -> Unit
 
 pub async fn mo_serve(Options) -> Unit
 
@@ -80,7 +80,9 @@ pub(all) struct BuildAnalysisReport {
 } derive(Eq, @debug.Debug)
 pub fn BuildAnalysisReport::equal(Self, Self) -> Bool
 pub fn BuildAnalysisReport::not_equal(Self, Self) -> Bool
+pub fn BuildAnalysisReport::to_json(Self) -> Json
 pub fn BuildAnalysisReport::to_repr(Self) -> @debug.Repr
+pub impl ToJson for BuildAnalysisReport
 
 pub(all) struct ExplainReport {
   src : String
@@ -140,7 +142,9 @@ pub(all) struct PageAnalysis {
 } derive(Eq, @debug.Debug)
 pub fn PageAnalysis::equal(Self, Self) -> Bool
 pub fn PageAnalysis::not_equal(Self, Self) -> Bool
+pub fn PageAnalysis::to_json(Self) -> Json
 pub fn PageAnalysis::to_repr(Self) -> @debug.Repr
+pub impl ToJson for PageAnalysis
 
 pub(all) enum Rule {
   Glob(String, Handler)
@@ -172,7 +176,9 @@ pub(all) struct StepSummary {
 } derive(Eq, @debug.Debug)
 pub fn StepSummary::equal(Self, Self) -> Bool
 pub fn StepSummary::not_equal(Self, Self) -> Bool
+pub fn StepSummary::to_json(Self) -> Json
 pub fn StepSummary::to_repr(Self) -> @debug.Repr
+pub impl ToJson for StepSummary
 
 pub(all) struct StepTrace {
   name : String
@@ -180,7 +186,9 @@ pub(all) struct StepTrace {
 } derive(Eq, @debug.Debug)
 pub fn StepTrace::equal(Self, Self) -> Bool
 pub fn StepTrace::not_equal(Self, Self) -> Bool
+pub fn StepTrace::to_json(Self) -> Json
 pub fn StepTrace::to_repr(Self) -> @debug.Repr
+pub impl ToJson for StepTrace
 
 pub(all) enum Thing {
   Doc(String)

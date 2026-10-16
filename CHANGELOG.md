@@ -22,6 +22,7 @@
 - Serialize lefthook pre-commit commands to stage prebuild artifacts ([5d106ed](https://github.com/biyuehu/mbdoc/commit/5d106ed))
 - **glob:** Degrade ** to * when not a standalone path segment ([3450466](https://github.com/biyuehu/mbdoc/commit/3450466))
 - **glob:** Normalize backslash paths across all platforms and eliminate to_json deprecation warnings ([0c17219](https://github.com/biyuehu/mbdoc/commit/0c17219))
+- **docs:** Restore @block steps marker in process_markdown_page ([2a8054c](https://github.com/biyuehu/mbdoc/commit/2a8054c))
 
 ### 📖 Documentation
 

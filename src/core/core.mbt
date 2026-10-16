@@ -60,12 +60,16 @@ pub async fn mo_build(
   rules : Rules,
   no_emit~ : Bool = false,
   analyze~ : Bool = false,
+  analyze_json~ : Bool = false,
 ) -> Unit {
+  let is_analyze = analyze || analyze_json
   let build_start = @async.now()
-  if no_emit {
-    println("Dry-run (no emit) from \{options.src}")
-  } else {
-    println("Emitting files from \{options.src} to \{options.dest}")
+  if !analyze_json {
+    if no_emit {
+      println("Dry-run (no emit) from \{options.src}")
+    } else {
+      println("Emitting files from \{options.src} to \{options.dest}")
+    }
   }
   let page_analyses : Array[PageAnalysis] = []
   let step_map : Map[String, (Ref[Int64], Ref[Int32], Ref[Int64])] = Map([])
@@ -80,7 +84,7 @@ pub async fn mo_build(
           let t0 = @async.now()
           let tpl_counter = Ref(0)
           let collected_traces : Array[StepTrace] = []
-          let item = if analyze {
+          let item = if is_analyze {
             with_page_trace(collected_traces, () => {
               @template.with_render_counter(tpl_counter, () => {
                 rule.handler().run(options, path)
@@ -95,7 +99,7 @@ pub async fn mo_build(
           } else {
             item.data.write(options.dest, item.location())
           }
-          if analyze {
+          if is_analyze {
             let size = item.data.byte_size()
             let mut slowest_name = rule.handler_kind()
             let mut slowest_ms = t_run
@@ -128,14 +132,14 @@ pub async fn mo_build(
         })
       }
     })
-    if no_emit {
+    if no_emit && !analyze_json {
       for loc in outputs {
         if !loc.is_empty() {
           println("  would write: \{loc}")
         }
       }
     }
-    if analyze {
+    if is_analyze {
       for rep in page_reports {
         match rep {
           Some(p) => {
@@ -164,13 +168,15 @@ pub async fn mo_build(
     }
   }
   let total_build_ms = @async.now() - build_start
-  if no_emit {
-    println("Dry-run complete (no files written).")
-  } else {
-    @c.chalk().modifier(Bold).color(Green).render("√ Build finished.")
-    |> println
+  if !analyze_json {
+    if no_emit {
+      println("Dry-run complete (no files written).")
+    } else {
+      @c.chalk().modifier(Bold).color(Green).render("√ Build finished.")
+      |> println
+    }
   }
-  if analyze {
+  if is_analyze {
     let mut total_size = 0
     for p in page_analyses {
       total_size += p.size_bytes
@@ -191,7 +197,11 @@ pub async fn mo_build(
       total_size_bytes: total_size,
       total_build_ms,
     }
-    print_analysis_report(report)
+    if analyze_json {
+      println(report.to_json().stringify())
+    } else {
+      print_analysis_report(report)
+    }
   }
 }
 

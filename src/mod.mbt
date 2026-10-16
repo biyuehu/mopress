@@ -1,16 +1,18 @@
 ///|
-fn load_config() -> @config.BookConfig raise {
+fn load_config(silent~ : Bool = false) -> @config.BookConfig raise {
   let config = @config.file_name
     |> @fs.read_file_to_string
     |> @config.BookConfig::parse()
-  @c.chalk().color(Magenta).render("✝ Handing site: \{config.title}")
-  |> println
-  @c.chalk()
-  .color(BlueBright)
-  .render(
-    "? Total preprocessors: \{config.extensions.preprocessors.length()} | Total transformers: \{config.extensions.transformers.length()} | Total import_css: \{config.extensions.import_css.length()} | Total import_js: \{config.extensions.import_js.length()} | Total use_css: \{config.extensions.use_css.length()} | Total use_js: \{config.extensions.use_js.length()} | Total inject_head: \{config.extensions.inject_head.length()} | Total inject_body: \{config.extensions.inject_body.length()}",
-  )
-  |> println
+  if !silent {
+    @c.chalk().color(Magenta).render("✝ Handing site: \{config.title}")
+    |> println
+    @c.chalk()
+    .color(BlueBright)
+    .render(
+      "? Total preprocessors: \{config.extensions.preprocessors.length()} | Total transformers: \{config.extensions.transformers.length()} | Total import_css: \{config.extensions.import_css.length()} | Total import_js: \{config.extensions.import_js.length()} | Total use_css: \{config.extensions.use_css.length()} | Total use_js: \{config.extensions.use_js.length()} | Total inject_head: \{config.extensions.inject_head.length()} | Total inject_body: \{config.extensions.inject_body.length()}",
+    )
+    |> println
+  }
   config
 }
 
@@ -123,6 +125,7 @@ fn handle_help() -> Unit {
       #|  build              Build the site
       #|  build --no-emit    Build without writing files to disk
       #|  build --analyze    Build and output performance breakdown analysis
+      #|  build --analyze-json  Build and output analysis report in JSON format
       #|  explain            Print which files each rule matches
       #|  init               Initialize a new book-mode project
       #|  new                Create a new site-mode project
@@ -134,9 +137,13 @@ fn handle_help() -> Unit {
 }
 
 ///|
-async fn handle_build(no_emit~ : Bool = false, analyze~ : Bool = false) -> Unit {
-  let config = load_config()
-  build_book(config, no_emit~, analyze~)
+async fn handle_build(
+  no_emit~ : Bool = false,
+  analyze~ : Bool = false,
+  analyze_json~ : Bool = false,
+) -> Unit {
+  let config = load_config(silent=analyze_json)
+  build_book(config, no_emit~, analyze~, analyze_json~)
 }
 
 ///|
@@ -176,6 +183,7 @@ async fn command_handler() -> Unit {
       handle_build(
         no_emit=args.contains("--no-emit"),
         analyze=args.contains("--analyze"),
+        analyze_json=args.contains("--analyze-json"),
       )
     "serve" => handle_serve()
     "explain" => handle_explain()
@@ -211,8 +219,11 @@ pub async fn process_markdown_page(
   raw : @core.Item[String],
   config : @config.BookConfig,
   summary : @summary.Summary,
+  silent~ : Bool = false,
 ) -> @core.Item[@core.Thing] {
-  "Rendering page \{raw.target}" |> println
+  if !silent {
+    "Rendering page \{raw.target}" |> println
+  }
   let t_sep_0 = @async.now()
   let seprated = raw |> @core.separate_frontmatter
   @core.record_step_trace("separate_frontmatter", @async.now() - t_sep_0)
@@ -337,6 +348,7 @@ fn build_book_rules(
   config : @config.BookConfig,
   summary : @summary.Summary,
   not_found_page : @core.Item[@core.Thing],
+  silent~ : Bool = false,
 ) -> @core.Rules {
   [
     Glob(
@@ -378,10 +390,13 @@ fn build_book_rules(
         }
       }),
     ),
-    Glob("**/*.md", Text(raw => raw |> process_markdown_page(config, summary))),
+    Glob(
+      "**/*.md",
+      Text(raw => raw |> process_markdown_page(config, summary, silent~)),
+    ),
     Glob(
       "**/*.markdown",
-      Text(raw => raw |> process_markdown_page(config, summary)),
+      Text(raw => raw |> process_markdown_page(config, summary, silent~)),
     ),
     ..config.extensions.assets.map(glob => @core.Glob(glob, Copy)),
   ]
@@ -411,8 +426,11 @@ pub async fn build_book(
   config : @config.BookConfig,
   no_emit~ : Bool = false,
   analyze~ : Bool = false,
+  analyze_json~ : Bool = false,
 ) -> Unit {
-  println("Parsing SUMMARY.md")
+  if !analyze_json {
+    println("Parsing SUMMARY.md")
+  }
   let summary = @fs.read_file_to_string(
       @path.Path(config.src).join("SUMMARY.md").to_string(),
     )
@@ -423,12 +441,14 @@ pub async fn build_book(
     @core.Item::new(book_404_md, "404", extension=".md"),
     config,
     summary,
+    silent=analyze_json,
   )
 
   @core.mo_build(
     { src: config.src, dest: config.dest, },
-    build_book_rules(config, summary, not_found_page),
+    build_book_rules(config, summary, not_found_page, silent=analyze_json),
     no_emit~,
     analyze~,
+    analyze_json~,
   )
 }

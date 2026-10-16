@@ -136,3 +136,23 @@ async test "mo_build with analyze flag runs and outputs report" {
   )
   assert_true(@fs.path_exists(dest))
 }
+
+///|
+async test "mo_build with analyze_json flag runs and outputs valid json" {
+  let dest = "_build/test_analyze_json_out"
+  let rules : @core.Rules = [
+    @core.Glob(
+      "*.md",
+      @core.Handler::Text(item => {
+        @core.record_step_trace("json_step", 3L)
+        @core.unify(item)
+      }),
+    ),
+  ]
+  @core.mo_build(
+    { src: "src/core/testdata/explain", dest, },
+    rules,
+    analyze_json=true,
+  )
+  assert_true(@fs.path_exists(dest))
+}

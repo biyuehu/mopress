@@ -8,11 +8,11 @@ import {
 }
 
 // Values
-pub async fn build_book(@config.BookConfig, no_emit? : Bool, analyze? : Bool) -> Unit
+pub async fn build_book(@config.BookConfig, no_emit? : Bool, analyze? : Bool, analyze_json? : Bool) -> Unit
 
 pub fn explain_book(@config.BookConfig) -> Unit raise
 
-pub async fn process_markdown_page(@core.Item[String], @config.BookConfig, @summary.Summary) -> @core.Item[@core.Thing]
+pub async fn process_markdown_page(@core.Item[String], @config.BookConfig, @summary.Summary, silent? : Bool) -> @core.Item[@core.Thing]
 
 pub let version : String
 

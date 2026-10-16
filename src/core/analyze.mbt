@@ -61,6 +61,70 @@ pub extend BuildAnalysisReport with Eq::{not_equal, equal}
 pub extend BuildAnalysisReport with @debug.Debug::{to_repr}
 
 ///|
+pub fn StepTrace::to_json(self : StepTrace) -> Json {
+  {
+    "name": Json::string(self.name),
+    "duration_ms": Json::number(self.duration_ms.to_double()),
+  }
+}
+
+///|
+pub impl ToJson for StepTrace with fn to_json(self : StepTrace) -> Json {
+  self.to_json()
+}
+
+///|
+pub fn PageAnalysis::to_json(self : PageAnalysis) -> Json {
+  {
+    "path": Json::string(self.path),
+    "size_bytes": Json::number(self.size_bytes.to_double()),
+    "total_duration_ms": Json::number(self.total_duration_ms.to_double()),
+    "template_renders": Json::number(self.template_renders.to_double()),
+    "slowest_step": Json::string(self.slowest_step),
+    "slowest_step_ms": Json::number(self.slowest_step_ms.to_double()),
+    "step_traces": Json::array(self.step_traces.map(t => t.to_json())),
+  }
+}
+
+///|
+pub impl ToJson for PageAnalysis with fn to_json(self : PageAnalysis) -> Json {
+  self.to_json()
+}
+
+///|
+pub fn StepSummary::to_json(self : StepSummary) -> Json {
+  {
+    "name": Json::string(self.name),
+    "total_ms": Json::number(self.total_ms.to_double()),
+    "call_count": Json::number(self.call_count.to_double()),
+    "max_ms": Json::number(self.max_ms.to_double()),
+  }
+}
+
+///|
+pub impl ToJson for StepSummary with fn to_json(self : StepSummary) -> Json {
+  self.to_json()
+}
+
+///|
+pub fn BuildAnalysisReport::to_json(self : BuildAnalysisReport) -> Json {
+  {
+    "pages": Json::array(self.pages.map(p => p.to_json())),
+    "steps": Json::array(self.steps.map(s => s.to_json())),
+    "total_pages": Json::number(self.total_pages.to_double()),
+    "total_size_bytes": Json::number(self.total_size_bytes.to_double()),
+    "total_build_ms": Json::number(self.total_build_ms.to_double()),
+  }
+}
+
+///|
+pub impl ToJson for BuildAnalysisReport with fn to_json(
+  self : BuildAnalysisReport,
+) -> Json {
+  self.to_json()
+}
+
+///|
 let current_page_traces : Ref[Array[StepTrace]?] = Ref(None)
 
 ///|
