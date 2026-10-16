@@ -26,7 +26,7 @@ test "parse if for and partial nodes" {
     is [
       @template.If("relatedPosts", if_nodes, []),
       @template.Text("\n"),
-      @template.Partial("templates/footer.html"),
+      @template.Partial("templates/footer.html", []),
     ] else {
     fail("expected if block followed by partial")
   }
@@ -406,7 +406,7 @@ test "value from json" {
 ///|
 test "partial path with subdirectories" {
   guard @template.parse_template("$partial(\"a/b/c.html\")$")
-    is [@template.Partial("a/b/c.html")] else {
+    is [@template.Partial("a/b/c.html", [])] else {
     fail("expected partial with nested path")
   }
 }
@@ -414,14 +414,15 @@ test "partial path with subdirectories" {
 ///|
 test "partial path with parent reference" {
   guard @template.parse_template("$partial(\"../x.html\")$")
-    is [@template.Partial("../x.html")] else {
+    is [@template.Partial("../x.html", [])] else {
     fail("expected partial with parent path")
   }
 }
 
 ///|
 test "partial empty path is accepted at parse time" {
-  guard @template.parse_template("$partial(\"\")$") is [@template.Partial("")] else {
+  guard @template.parse_template("$partial(\"\")$")
+    is [@template.Partial("", [])] else {
     fail("expected empty partial path")
   }
 }
@@ -429,7 +430,165 @@ test "partial empty path is accepted at parse time" {
 ///|
 test "partial path is taken literally, not resolved" {
   guard @template.parse_template("$partial(\"./a/../b.html\")$")
-    is [@template.Partial("./a/../b.html")] else {
+    is [@template.Partial("./a/../b.html", [])] else {
     fail("expected literal partial path")
   }
+}
+
+///|
+test "for loop exposes index first and last variables" {
+  let source = "$for(items)$[$index$,$first$,$last$:$item$]$endfor$"
+  let template = @template.parse_template(source)
+  let result = @template.apply_template(template, {
+    "items": @template.Array([
+      @template.String("a"),
+      @template.String("b"),
+      @template.String("c"),
+    ]),
+  })
+  assert_eq(result, "[0,true,false:a][1,false,false:b][2,false,true:c]")
+}
+
+///|
+test "for loop with single element has both first and last true" {
+  let source = "$for(items)$$index$:$first$,$last$:$item$$endfor$"
+  let template = @template.parse_template(source)
+  let result = @template.apply_template(template, {
+    "items": @template.Array([@template.String("only")]),
+  })
+  assert_eq(result, "0:true,true:only")
+}
+
+///|
+test "if negation supports !variable and ! dotted.path with optional whitespace" {
+  let source =
+    #|$if(!draft)$published$else$draft$endif$
+    #|$if(! page.draft)$published2$else$draft2$endif$
+  let template = @template.parse_template(source)
+  let res_draft_false = @template.apply_template(template, {
+    "draft": @template.Bool(false),
+    "page": @template.Object({ "draft": @template.Bool(false) }),
+  })
+  assert_eq(res_draft_false, "published\npublished2")
+
+  let res_draft_true = @template.apply_template(template, {
+    "draft": @template.Bool(true),
+    "page": @template.Object({ "draft": @template.Bool(true) }),
+  })
+  assert_eq(res_draft_true, "draft\ndraft2")
+}
+
+///|
+test "partial with literal and variable arguments" {
+  let source = "$partial(\"src/template/testdata/footer.html\", title=\"Custom Title\")$"
+  let template = @template.parse_template(source)
+  let result = @template.apply_template(template, {
+    "title": @template.String("Original Title"),
+  })
+  assert_eq(result, "<footer>Custom Title</footer>\n")
+}
+
+///|
+test "partial with variable lookup arguments and context isolation" {
+  let source = "$partial(\"src/template/testdata/footer.html\", title=page.heading)$Outer: $title$"
+  let template = @template.parse_template(source)
+  let result = @template.apply_template(template, {
+    "title": @template.String("Outer"),
+    "page": @template.Object({ "heading": @template.String("Inner Heading") }),
+  })
+  assert_eq(result, "<footer>Inner Heading</footer>\nOuter: Outer")
+}
+
+///|
+test "for loop restores shadowed variables and handles nested loops" {
+  let source = "before:$index$,$first$,$last$\n$for(outer)$outer:$index$,$first$,$last$:$item$\n$for(inner)$  inner:$index$,$first$,$last$:$item$\n$endfor$outer_after:$index$,$first$,$last$\n$endfor$after:$index$,$first$,$last$"
+  let template = @template.parse_template(source)
+  let result = @template.apply_template(template, {
+    "index": @template.Number(99),
+    "first": @template.Bool(false),
+    "last": @template.Bool(false),
+    "outer": @template.Array([@template.String("A"), @template.String("B")]),
+    "inner": @template.Array([@template.String("1"), @template.String("2")]),
+  })
+  let expected =
+    #|before:99,false,false
+    #|outer:0,true,false:A
+    #|  inner:0,true,false:1
+    #|  inner:1,false,true:2
+    #|outer_after:0,true,false
+    #|outer:1,false,true:B
+    #|  inner:0,true,false:1
+    #|  inner:1,false,true:2
+    #|outer_after:1,false,true
+    #|after:99,false,false
+  assert_eq(result, expected)
+}
+
+///|
+test "for loop on empty array renders nothing and preserves context" {
+  let source = "before:$index$$for(items)$$index$:$item$$endfor$after:$index$"
+  let template = @template.parse_template(source)
+  let result = @template.apply_template(template, {
+    "index": @template.Number(10),
+    "items": @template.Array([]),
+  })
+  assert_eq(result, "before:10after:10")
+}
+
+///|
+test "if negation syntax errors" {
+  let err1 = try @template.parse_template("$if(!)$") catch {
+    @template.TemplateParseError(msg) => msg
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(err1.contains("invalid template identifier"))
+
+  let err2 = try @template.parse_template("$if(! 123)$") catch {
+    @template.TemplateParseError(msg) => msg
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(err2.contains("invalid template identifier"))
+}
+
+///|
+test "partial argument parsing errors and strict mode undefined variable" {
+  let err_no_eq = try
+    @template.parse_template("$partial(\"path.html\", foo)$")
+  catch {
+    @template.TemplateParseError(msg) => msg
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(err_no_eq.contains("invalid partial argument syntax"))
+
+  let err_unterminated_str = try
+    @template.parse_template("$partial(\"path.html\", foo=\"bar)$")
+  catch {
+    @template.TemplateParseError(msg) => msg
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(err_unterminated_str.contains("unterminated string"))
+
+  let err_invalid_ident = try
+    @template.parse_template("$partial(\"path.html\", 123=val)$")
+  catch {
+    @template.TemplateParseError(msg) => msg
+  } noraise {
+    _ => abort("expected parse error")
+  }
+  assert_true(err_invalid_ident.contains("invalid partial parameter name"))
+
+  let template = @template.parse_template(
+    "$partial(\"src/template/testdata/footer.html\", title=missing_var)$",
+  )
+  let err_strict = try @template.apply_template_strict(template, {}) catch {
+    @template.UndefinedVariableError(msg) => msg
+    _ => abort("expected undefined variable error")
+  } noraise {
+    _ => abort("expected undefined variable error")
+  }
+  assert_true(err_strict.contains("missing variable: missing_var"))
 }

@@ -12,6 +12,7 @@ title: Changelog
 
 - Add explain and --no-emit for build rules ([44dac1e](https://github.com/biyuehu/mbdoc/commit/44dac1e))
 - Add feed and sitemap generation ([2462a1c](https://github.com/biyuehu/mbdoc/commit/2462a1c))
+- **template:** Add loop variables, if-negation, and partial arguments ([d167b63](https://github.com/biyuehu/mbdoc/commit/d167b63))
 
 ### 🩹 Fixes
 
@@ -47,6 +48,6 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 
 
