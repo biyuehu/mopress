@@ -43,7 +43,7 @@ pub(all) enum TemplateNode {
   Variable(String)
   If(String, Array[TemplateNode], Array[TemplateNode])
   For(String, Array[TemplateNode])
-  Partial(String)
+  Partial(String, Array[(String, String)])
 } derive(Eq, @debug.Debug)
 pub fn TemplateNode::equal(Self, Self) -> Bool
 pub fn TemplateNode::not_equal(Self, Self) -> Bool

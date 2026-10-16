@@ -19,8 +19,8 @@ pub(all) enum TemplateNode {
   /// to iterate over, and the nodes to render once per element.
   For(String, Array[TemplateNode])
   /// A reference to another template file to be rendered inline at this
-  /// position.
-  Partial(String)
+  /// position, optionally passing arguments.
+  Partial(String, Array[(String, String)])
 } derive(Eq, Debug)
 
 ///|
@@ -179,7 +179,7 @@ fn parse_nodes(
             if contains_string(terminators, tag) {
               return (nodes, close + 1, Some(tag))
             } else if tag.has_prefix("if(") && tag.has_suffix(")") {
-              let name = trim_tag_argument(tag, "if(")
+              let name = trim_if_argument(tag)
               let (then_children, next, found) = parse_nodes(input, close + 1, [
                 "else", "endif",
               ])
@@ -239,7 +239,8 @@ fn parse_nodes(
                   )
               }
             } else if tag.has_prefix("partial(") && tag.has_suffix(")") {
-              nodes.push(Partial(parse_partial_path(tag, open)))
+              let (path, args) = parse_partial_invocation(tag, open)
+              nodes.push(Partial(path, args))
               index = close + 1
             } else if tag == "else" || tag == "endif" || tag == "endfor" {
               raise TemplateParseError(
@@ -283,22 +284,139 @@ fn trim_tag_argument(
 }
 
 ///|
-fn parse_partial_path(
+fn trim_if_argument(tag : String) -> String raise TemplateParseError {
+  let inner = substring(tag, "if(".length(), tag.length() - 1).trim().to_owned()
+  if inner.has_prefix("!") {
+    let name = inner[1:].trim().to_owned()
+    if is_identifier(name) {
+      "!" + name
+    } else {
+      raise TemplateParseError("invalid template identifier `\{name}`")
+    }
+  } else if is_identifier(inner) {
+    inner
+  } else {
+    raise TemplateParseError("invalid template identifier `\{inner}`")
+  }
+}
+
+///|
+fn parse_partial_invocation(
   tag : String,
   offset : Int32,
-) -> String raise TemplateParseError {
-  let raw = substring(tag, "partial(".length(), tag.length() - 1)
+) -> (String, Array[(String, String)]) raise TemplateParseError {
+  let inner = substring(tag, "partial(".length(), tag.length() - 1)
     .trim()
     .to_owned()
-  if raw.length() >= 2 &&
-    char_at(raw, 0) == '"' &&
-    char_at(raw, raw.length() - 1) == '"' {
-    substring(raw, 1, raw.length() - 1)
-  } else {
+  if inner.length() == 0 || char_at(inner, 0) != '"' {
     raise TemplateParseError(
       "partial expects a quoted path at byte " + offset.to_string(),
     )
   }
+  let path_end = find_unescaped_quote(inner, 1)
+  match path_end {
+    None =>
+      raise TemplateParseError(
+        "partial expects a quoted path at byte " + offset.to_string(),
+      )
+    Some(end_idx) => {
+      let path = substring(inner, 1, end_idx)
+      let remainder = substring(inner, end_idx + 1, inner.length()).trim()
+      let args : Array[(String, String)] = []
+      if remainder.length() > 0 {
+        if !remainder.has_prefix(",") {
+          raise TemplateParseError(
+            "invalid partial syntax after path at byte " + offset.to_string(),
+          )
+        }
+        let mut rest = remainder[1:].trim().to_owned()
+        while rest.length() > 0 {
+          let eq_idx = match find_char(rest, '=', 0) {
+            Some(i) => i
+            None =>
+              raise TemplateParseError(
+                "invalid partial argument syntax at byte " + offset.to_string(),
+              )
+          }
+          let key = substring(rest, 0, eq_idx).trim().to_owned()
+          if !is_identifier(key) {
+            raise TemplateParseError("invalid partial parameter name `\{key}`")
+          }
+          let after_eq = substring(rest, eq_idx + 1, rest.length())
+            .trim()
+            .to_owned()
+          if after_eq.length() == 0 {
+            raise TemplateParseError(
+              "missing partial argument value at byte " + offset.to_string(),
+            )
+          }
+          if char_at(after_eq, 0) == '"' {
+            match find_unescaped_quote(after_eq, 1) {
+              Some(val_end) => {
+                let quoted_val = substring(after_eq, 0, val_end + 1)
+                args.push((key, quoted_val))
+                let after_val = substring(
+                    after_eq,
+                    val_end + 1,
+                    after_eq.length(),
+                  )
+                  .trim()
+                  .to_owned()
+                if after_val.length() > 0 {
+                  if !after_val.has_prefix(",") {
+                    raise TemplateParseError(
+                      "invalid separator after partial argument at byte " +
+                      offset.to_string(),
+                    )
+                  }
+                  rest = after_val[1:].trim().to_owned()
+                } else {
+                  rest = ""
+                }
+              }
+              None =>
+                raise TemplateParseError(
+                  "unterminated string in partial argument at byte " +
+                  offset.to_string(),
+                )
+            }
+          } else {
+            let comma_idx = find_char(after_eq, ',', 0)
+            let (raw_val, next_rest) = match comma_idx {
+              Some(c_idx) =>
+                (
+                  substring(after_eq, 0, c_idx).trim().to_owned(),
+                  substring(after_eq, c_idx + 1, after_eq.length())
+                  .trim()
+                  .to_owned(),
+                )
+              None => (after_eq, "")
+            }
+            if !is_identifier(raw_val) {
+              raise TemplateParseError(
+                "invalid partial argument value `\{raw_val}`",
+              )
+            }
+            args.push((key, raw_val))
+            rest = next_rest
+          }
+        }
+      }
+      (path, args)
+    }
+  }
+}
+
+///|
+fn find_unescaped_quote(input : String, start : Int32) -> Int32? {
+  let mut index = start
+  while index < input.length() {
+    if char_at(input, index) == '"' {
+      return Some(index)
+    }
+    index = index + 1
+  }
+  None
 }
 
 ///|
@@ -470,29 +588,43 @@ fn render_nodes(
               raise UndefinedVariableError("missing variable: " + name)
             }
         }
-      If(name, then_children, else_children) =>
-        if lookup_value(name, context) is Some(value) && value.is_truthy() {
+      If(name, then_children, else_children) => {
+        let (is_negated, var_name) = if name.has_prefix("!") {
+          (true, substring(name, 1, name.length()).trim().to_owned())
+        } else {
+          (false, name)
+        }
+        let is_truthy = lookup_value(var_name, context) is Some(value) &&
+          value.is_truthy()
+        let cond = if is_negated { !is_truthy } else { is_truthy }
+        if cond {
           render_nodes(then_children, context, strict, output, partial_stack)
         } else {
           render_nodes(else_children, context, strict, output, partial_stack)
         }
+      }
       For(name, children) =>
         match lookup_value(name, context) {
-          Some(items) if items is Array(items) =>
-            for item in items {
+          Some(items) if items is Array(items) => {
+            let len = items.length()
+            for i, item in items {
               let item_context = context.copy()
               item_context["item"] = item
+              item_context["index"] = Number(i.to_double())
+              item_context["first"] = Bool(i == 0)
+              item_context["last"] = Bool(i == len - 1)
               render_nodes(
                 children, item_context, strict, output, partial_stack,
               )
             }
+          }
           _ =>
             if strict {
               raise NonArrayForLoopError("expected array for loop: " + name)
             }
         }
-      Partial(path) =>
-        render_partial(path, context, strict, output, partial_stack)
+      Partial(path, args) =>
+        render_partial(path, args, context, strict, output, partial_stack)
     }
   }
 }
@@ -563,6 +695,7 @@ fn _mopress_json_import_guard() -> Unit raise {
 ///|
 fn render_partial(
   path : String,
+  args : Array[(String, String)],
   context : Context,
   strict : Bool,
   output : StringBuilder,
@@ -579,7 +712,28 @@ fn render_partial(
     TemplateParseError(message) =>
       raise PartialParseError("failed to parse partial `\{path}`: " + message)
   }
+  let partial_context = context.copy()
+  for pair in args {
+    let (key, raw_val) = pair
+    if raw_val.length() >= 2 &&
+      char_at(raw_val, 0) == '"' &&
+      char_at(raw_val, raw_val.length() - 1) == '"' {
+      partial_context[key] = String(substring(raw_val, 1, raw_val.length() - 1))
+    } else {
+      match lookup_value(raw_val, context) {
+        Some(v) => partial_context[key] = v
+        None =>
+          if strict {
+            raise UndefinedVariableError(
+              "missing variable: " + raw_val + " for partial argument " + key,
+            )
+          } else {
+            partial_context[key] = String("")
+          }
+      }
+    }
+  }
   let next_stack = partial_stack.copy()
   next_stack.push(path)
-  render_nodes(template, context, strict, output, next_stack)
+  render_nodes(template, partial_context, strict, output, next_stack)
 }
