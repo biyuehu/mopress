@@ -8,7 +8,7 @@ import {
 }
 
 // Values
-pub async fn build_book(@config.BookConfig, no_emit? : Bool) -> Unit
+pub async fn build_book(@config.BookConfig, no_emit? : Bool, analyze? : Bool) -> Unit
 
 pub fn explain_book(@config.BookConfig) -> Unit raise
 

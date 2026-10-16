@@ -116,3 +116,23 @@ async test "mo_build concurrently processes all matched files without missing or
   let a_content = @fs.read_file_to_string(a_path)
   assert_true(a_content.contains("-- processed by concurrent build --"))
 }
+
+///|
+async test "mo_build with analyze flag runs and outputs report" {
+  let dest = "_build/test_analyze_out"
+  let rules : @core.Rules = [
+    @core.Glob(
+      "*.md",
+      @core.Handler::Text(item => {
+        @core.record_step_trace("dummy_step", 5L)
+        @core.unify(item)
+      }),
+    ),
+  ]
+  @core.mo_build(
+    { src: "src/core/testdata/explain", dest, },
+    rules,
+    analyze=true,
+  )
+  assert_true(@fs.path_exists(dest))
+}

@@ -413,6 +413,23 @@ pub fn Thing::write(
 }
 
 ///|
+/// Returns the total size in bytes of this `Thing`.
+pub fn Thing::byte_size(self : Thing) -> Int32 {
+  match self {
+    Doc(doc) => doc.length()
+    Asset(asset) => asset.length()
+    Multiple(multiple) => {
+      let mut total = 0
+      for item in multiple {
+        total += item.1.byte_size()
+      }
+      total
+    }
+    Empty => 0
+  }
+}
+
+///|
 /// Types that can be converted into a `Thing`, the common output
 /// representation written to disk at the end of a build pipeline.
 pub trait Thingable {

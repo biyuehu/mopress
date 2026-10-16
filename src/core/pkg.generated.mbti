@@ -30,7 +30,7 @@ pub fn inject_head(Item[String], String) -> Item[String]
 
 pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
 
-pub async fn mo_build(Options, Array[Rule], no_emit? : Bool) -> Unit
+pub async fn mo_build(Options, Array[Rule], no_emit? : Bool, analyze? : Bool) -> Unit
 
 pub async fn mo_serve(Options) -> Unit
 
@@ -39,6 +39,10 @@ pub async fn mopress(Array[Rule], options? : Options) -> Unit
 pub async fn[E] mopress_with(options? : Options, (Options) -> E, (Options, E) -> Array[Rule]) -> Unit
 
 pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
+
+pub fn print_analysis_report(BuildAnalysisReport) -> Unit
+
+pub fn record_step_trace(String, Int64) -> Unit
 
 pub fn[T : Show] render_markdown(Item[T]) -> Item[String]
 
@@ -62,9 +66,22 @@ pub fn use_preprocessor(Item[String], Array[(Item[String]) -> Item[String] raise
 
 pub fn use_transformer(Item[Array[@markdown.Block]], Array[(Item[Array[@markdown.Block]]) -> Item[Array[@markdown.Block]] raise]) -> Item[Array[@markdown.Block]] raise
 
+pub async fn[T] with_page_trace(Array[StepTrace], async () -> T) -> T
+
 // Errors
 
 // Types and methods
+pub(all) struct BuildAnalysisReport {
+  pages : Array[PageAnalysis]
+  steps : Array[StepSummary]
+  total_pages : Int
+  total_size_bytes : Int
+  total_build_ms : Int64
+} derive(Eq, @debug.Debug)
+pub fn BuildAnalysisReport::equal(Self, Self) -> Bool
+pub fn BuildAnalysisReport::not_equal(Self, Self) -> Bool
+pub fn BuildAnalysisReport::to_repr(Self) -> @debug.Repr
+
 pub(all) struct ExplainReport {
   src : String
   rules : Array[RuleMatch]
@@ -112,6 +129,19 @@ pub fn Options::not_equal(Self, Self) -> Bool
 pub fn Options::to_repr(Self) -> @debug.Repr
 pub impl Default for Options
 
+pub(all) struct PageAnalysis {
+  path : String
+  size_bytes : Int
+  total_duration_ms : Int64
+  template_renders : Int
+  slowest_step : String
+  slowest_step_ms : Int64
+  step_traces : Array[StepTrace]
+} derive(Eq, @debug.Debug)
+pub fn PageAnalysis::equal(Self, Self) -> Bool
+pub fn PageAnalysis::not_equal(Self, Self) -> Bool
+pub fn PageAnalysis::to_repr(Self) -> @debug.Repr
+
 pub(all) enum Rule {
   Glob(String, Handler)
   Guard(String, (String) -> Bool, Handler)
@@ -134,12 +164,31 @@ pub fn RuleMatch::equal(Self, Self) -> Bool
 pub fn RuleMatch::not_equal(Self, Self) -> Bool
 pub fn RuleMatch::to_repr(Self) -> @debug.Repr
 
+pub(all) struct StepSummary {
+  name : String
+  total_ms : Int64
+  call_count : Int
+  max_ms : Int64
+} derive(Eq, @debug.Debug)
+pub fn StepSummary::equal(Self, Self) -> Bool
+pub fn StepSummary::not_equal(Self, Self) -> Bool
+pub fn StepSummary::to_repr(Self) -> @debug.Repr
+
+pub(all) struct StepTrace {
+  name : String
+  duration_ms : Int64
+} derive(Eq, @debug.Debug)
+pub fn StepTrace::equal(Self, Self) -> Bool
+pub fn StepTrace::not_equal(Self, Self) -> Bool
+pub fn StepTrace::to_repr(Self) -> @debug.Repr
+
 pub(all) enum Thing {
   Doc(String)
   Asset(Bytes)
   Multiple(Array[(String, Thing)])
   Empty
 } derive(Eq, @debug.Debug)
+pub fn Thing::byte_size(Self) -> Int
 pub fn Thing::equal(Self, Self) -> Bool
 pub fn Thing::not_equal(Self, Self) -> Bool
 pub fn Thing::to_repr(Self) -> @debug.Repr

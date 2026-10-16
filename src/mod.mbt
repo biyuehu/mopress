@@ -122,6 +122,7 @@ fn handle_help() -> Unit {
       #|Commands:
       #|  build              Build the site
       #|  build --no-emit    Build without writing files to disk
+      #|  build --analyze    Build and output performance breakdown analysis
       #|  explain            Print which files each rule matches
       #|  init               Initialize a new book-mode project
       #|  new                Create a new site-mode project
@@ -133,9 +134,9 @@ fn handle_help() -> Unit {
 }
 
 ///|
-async fn handle_build(no_emit~ : Bool = false) -> Unit {
+async fn handle_build(no_emit~ : Bool = false, analyze~ : Bool = false) -> Unit {
   let config = load_config()
-  build_book(config, no_emit~)
+  build_book(config, no_emit~, analyze~)
 }
 
 ///|
@@ -171,7 +172,11 @@ async fn command_handler() -> Unit {
         @c.chalk().modifier(Bold).color(Red).render("Usage: mopress new <dir>")
         |> println
       }
-    "build" => handle_build(no_emit=args.length() > 2 && args[2] == "--no-emit")
+    "build" =>
+      handle_build(
+        no_emit=args.contains("--no-emit"),
+        analyze=args.contains("--analyze"),
+      )
     "serve" => handle_serve()
     "explain" => handle_explain()
     "version" => handle_version()
@@ -208,79 +213,104 @@ pub async fn process_markdown_page(
   summary : @summary.Summary,
 ) -> @core.Item[@core.Thing] {
   "Rendering page \{raw.target}" |> println
+  let t_sep_0 = @async.now()
   let seprated = raw |> @core.separate_frontmatter
+  @core.record_step_trace("separate_frontmatter", @async.now() - t_sep_0)
+
+  let t_prep_0 = @async.now()
   let text = @bridge.run_markdown_preprocessors(
     config,
     seprated.data.1,
     raw.target,
   )
-  let ast = @bridge.run_markdown_transformers(
-    config,
-    (seprated.map(_ => text) |> @core.parse_markdown).data,
-    raw.target,
-  )
-  // @block steps
-  @core.render_markdown_and_frontmatter_from_ast(
+  @core.record_step_trace("run_preprocessors", @async.now() - t_prep_0)
+
+  let t_parse_0 = @async.now()
+  let parsed_md = (seprated.map(_ => text) |> @core.parse_markdown).data
+  @core.record_step_trace("parse_markdown", @async.now() - t_parse_0)
+
+  let t_trans_0 = @async.now()
+  let ast = @bridge.run_markdown_transformers(config, parsed_md, raw.target)
+  @core.record_step_trace("run_transformers", @async.now() - t_trans_0)
+
+  let t_render_0 = @async.now()
+  let rendered_html = @core.render_markdown_and_frontmatter_from_ast(
     seprated.map(_ => ast),
     seprated.data.0,
   )
-  |> @core.set_extension(".html")
-  |> x => {
-    let (prev, next) = summary.prev_next(x.location())
-    x.add_vars(
-      Map([
-        (
-          "section",
-          summary.flatten(x.location(), config.base_url)
-          |> @template.Value::from_json,
-        ),
-        ("site_title", config.title |> String),
-        ("site_description", config.description |> String),
-        ("site_keywords", config.keywords |> String),
-        ("site_authors", config.authors.join(",") |> String),
-        ("site_language", config.language |> String),
-        ("favicon", config.favicon |> String),
-        ("logo", config.logo |> String),
-        ("repository", config.repository.unwrap_or("") |> String),
-        ("src", config.src |> String),
-        ("dest", config.dest |> String),
-        ("base_url", config.base_url |> String),
-        ("build_time", build_time |> String),
-        ("version", version |> String),
-        ("breadcrumb", summary.breadcrumb(x.location()) |> String),
-        ("current", x.location() |> String),
-        (
-          "prev",
-          prev
-          .map(prev => {
-            @template.Object(
-              Map([("title", prev.0 |> String), ("location", prev.1 |> String)]),
-            )
-          })
-          .unwrap_or(String("")),
-        ),
-        (
-          "next",
-          next
-          .map(next => {
-            @template.Object(
-              Map([("title", next.0 |> String), ("location", next.1 |> String)]),
-            )
-          })
-          .unwrap_or(String("")),
-        ),
-      ]),
-    )
-    // @end
-  }
-  |> @core.load_and_apply_template(config.extensions.template)
-  |> @core.import_css(config.extensions.import_css)
-  |> @core.import_js(config.extensions.import_js)
-  |> @core.use_css(config.extensions.use_css)
-  |> @core.use_js(config.extensions.use_js)
-  |> @core.inject_head(config.extensions.inject_head.join("\n"))
-  |> @core.inject_body(config.extensions.inject_body.join("\n"))
-  |> @core.unify
+  @core.record_step_trace("render_markdown", @async.now() - t_render_0)
+
+  let t_tpl_0 = @async.now()
+  let item_with_vars = rendered_html
+    |> @core.set_extension(".html")
+    |> x => {
+      let (prev, next) = summary.prev_next(x.location())
+      x.add_vars(
+        Map([
+          (
+            "section",
+            summary.flatten(x.location(), config.base_url)
+            |> @template.Value::from_json,
+          ),
+          ("site_title", config.title |> String),
+          ("site_description", config.description |> String),
+          ("site_keywords", config.keywords |> String),
+          ("site_authors", config.authors.join(",") |> String),
+          ("site_language", config.language |> String),
+          ("favicon", config.favicon |> String),
+          ("logo", config.logo |> String),
+          ("repository", config.repository.unwrap_or("") |> String),
+          ("src", config.src |> String),
+          ("dest", config.dest |> String),
+          ("base_url", config.base_url |> String),
+          ("build_time", build_time |> String),
+          ("version", version |> String),
+          ("breadcrumb", summary.breadcrumb(x.location()) |> String),
+          ("current", x.location() |> String),
+          (
+            "prev",
+            prev
+            .map(prev => {
+              @template.Object(
+                Map([
+                  ("title", prev.0 |> String),
+                  ("location", prev.1 |> String),
+                ]),
+              )
+            })
+            .unwrap_or(String("")),
+          ),
+          (
+            "next",
+            next
+            .map(next => {
+              @template.Object(
+                Map([
+                  ("title", next.0 |> String),
+                  ("location", next.1 |> String),
+                ]),
+              )
+            })
+            .unwrap_or(String("")),
+          ),
+        ]),
+      )
+    }
+  let templated = item_with_vars
+    |> @core.load_and_apply_template(config.extensions.template)
+  @core.record_step_trace("apply_template", @async.now() - t_tpl_0)
+
+  let t_assets_0 = @async.now()
+  let final_item = templated
+    |> @core.import_css(config.extensions.import_css)
+    |> @core.import_js(config.extensions.import_js)
+    |> @core.use_css(config.extensions.use_css)
+    |> @core.use_js(config.extensions.use_js)
+    |> @core.inject_head(config.extensions.inject_head.join("\n"))
+    |> @core.inject_body(config.extensions.inject_body.join("\n"))
+    |> @core.unify
+  @core.record_step_trace("inject_assets", @async.now() - t_assets_0)
+  final_item
 }
 
 ///|
@@ -378,6 +408,7 @@ pub fn explain_book(config : @config.BookConfig) -> Unit raise {
 pub async fn build_book(
   config : @config.BookConfig,
   no_emit~ : Bool = false,
+  analyze~ : Bool = false,
 ) -> Unit {
   println("Parsing SUMMARY.md")
   let summary = @fs.read_file_to_string(
@@ -396,5 +427,6 @@ pub async fn build_book(
     { src: config.src, dest: config.dest, },
     build_book_rules(config, summary, not_found_page),
     no_emit~,
+    analyze~,
   )
 }

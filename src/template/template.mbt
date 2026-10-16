@@ -542,11 +542,43 @@ pub extend TemplateRenderError with Show::{to_string, output}
 ///
 /// Rendering errors (e.g. an undefined variable reference, or a failed
 /// partial) are tolerated on a per-node basis: the offending template
+
+///|
+let active_render_counter : Ref[Ref[Int32]?] = Ref(None)
+
+///|
+pub async fn[T] with_render_counter(
+  counter : Ref[Int32],
+  f : async () -> T,
+) -> T {
+  let prev = active_render_counter.val
+  active_render_counter.val = Some(counter)
+  defer {
+    active_render_counter.val = prev
+  }
+  f()
+}
+
+///|
+fn record_template_render() -> Unit {
+  match active_render_counter.val {
+    Some(counter) => counter.val += 1
+    None => ()
+  }
+}
+
+///|
+/// Renders a parsed template against the given variable context,
+/// producing the final output string.
+///
+/// Rendering errors (e.g. an undefined variable reference, or a failed
+/// partial) are tolerated on a per-node basis: the offending template
 /// node is simply rendered as empty output, and rendering continues for
 /// the rest of the template, rather than the whole render failing. Use
 /// `apply_template_strict` if such errors should instead abort rendering
 /// entirely.
 pub fn apply_template(template : Template, context : Context) -> String {
+  record_template_render()
   let output = StringBuilder()
   render_nodes(template, context, false, output, []) catch {
     _ => panic()
@@ -564,6 +596,7 @@ pub fn apply_template_strict(
   template : Template,
   context : Context,
 ) -> String raise TemplateRenderError {
+  record_template_render()
   let output = StringBuilder()
   render_nodes(template, context, true, output, [])
   output.to_string()
@@ -735,5 +768,6 @@ fn render_partial(
   }
   let next_stack = partial_stack.copy()
   next_stack.push(path)
+  record_template_render()
   render_nodes(template, partial_context, strict, output, next_stack)
 }

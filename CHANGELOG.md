@@ -10,6 +10,7 @@
 - Add feed and sitemap generation ([2462a1c](https://github.com/biyuehu/mbdoc/commit/2462a1c))
 - **template:** Add loop variables, if-negation, and partial arguments ([d167b63](https://github.com/biyuehu/mbdoc/commit/d167b63))
 - **plugins:** Implement MoonBit Playground Web Component plugin ([06a411a](https://github.com/biyuehu/mbdoc/commit/06a411a))
+- **core:** Enable concurrent file processing in mo_build ([954e574](https://github.com/biyuehu/mbdoc/commit/954e574))
 
 ### 🩹 Fixes
 
@@ -47,6 +48,6 @@
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 
 

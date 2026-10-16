@@ -289,3 +289,16 @@ async test "handler: binary and copy handlers use bytes reader" {
   })
   @debug.assert_eq(r2.data, Asset(b"cd"))
 }
+
+///|
+test "thing: byte_size calculates correct sizes" {
+  assert_eq(Thing::Doc("hello").byte_size(), 5)
+  assert_eq(Thing::Asset(b"world!").byte_size(), 6)
+  assert_eq(Thing::Empty.byte_size(), 0)
+  let multi = Thing::Multiple([
+    ("a.txt", Thing::Doc("abc")),
+    ("b.bin", Thing::Asset(b"1234")),
+    ("c.empty", Thing::Empty),
+  ])
+  assert_eq(multi.byte_size(), 7)
+}

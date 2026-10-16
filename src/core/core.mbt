@@ -8,9 +8,10 @@ pub async fn mopress(
 ) -> Unit {
   let args = @env.args()
   let cmd = if args.length() > 1 { args[1] } else { "" }
-  let no_emit = args.length() > 2 && args[2] == "--no-emit"
+  let no_emit = args.contains("--no-emit")
+  let analyze = args.contains("--analyze")
   match cmd {
-    "build" => options |> mo_build(rules, no_emit~)
+    "build" => options |> mo_build(rules, no_emit~, analyze~)
     "serve" => options |> mo_serve
     "explain" => options |> explain(rules)
     opts =>
@@ -58,24 +59,71 @@ pub async fn mo_build(
   options : Options,
   rules : Rules,
   no_emit~ : Bool = false,
+  analyze~ : Bool = false,
 ) -> Unit {
+  let build_start = @async.now()
   if no_emit {
     println("Dry-run (no emit) from \{options.src}")
   } else {
     println("Emitting files from \{options.src} to \{options.dest}")
   }
+  let page_analyses : Array[PageAnalysis] = []
+  let step_map : Map[String, (Ref[Int64], Ref[Int32], Ref[Int64])] = Map([])
   for rule in rules {
     let paths = rule.match_paths(options.src).0
     let mut outputs : Array[String] = []
+    let page_reports : Array[PageAnalysis?] = Array::make(paths.length(), None)
     @async.with_task_group(group => {
       outputs = Array::make(paths.length(), "")
       for i, path in paths {
         group.spawn_bg(() => {
-          let item = rule.handler().run(options, path)
+          let t0 = @async.now()
+          let tpl_counter = Ref(0)
+          let collected_traces : Array[StepTrace] = []
+          let item = if analyze {
+            with_page_trace(collected_traces, () => {
+              @template.with_render_counter(tpl_counter, () => {
+                rule.handler().run(options, path)
+              })
+            })
+          } else {
+            rule.handler().run(options, path)
+          }
+          let t_run = @async.now() - t0
           if no_emit {
             outputs[i] = item.location()
           } else {
             item.data.write(options.dest, item.location())
+          }
+          if analyze {
+            let size = item.data.byte_size()
+            let mut slowest_name = rule.handler_kind()
+            let mut slowest_ms = t_run
+            if collected_traces.length() > 0 {
+              slowest_name = collected_traces[0].name
+              slowest_ms = collected_traces[0].duration_ms
+              for tr in collected_traces {
+                if tr.duration_ms > slowest_ms {
+                  slowest_name = tr.name
+                  slowest_ms = tr.duration_ms
+                }
+              }
+            } else {
+              collected_traces.push({
+                name: rule.handler_kind(),
+                duration_ms: t_run,
+              })
+            }
+            let page_rep : PageAnalysis = {
+              path: item.location(),
+              size_bytes: size,
+              total_duration_ms: t_run,
+              template_renders: tpl_counter.val,
+              slowest_step: slowest_name,
+              slowest_step_ms: slowest_ms,
+              step_traces: collected_traces,
+            }
+            page_reports[i] = Some(page_rep)
           }
         })
       }
@@ -87,12 +135,63 @@ pub async fn mo_build(
         }
       }
     }
+    if analyze {
+      for rep in page_reports {
+        match rep {
+          Some(p) => {
+            page_analyses.push(p)
+            for trace in p.step_traces {
+              match step_map.get(trace.name) {
+                Some(entry) => {
+                  entry.0.val += trace.duration_ms
+                  entry.1.val += 1
+                  if trace.duration_ms > entry.2.val {
+                    entry.2.val = trace.duration_ms
+                  }
+                }
+                None =>
+                  step_map[trace.name] = (
+                    Ref(trace.duration_ms),
+                    Ref(1),
+                    Ref(trace.duration_ms),
+                  )
+              }
+            }
+          }
+          None => ()
+        }
+      }
+    }
   }
+  let total_build_ms = @async.now() - build_start
   if no_emit {
     println("Dry-run complete (no files written).")
   } else {
     @c.chalk().modifier(Bold).color(Green).render("√ Build finished.")
     |> println
+  }
+  if analyze {
+    let mut total_size = 0
+    for p in page_analyses {
+      total_size += p.size_bytes
+    }
+    let step_summaries : Array[StepSummary] = []
+    for entry in step_map {
+      step_summaries.push({
+        name: entry.0,
+        total_ms: entry.1.0.val,
+        call_count: entry.1.1.val,
+        max_ms: entry.1.2.val,
+      })
+    }
+    let report : BuildAnalysisReport = {
+      pages: page_analyses,
+      steps: step_summaries,
+      total_pages: page_analyses.length(),
+      total_size_bytes: total_size,
+      total_build_ms,
+    }
+    print_analysis_report(report)
   }
 }
 
