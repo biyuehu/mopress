@@ -41,9 +41,10 @@
 - Expand and strengthen unit test coverage ([8ea105f](https://github.com/biyuehu/mbdoc/commit/8ea105f))
 - **glob:** Cover tokenizer, scanner, and wildcard edge cases ([609b97b](https://github.com/biyuehu/mbdoc/commit/609b97b))
 - Expand coverage and mark test roadmap items done ([e75f926](https://github.com/biyuehu/mbdoc/commit/e75f926))
+- **template:** Add comprehensive tests for loop variables, negation, and partials ([7fa4648](https://github.com/biyuehu/mbdoc/commit/7fa4648))
 
 ### ❤️ Contributors
 
-- Romi <biyuehuya@gmail.com>
+- Romi ([@biyuehu](https://github.com/biyuehu))
 
 

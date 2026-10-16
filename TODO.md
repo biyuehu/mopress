@@ -14,13 +14,10 @@
 
 - [x] Improve better 404 page
 - [x] Feed & Sitemap generation
-  - feed/sitemap 文档需提及：`description` / `keywords` / `authors` / `title` / `date` / `language` 均为可选，有则用、无则忽略
-  - 暂定：feed 用 Atom，收录 SUMMARY 全部页面，条目时间戳统一用构建时间；sitemap 同样收 SUMMARY 全部
-  - 新增顶层配置 `site_url`（feed 必需，缺失则跳过 feed）、`feed_enabled`、`feed_limit`、`sitemap_enabled`
 
 ## Features
 
-- [ ] Template engine enhancements
+- [x] Template engine enhancements
 - [ ] i18n support
 - [ ] JSON / YAML data sources
 
