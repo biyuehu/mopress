@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<!-- biome-ignore lint: lint/a11y/useValidLang -->
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>贡献指南 - MoPress Book</title>
+  <link rel="icon" href="https://himeno-sena.com/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/styles/index.css">
+  <meta name="description" content="A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll">
+  <meta name="keywords" content="Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll">
+  <meta name="authors" content="Himeno Sena">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script></head>
+
+<body>
+  <div class="doc-root" id="docRoot">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="logo-row" style="text-decoration: none;">
+          <img class="logo-mark" src="https://himeno-sena.com/favicon.ico" alt="Logo" />
+          <span class="logo-name">MoPress Book</span>
+        </a>
+      </div>
+      <div class="nav-scroll">
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/introduce.html">
+          介绍
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        <div class="nav-section-label">指南</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/starting.html">
+          <strong>1</strong>快速开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/book-mode/index.html">
+          <strong>2</strong>Book 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/configuration.html">
+          <strong>2.1</strong>配置 (sena.toml)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/summary-file.html">
+          <strong>2.2</strong>组织章节 (SUMMARY.md)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/frontmatter.html">
+          <strong>2.3</strong>元数据
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/extensions.html">
+          <strong>2.4</strong>扩展配置
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/features.html">
+          <strong>2.5</strong>功能预设
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/pages.html">
+          <strong>2.6</strong>页面定制
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/site-mode/index.html">
+          <strong>3</strong>Site 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/starting.html">
+          <strong>3.1</strong>开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/rules-handlers-steps.html">
+          <strong>3.2</strong>Rules, Handlers 和 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/composing-steps.html">
+          <strong>3.3</strong>组合 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/output-formats.html">
+          <strong>3.4</strong>输出格式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/advance/index.html">
+          <strong>4</strong>高级
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/template.html">
+          <strong>4.1</strong>模板引擎
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/glob.html">
+          <strong>4.2</strong>Glob 匹配
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/plugins/index.html">
+          <strong>4.3</strong>多样化的插件
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/protocol.html">
+          <strong>4.3.1</strong>外部插件协议
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/web-components.html">
+          <strong>4.3.2</strong>Web Components
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/moonbit-modules.html">
+          <strong>4.3.3</strong>Moonbit 模块
+        </a>
+        
+        
+        
+        <div class="nav-section-label">参考</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/markdown.html">
+          <strong>5</strong>Markdown 演示
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/cli.html">
+          <strong>6</strong>CLI 参考
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/api.html">
+          <strong>7</strong>Api 参考
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/plugins.html">
+          插件枢纽</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0 active" href="/contributing.html">
+          贡献</a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/changelog.html">
+          Changelog</a>
+        
+        
+      </div>
+      <div class="nav-footer">
+        <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
+            rel="noopener noreferrer">MoPress</a>
+          <span class="nav-version">0.4.0</span>
+        </span>
+      </div>
+    </nav>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>toggle</title>
+              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button type="button" title="Search" id="searchOpen" aria-label="Search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>search</title>
+              <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="topbar-title" id="topbarTitle">/ 贡献</div>
+
+        <div class="topbar-right">
+          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
+          <a class="topbar-link" title="Open GitHub" href="https://github.com/biyuehu/mopress" target="_blank" rel="noreferrer noopener">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>github</title>
+              <path
+                d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
+                fill="currentColor" opacity=".6" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <article class="content">
+        <h1 id="贡献指南"><a href="#贡献指南" aria-hidden="true">贡献指南</a></h1>
+<p>感谢你对 MoPress 的关注与支持！无论是提交 Bug 报告、提出功能建议、完善文档、贡献核心代码，还是向 <a href="/plugins.html"  rel="noopener noreferrer">插件枢纽</a> 提交你开发的插件，我们都非常欢迎。</p>
+<hr>
+<h2 id="1-准备开发环境"><a href="#1-准备开发环境" aria-hidden="true">1. 准备开发环境</a></h2>
+<p>在开始贡献代码前，请确保你的本地环境中安装了以下工具：</p>
+<ul><li><p><strong><a href="https://www.moonbitlang.com/" target="_blank"  rel="noopener noreferrer">MoonBit</a></strong>：最新的 MoonBit 编译器与工具链。</p>
+</li><li><p><strong><a href="https://bun.sh/" target="_blank"  rel="noopener noreferrer">Bun</a></strong>（或 Node.js）：用于运行构建预处理脚本及外部插件协议测试。</p>
+</li><li><p><strong><a href="https://github.com/casey/just" target="_blank"  rel="noopener noreferrer">Just</a></strong>：通用的命令运行工具（可选，但推荐用于便捷执行常用构建脚本）。</p>
+</li><li><p><strong>Git</strong>：版本管理工具。</p>
+</li></ul>
+<div style="border-left:4px solid #cf222e;padding:8px 16px;margin:16px 0;background:#cf222e1a">
+<p style="font-weight:600;color:#cf222e;margin:0 0 4px">Caution</p>
+<p style="margin:0;white-space:pre-wrap">由于 MoonBit Native 后端的平台特性，Windows 用户建议确保系统安装并配置了 **MSVC**（Visual Studio C++ 构建工具）环境，而非 MinGW。</p>
+</div>
+<hr>
+<h2 id="2-本地开发与构建流程"><a href="#2-本地开发与构建流程" aria-hidden="true">2. 本地开发与构建流程</a></h2>
+<h3 id="克隆项目并安装依赖"><a href="#克隆项目并安装依赖" aria-hidden="true">克隆项目并安装依赖</a></h3>
+<pre><code class="language-bash">git clone https://github.com/biyuehu/mopress.git
+cd mopress
+
+# 更新 MoonBit 依赖
+moon update
+
+# 安装 Git 提交钩子（推荐）
+just init</code></pre>
+<h3 id="生成嵌入资源（prebuild）"><a href="#生成嵌入资源（prebuild）" aria-hidden="true">生成嵌入资源（Prebuild）</a></h3>
+<p>MoPress 在编译时会将内置的模板、静态资源与演示项目转录为 MoonBit 源码（<code>src/includes.mbt</code>）。在修改了相关资源或执行编译/测试前，请先执行：</p>
+<pre><code class="language-bash">just prebuild
+# 等价于：bun scripts/gen-includes.ts</code></pre>
+<h3 id="运行测试"><a href="#运行测试" aria-hidden="true">运行测试</a></h3>
+<pre><code class="language-bash">just test
+# 等价于：just prebuild &amp;&amp; moon test</code></pre>
+<p>MoPress 包含单元测试与快照测试。若改动影响到了预期的快照输出，可运行快照更新命令：</p>
+<pre><code class="language-bash">moon test --update</code></pre>
+<h3 id="代码格式化与接口检查"><a href="#代码格式化与接口检查" aria-hidden="true">代码格式化与接口检查</a></h3>
+<p>在准备提交代码前，请确保代码已通过 MoonBit 官方格式化并更新了生成的接口声明文件（<code>.mbti</code>）：</p>
+<pre><code class="language-bash">moon fmt
+moon info</code></pre>
+<div style="border-left:4px solid #1a7f37;padding:8px 16px;margin:16px 0;background:#1a7f371a">
+<p style="font-weight:600;color:#1a7f37;margin:0 0 4px">Tip</p>
+<p style="margin:0;white-space:pre-wrap">如果项目配置了 `lefthook`，在执行 `git commit` 时会自动触发 pre-commit 钩子，按顺序执行 prebuild、代码格式化、接口更新与全量测试。</p>
+</div>
+<hr>
+<h2 id="3-提交规范（pull-request）"><a href="#3-提交规范（pull-request）" aria-hidden="true">3. 提交规范（Pull Request）</a></h2>
+<ol start="1"><li><p><strong>创建分支</strong>：从 <code>main</code> 分支切出具名功能分支，如 <code>git checkout -b feat/my-new-feature</code> 或 <code>fix/resolve-issue-123</code>。</p>
+</li><li><p><strong>提交信息规范</strong>：遵循 <a href="https://www.conventionalcommits.org/" target="_blank"  rel="noopener noreferrer">Conventional Commits</a> 格式，常见类型包括：</p>
+<ul><li><p><code>feat:</code> 新增功能</p>
+</li><li><p><code>fix:</code> 修复缺陷</p>
+</li><li><p><code>docs:</code> 文档改动</p>
+</li><li><p><code>test:</code> 新增或修复测试</p>
+</li><li><p><code>chore:</code> 构建脚本、依赖或工具链调整</p>
+</li></ul>
+</li><li><p><strong>编写测试</strong>：为新功能或修复的 Bug 添加对应的测试用例（黑盒测试 <code>*_test.mbt</code> 或白盒测试 <code>*_wbtest.mbt</code>）。</p>
+</li><li><p><strong>提交 PR</strong>：发起 Pull Request 并详细说明改动动机、设计思路与影响范围。</p>
+</li></ol>
+<hr>
+<h2 id="4-插件枢纽（plugin-hub）收录申请"><a href="#4-插件枢纽（plugin-hub）收录申请" aria-hidden="true">4. 插件枢纽（Plugin Hub）收录申请</a></h2>
+<p>如果你开发了适用于 MoPress 的插件（包括预处理器、转换器、Web Components 或 MoonBit 模块），欢迎申请收录进 <a href="/plugins.html"  rel="noopener noreferrer">插件枢纽</a>！</p>
+<h3 id="收录步骤"><a href="#收录步骤" aria-hidden="true">收录步骤</a></h3>
+<ol start="1"><li><p>将你的插件开源并发布到公开仓库（如 GitHub、Gitee、Codeberg）或 npm / mooncakes。</p>
+</li><li><p>编辑本项目仓库中的 <a href="https://github.com/biyuehu/mopress/blob/main/docs/plugins.json" target="_blank"  rel="noopener noreferrer"><code>docs/plugins.json</code></a>，在数组末尾追加你的插件元数据：</p>
+<pre><code class="language-json"> {
+   &quot;name&quot;: &quot;插件名称&quot;,
+   &quot;url&quot;: &quot;https://github.com/username/your-plugin-repo&quot;,
+   &quot;type&quot;: &quot;Transformers&quot;,
+   &quot;description&quot;: &quot;简要描述插件的功能与适用场景。&quot;
+ }</code></pre>
+</li><li><p>提交 PR，标题格式例如：<code>docs: add &lt;plugin-name&gt; to plugin hub</code>。</p>
+</li></ol>
+<h3 id="插件类型（type-字段）"><a href="#插件类型（type-字段）" aria-hidden="true">插件类型（<code>type</code> 字段）</a></h3>
+<p><code>type</code> 字段必须为以下四种之一：</p>
+<table><thead><tr><th>类型</th><th>说明</th></tr></thead><tbody><tr><td><code>Preprocessers</code></td><td>文本预处理器（基于外部程序，通过 stdin/stdout 转换原始 Markdown 文本）</td></tr><tr><td><code>Transformers</code></td><td>AST 转换器（基于外部程序，通过 stdin/stdout 变换 Markdown AST 节点）</td></tr><tr><td><code>WebComponents</code></td><td>前端运行时 Web Component 组件（配合 HTML 块或内嵌标签使用）</td></tr><tr><td><code>MoonBit</code></td><td>MoonBit 原生 Step 模块（适用于 Site 模式的进程内管道函数）</td></tr></tbody></table>
+<h3 id="插件质量要求"><a href="#插件质量要求" aria-hidden="true">插件质量要求</a></h3>
+<ul><li><p><strong>开源透明</strong>：插件仓库需包含清晰的开源许可证（如 MIT、Apache-2.0、GPL 等）。</p>
+</li><li><p><strong>使用说明</strong>：README 中需提供接入 MoPress（<code>sena.toml</code> 或 <code>site.mbtx</code>）的配置示例。</p>
+</li><li><p><strong>稳定性与安全</strong>：插件在非正常输入下应能安全退出，外部脚本错误输出需遵循 MoPress 插件协议。</p>
+</li></ul>
+<hr>
+<h2 id="5-报告问题与建议"><a href="#5-报告问题与建议" aria-hidden="true">5. 报告问题与建议</a></h2>
+<p>遇到 Bug 或有新的功能想法？欢迎通过以下途径反馈：</p>
+<ul><li><p><strong>Bug 报告</strong>：在 GitHub Issues 中详细提供复现步骤、最小复现示例（Markdown 与 <code>sena.toml</code>）、操作系统环境以及错误日志。</p>
+</li><li><p><strong>功能讨论</strong>：可以在 Issue 或 Discussions 中发起讨论，分享你的使用场景与设计设想。</p>
+</li></ul>
+
+<script>
+  globalThis.console.log(`%c Mo %c Press`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
+  globalThis.console.log("%c Made With Love By Arimura Sena", "color: #e7acb4;background: #333; padding:5px;font-size: 2em;font-weight: bold;")
+  globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+  globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+</script>
+        <div class="page-nav">
+          
+          <a class="page-nav-btn" href="/plugins.html">
+            <div class="page-nav-dir">← Prev</div>
+            <div class="page-nav-title">插件枢纽</div>
+          </a>
+          
+          
+          <a class="page-nav-btn next" href="/changelog.html">
+            <div class="page-nav-dir">Next →</div>
+            <div class="page-nav-title">Changelog</div>
+          </a>
+          
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="search-overlay" id="searchOverlay" hidden>
+    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchDialogTitle">
+      <div class="search-head">
+        <div class="search-head-left">
+          <div class="search-head-title" id="searchDialogTitle">Search</div>
+          <div class="search-head-hint">Ctrl / ⌘ + K</div>
+        </div>
+
+        <button type="button" title="Close Search" class="search-close" id="searchClose"
+          aria-label="Close search">Esc</button>
+      </div>
+
+      <div class="search-input-row">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <input id="searchInput" class="search-input" type="search" placeholder="Search..." autocomplete="off"
+          spellcheck="false" />
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <script src="/scripts/main.js"></script>
+<script src="/plugins/runtime/bili-video.js"></script>
+<script src="/plugins/runtime/moonbit-playground.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Kaida-Amethyst/highlightjs-moonbit/dist/moonbit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/haskell.min.js"></script>
+<script>console.log('Hello, MoPress!');</script>
+<script>hljs.highlightAll()</script>
+</body>
+
+</html>
