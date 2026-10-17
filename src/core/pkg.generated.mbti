@@ -201,6 +201,7 @@ pub fn Thing::equal(Self, Self) -> Bool
 pub fn Thing::not_equal(Self, Self) -> Bool
 pub fn Thing::to_repr(Self) -> @debug.Repr
 pub fn Thing::write(Self, String, String) -> Unit raise @fs.IOError
+pub fn Thing::write_if_changed(Self, String, String) -> Bool raise @fs.IOError
 
 // Type aliases
 pub type Frontmatter = Map[String, String]

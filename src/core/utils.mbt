@@ -85,6 +85,68 @@ fn ensure_dir_for_file(filepath : String) -> Unit raise @fs.IOError {
 }
 
 ///|
+
+///|
+fn compute_bytes_hash(bytes : Bytes) -> String {
+  let hash = @crypto.sha256(bytes)
+  @crypto.bytes_to_hex_string(hash)
+}
+
+///|
+/// Writes this `Thing` to disk under `dest`, but only if the target file does
+/// not exist or its existing content hash differs from the new content.
+/// Returns `true` if a write actually occurred, or `false` if skipped.
+pub fn Thing::write_if_changed(
+  self : Thing,
+  dest : String,
+  target : String,
+) -> Bool raise @fs.IOError {
+  let path = @path.Path(dest).join(target).to_string()
+  ensure_dir_for_file(path)
+  match self {
+    Doc(doc) => {
+      if @fs.path_exists(path) && @fs.is_file(path) {
+        try {
+          let existing = @fs.read_file_to_string(path)
+          if existing == doc {
+            return false
+          }
+        } catch {
+          _ => ()
+        }
+      }
+      @fs.write_string_to_file(path, doc)
+      true
+    }
+    Asset(asset) => {
+      if @fs.path_exists(path) && @fs.is_file(path) {
+        try {
+          let existing = @fs.read_file_to_bytes(path)
+          if compute_bytes_hash(existing) == compute_bytes_hash(asset) {
+            return false
+          }
+        } catch {
+          _ => ()
+        }
+      }
+      @fs.write_bytes_to_file(path, asset)
+      true
+    }
+    Multiple(multiple) => {
+      let mut written = false
+      for info in multiple {
+        let res = info.1.write_if_changed(dest, info.0)
+        if res {
+          written = true
+        }
+      }
+      written
+    }
+    Empty => false
+  }
+}
+
+///|
 /// Marker to keep `moonbitlang/async` as a declared dependency of this
 /// package: the package is only referenced by whitebox tests (`async test`
 /// in `steps_wbtest.mbt`), which the `unused_package` lint does not scan.

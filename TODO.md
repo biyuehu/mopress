@@ -21,7 +21,7 @@
 - [x] Build performance profiling (`mopress build --analyze` & `--analyze-json`)
 - [ ] Build performance & caching
   - [x] Data sources preloading and caching
-  - [ ] Incremental build with content hashing
+  - [x] Incremental build with content hashing
   - [ ] Dev server live reloading (`mopress serve`)
 - [ ] Template partial / include syntax (`$include("partials/footer.html")$`)
 - [ ] Native code block syntax highlighting & copy button (`features.code_copy`)

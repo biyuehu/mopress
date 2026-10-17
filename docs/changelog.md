@@ -18,6 +18,7 @@ title: Changelog
 - **cli:** Add --analyze flag to mopress build for performance profiling ([9914f5f](https://github.com/biyuehu/mbdoc/commit/9914f5f))
 - **cli:** Support --analyze-json flag for machine-readable performance metrics ([cddc2c8](https://github.com/biyuehu/mbdoc/commit/cddc2c8))
 - **data:** Support structured data directory (JSON and TOML) for templates ([e7e6cad](https://github.com/biyuehu/mbdoc/commit/e7e6cad))
+- **data:** Cache loaded data directory to avoid redundant disk reads ([60e49e1](https://github.com/biyuehu/mbdoc/commit/60e49e1))
 
 ### 🩹 Fixes
 
@@ -59,6 +60,6 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi <biyuehuya@gmail.com>
+- Romi ([@biyuehu](https://github.com/biyuehu))
 
 

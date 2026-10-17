@@ -97,7 +97,7 @@ pub async fn mo_build(
           if no_emit {
             outputs[i] = item.location()
           } else {
-            item.data.write(options.dest, item.location())
+            ignore(item.data.write_if_changed(options.dest, item.location()))
           }
           if is_analyze {
             let size = item.data.byte_size()

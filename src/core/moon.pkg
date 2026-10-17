@@ -12,5 +12,6 @@ import {
   "moonbitlang/async/fs" @afs,
   "moonbitlang/async/http",
   "moonbitlang/async/socket",
+  "moonbitlang/x/crypto",
   "moonbit-community/chalk" @c,
 }

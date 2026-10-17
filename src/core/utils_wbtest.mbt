@@ -125,3 +125,24 @@ test "parse_frontmatter: whitespace trimmed from key and value" {
   assert_eq(meta["title"], "Hello World")
   assert_eq(body, "body")
 }
+
+///|
+test "Thing::write_if_changed: skips rewrite when content is identical" {
+  let temp_dir = "_build/test_write_if_changed"
+  let doc = Thing::Doc("Hello World")
+
+  // First write should write and return true
+  let first = doc.write_if_changed(temp_dir, "test.txt")
+  assert_true(first)
+  assert_eq(@fs.read_file_to_string(temp_dir + "/test.txt"), "Hello World")
+
+  // Second write with identical content should skip and return false
+  let second = doc.write_if_changed(temp_dir, "test.txt")
+  assert_false(second)
+
+  // Third write with modified content should write and return true
+  let modified = Thing::Doc("Hello New World")
+  let third = modified.write_if_changed(temp_dir, "test.txt")
+  assert_true(third)
+  assert_eq(@fs.read_file_to_string(temp_dir + "/test.txt"), "Hello New World")
+}
