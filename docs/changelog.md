@@ -38,6 +38,7 @@ title: Changelog
 - Resolve documentation inconsistencies, add contributing guide, and automate index version update ([c9487e5](https://github.com/biyuehu/mbdoc/commit/c9487e5))
 - Document template loop variables, negation, and partial arguments ([84f34d8](https://github.com/biyuehu/mbdoc/commit/84f34d8))
 - Update TODO.md with data sources and build profiling completion ([db84b86](https://github.com/biyuehu/mbdoc/commit/db84b86))
+- Update documentation for data_dir, variable priority, and build analyze options ([435fca2](https://github.com/biyuehu/mbdoc/commit/435fca2))
 
 ### 🏡 Chore
 
@@ -57,6 +58,6 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 
 

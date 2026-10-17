@@ -20,7 +20,7 @@ mopress <command>
 | --- | --- |
 | `init` | 初始化一个新的 Book 模式项目 |
 | `new` | 创建一个新的 Site 模式项目 |
-| `build` | 构建站点（支持 `--no-emit` 空运行） |
+| `build` | 构建站点（支持 `--no-emit` 空运行、`--analyze` 性能分析、`--analyze-json` 机器可读报告） |
 | `explain` | 打印规则匹配报告与预估输出列表（Dry-run） |
 | `serve` | 在本地启动开发服务器预览站点 |
 | `version` | 打印版本信息 |
@@ -99,5 +99,5 @@ mopress help
 moon run --target native site.mbtx <args>
 ```
 
-`<args>` 支持 `build`（支持 `build --no-emit`）、`serve` 以及 `explain` 子命令，其行为与 Book 模式对应命令一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
+`<args>` 支持 `build`（支持 `--no-emit`、`--analyze`、`--analyze-json`）、`serve` 以及 `explain` 子命令，其行为与 Book 模式对应命令一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
 

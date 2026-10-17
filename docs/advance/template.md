@@ -177,11 +177,11 @@ $endif$
 模板渲染有两种模式：
 
 - **宽松模式**（`apply_template`）：渲染过程中遇到问题，如引用了不存在的变量，会跳过对应的模板节点、以空内容代替，然后继续渲染文档的其余部分，不会导致整个渲染失败。
-- **严格模式**（`apply_template_strict`）：一旦渲染中遇到任何问题，会立即中止并抛出具体的错误。对应的错误类型 [`TemplateParseError`](https://mooncakes.io/docs/himeno/mopress/template#TemplateParseError) 定义如下：
+- **严格模式**（`apply_template_strict`）：一旦渲染中遇到任何问题，会立即中止并抛出具体的错误。对应的错误类型 [`TemplateRenderError`](https://mooncakes.io/docs/himeno/mopress/template#TemplateRenderError) 定义如下：
 
 {{@ ../src/template/template.mbt#template-render-error}}
 
-解析阶段的错误则是另一种独立的错误类型 [`TemplateRenderError`](https://mooncakes.io/docs/himeno/mopress/template#TemplateRenderError)：
+解析阶段的错误则是另一种独立的错误类型 [`TemplateParseError`](https://mooncakes.io/docs/himeno/mopress/template#TemplateParseError)：
 
 {{@ ../src/template/template.mbt#template-parse-error}}
 

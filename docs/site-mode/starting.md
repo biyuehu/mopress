@@ -38,8 +38,7 @@ cd <dir>
 
 {{@ demo-site/site.mbtx }}
 
-这份代码声明了一条规则：匹配源目录下所有以 `.md` 结尾的文件，将其内容作为文本读入，依次经过“渲染 Markdown 与元数据”和
-修改目标扩展名为`.html`”等多个 step，最后调用 `unify` 转换为最终可写入磁盘的格式。
+这份代码声明了一条规则：匹配源目录下所有以 `.md` 结尾的文件，将其内容作为文本读入，依次经过“渲染 Markdown 与元数据”和“修改目标扩展名为 `.html`”等多个 step，最后调用 `unify` 转换为最终可写入磁盘的格式。
 
 ## 运行构建
 
@@ -47,7 +46,7 @@ cd <dir>
 moon run --target native site.mbtx build
 ```
 
-构建完成后，源目录中的 `hello.markdown` 会被渲染为输出目录 `dest` 中的 `hello.html`。
+构建完成后，源目录中的 `index.md` 会被渲染为输出目录 `dest` 中的 `index.html`。
 
 ## 自定义源目录与输出目录
 

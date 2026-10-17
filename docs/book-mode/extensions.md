@@ -28,7 +28,7 @@ title: 扩展配置
 > 运用 <i>template</i>、<i>data_dir</i>、<i>assets</i>、<i>use_*</i> 等字段可以高度定制页面，详细说明请参见 <a href="./pages.html">页面定制</a> 与 <a href="../advance/template.html">模板引擎</a>。
 
 ## 模板
- 
+
 `template` 字段指向的文件决定了页面的整体 HTML 结构。模板语法与变量系统的完整说明请参见 [模板引擎](../advance/template.md)。
 
 ## 结构化数据源（data_dir）

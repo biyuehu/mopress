@@ -20,7 +20,7 @@ title: 输出格式
 ## 写入磁盘
 
 ```moonbit
-pub fn Thing::write(self : Self, dest : String, name : String) -> Unit raise @fs.IOError
+pub fn Thing::write(self : Thing, dest : String, target : String) -> Unit raise @fs.IOError
 ```
 
 `Thing::write` 负责把一个 `Thing` 实际写入输出目录下、以 `name` 命名的位置：对于 `Doc`、`Asset` 会直接写入对应的文本/二进制文件；对于 `Multiple`，则会把 `name` 当作一个子目录，将数组中的每一项按各自的文件名递归写入该子目录下； `Empty` 则不执行任何写入操作。这个方法是对底层文件系统写入能力的一层薄封装，本身不做任何额外的内容处理。
