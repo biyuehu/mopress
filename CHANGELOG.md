@@ -15,6 +15,7 @@
 - **cli:** Support --analyze-json flag for machine-readable performance metrics ([cddc2c8](https://github.com/biyuehu/mbdoc/commit/cddc2c8))
 - **data:** Support structured data directory (JSON and TOML) for templates ([e7e6cad](https://github.com/biyuehu/mbdoc/commit/e7e6cad))
 - **data:** Cache loaded data directory to avoid redundant disk reads ([60e49e1](https://github.com/biyuehu/mbdoc/commit/60e49e1))
+- **core:** Skip rewriting unchanged files using content hashing in Thing::write_if_changed ([4d695f4](https://github.com/biyuehu/mbdoc/commit/4d695f4))
 
 ### 🩹 Fixes
 
@@ -56,6 +57,6 @@
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 
 

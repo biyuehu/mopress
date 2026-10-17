@@ -56,6 +56,8 @@ pub fn separate_frontmatter(Item[String]) -> Item[(Map[String, String], String)]
 
 pub fn[T] set_extension(Item[T], String) -> Item[T]
 
+pub fn trigger_live_reload() -> Unit
+
 pub fn[T : Thingable] unify(Item[T]) -> Item[Thing]
 
 pub fn use_css(Item[String], Array[String]) -> Item[String]

@@ -31,3 +31,12 @@ test "content_type covers common static assets" {
   assert_eq(content_type("image.png"), "image/png")
   assert_eq(content_type("font.woff2"), "font/woff2")
 }
+
+///|
+test "trigger_live_reload updates epoch and script contains endpoint" {
+  let initial = live_reload_epoch.val
+  trigger_live_reload()
+  assert_true(live_reload_epoch.val >= initial)
+  assert_true(live_reload_script.contains("/__mopress_live_reload"))
+  assert_true(live_reload_script.contains("window.location.reload()"))
+}

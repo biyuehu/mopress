@@ -5,6 +5,39 @@ let default_serve_host : String = "127.0.0.1"
 let default_serve_port : Int32 = 8000
 
 ///|
+
+///|
+let live_reload_epoch : Ref[Int64] = Ref(0)
+
+///|
+/// Notify all connected live reload clients that a build has occurred.
+pub fn trigger_live_reload() -> Unit {
+  live_reload_epoch.val = @async.now()
+}
+
+///|
+let live_reload_script : String =
+  #|<script>
+  #|(function() {
+  #|  let lastEpoch = null;
+  #|  function checkReload() {
+  #|    fetch('/__mopress_live_reload')
+  #|      .then(res => res.json())
+  #|      .then(data => {
+  #|        if (lastEpoch !== null && data.epoch !== lastEpoch) {
+  #|          window.location.reload();
+  #|        } else {
+  #|          lastEpoch = data.epoch;
+  #|          setTimeout(checkReload, 1000);
+  #|        }
+  #|      })
+  #|      .catch(() => setTimeout(checkReload, 2000));
+  #|  }
+  #|  checkReload();
+  #|})();
+  #|</script>
+
+///|
 async fn serve_static_dir(
   root : String,
   host~ : String = default_serve_host,
@@ -24,6 +57,19 @@ async fn serve_static_request(
   request : @http.Request,
   conn : @http.ServerConnection,
 ) -> Unit {
+  if request.path.has_prefix("/__mopress_live_reload") {
+    let body = "{\"epoch\": \{live_reload_epoch.val}}"
+    conn.send_response(200, "OK", extra_headers={
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": body.length().to_string(),
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+    })
+    if request.meth != Head {
+      conn.write_string(body)
+    }
+    conn.end_response()
+    return
+  }
   match request.meth {
     Get => serve_path(root, request.path, false, conn)
     Head => serve_path(root, request.path, true, conn)
@@ -90,6 +136,25 @@ async fn serve_file(
   head_only : Bool,
   conn : @http.ServerConnection,
 ) -> Unit {
+  let is_html = file_path.has_suffix(".html") || file_path.has_suffix(".htm")
+  if is_html {
+    let content = @fs.read_file_to_string(file_path) catch { _ => "" }
+    let injected = if content.contains("</body>") {
+      inject_before_body_end(content, live_reload_script)
+    } else {
+      content + live_reload_script
+    }
+    conn.send_response(200, "OK", extra_headers={
+      "Content-Type": content_type(file_path),
+      "Content-Length": injected.length().to_string(),
+      "Cache-Control": "no-cache",
+    })
+    if !head_only {
+      conn.write_string(injected)
+    }
+    conn.end_response()
+    return
+  }
   let file = @afs.open(file_path, mode=ReadOnly)
   defer file.close()
   conn.send_response(200, "OK", extra_headers={

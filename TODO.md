@@ -22,7 +22,7 @@
 - [ ] Build performance & caching
   - [x] Data sources preloading and caching
   - [x] Incremental build with content hashing
-  - [ ] Dev server live reloading (`mopress serve`)
+  - [x] Dev server live reloading (`mopress serve`)
 - [ ] Template partial / include syntax (`$include("partials/footer.html")$`)
 - [ ] Native code block syntax highlighting & copy button (`features.code_copy`)
 - [ ] Table of Contents (TOC) extraction & `$toc$` template variable
