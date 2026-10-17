@@ -257,7 +257,7 @@ pub async fn process_markdown_page(
     |> @core.set_extension(".html")
     |> x => {
       let (prev, next) = summary.prev_next(x.location())
-      let data_val = @data.load_data_dir(config.extensions.data_dir)
+      let data_val = @data.load_data_dir_cached(config.extensions.data_dir)
       let fm_vars = seprated.data.0.map((_, v) => v |> @template.String)
       x
       .set_var("data", data_val)

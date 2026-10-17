@@ -100,4 +100,3 @@ moon run --target native site.mbtx <args>
 ```
 
 `<args>` 支持 `build`（支持 `--no-emit`、`--analyze`、`--analyze-json`）、`serve` 以及 `explain` 子命令，其行为与 Book 模式对应命令一致。`--target native` 旨在告诉 MoonBit 编译目标为 Native 平台。
-

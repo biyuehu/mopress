@@ -58,3 +58,20 @@ test "load_data: step attaches data variable to Item" {
   assert_true(map.contains("authors"))
   assert_true(map.contains("sponsors"))
 }
+
+///|
+test "load_data_dir_cached: caches result and can be cleared" {
+  @data.clear_data_cache()
+  let val1 = @data.load_data_dir_cached("src/data/testdata")
+  guard val1 is Object(map1) else { fail("expected Object") }
+  assert_true(map1.contains("authors"))
+
+  let val2 = @data.load_data_dir_cached("src/data/testdata")
+  guard val2 is Object(map2) else { fail("expected Object") }
+  assert_true(map2.contains("authors"))
+
+  @data.clear_data_cache()
+  let val3 = @data.load_data_dir_cached("src/data/testdata")
+  guard val3 is Object(map3) else { fail("expected Object") }
+  assert_true(map3.contains("authors"))
+}

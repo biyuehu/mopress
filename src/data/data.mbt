@@ -81,9 +81,35 @@ pub fn load_data_dir(dir : String) -> @template.Value {
 }
 
 ///|
+let data_cache : Map[String, @template.Value] = Map([])
+
+///|
+/// Returns cached data for `dir` if available, or loads and caches it.
+pub fn load_data_dir_cached(dir : String) -> @template.Value {
+  match data_cache.get(dir) {
+    Some(val) => val
+    None => {
+      let val = load_data_dir(dir)
+      data_cache[dir] = val
+      val
+    }
+  }
+}
+
+///|
+/// Clears the in-memory cache of loaded data directories.
+pub fn clear_data_cache() -> Unit {
+  data_cache.clear()
+}
+
+///|
 /// Site mode step that loads structured data from `dir` and attaches it
 /// to the item under variable name `"data"`.
-pub fn[T] load_data(item : @core.Item[T], dir : String) -> @core.Item[T] {
-  let data = load_data_dir(dir)
+pub fn[T] load_data(
+  item : @core.Item[T],
+  dir : String,
+  cached~ : Bool = true,
+) -> @core.Item[T] {
+  let data = if cached { load_data_dir_cached(dir) } else { load_data_dir(dir) }
   item.set_var("data", data)
 }

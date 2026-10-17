@@ -39,6 +39,7 @@ title: Changelog
 - Document template loop variables, negation, and partial arguments ([84f34d8](https://github.com/biyuehu/mbdoc/commit/84f34d8))
 - Update TODO.md with data sources and build profiling completion ([db84b86](https://github.com/biyuehu/mbdoc/commit/db84b86))
 - Update documentation for data_dir, variable priority, and build analyze options ([435fca2](https://github.com/biyuehu/mbdoc/commit/435fca2))
+- Align documentation with latest CLI flags and API signatures ([d90843e](https://github.com/biyuehu/mbdoc/commit/d90843e))
 
 ### 🏡 Chore
 

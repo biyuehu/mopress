@@ -8,9 +8,13 @@ import {
 }
 
 // Values
-pub fn[T] load_data(@core.Item[T], String) -> @core.Item[T]
+pub fn clear_data_cache() -> Unit
+
+pub fn[T] load_data(@core.Item[T], String, cached? : Bool) -> @core.Item[T]
 
 pub fn load_data_dir(String) -> @template.Value
+
+pub fn load_data_dir_cached(String) -> @template.Value
 
 pub fn value_from_toml(@toml.TomlValue) -> @template.Value
 
