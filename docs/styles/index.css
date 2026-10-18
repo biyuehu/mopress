@@ -499,8 +499,22 @@ body {
   border-top: none;
 }
 
-.search-result:hover {
+.search-result:hover,
+.search-result.is-active {
   background: var(--bg-secondary);
+}
+
+.search-result.is-active {
+  outline: 1.5px solid var(--accent);
+  outline-offset: -1.5px;
+}
+
+.search-result mark {
+  background: rgba(234, 179, 8, 0.25);
+  color: inherit;
+  font-weight: 600;
+  padding: 0 0.125rem;
+  border-radius: 0.125rem;
 }
 
 .search-result-title {

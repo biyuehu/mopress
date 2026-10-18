@@ -19,17 +19,15 @@
 
 - [x] Template engine enhancements
 - [x] Build performance profiling (`mopress build --analyze` & `--analyze-json`)
-- [ ] Build performance & caching
+- [x] Build performance & caching
   - [x] Data sources preloading and caching
   - [x] Incremental build with content hashing
   - [x] Dev server live reloading (`mopress serve`)
-- [ ] Template partial / include syntax (`$include("partials/footer.html")$`)
-- [ ] Native code block syntax highlighting & copy button (`features.code_copy`)
 - [ ] Table of Contents (TOC) extraction & `$toc$` template variable
-- [ ] Search index generation (`features.search`)
+- [x] Built-in client search UI & modal (powered by existing `index.json`)
 - [ ] i18n / multi-language support
 - [x] JSON / YAML / TOML data sources
-- [ ] Standard step combinators library for Site Mode (`@mopress/steps`)
+- [ ] Common step combinators for Site Mode (e.g. excerpt, reading time, pagination)
 
 ## Site Mode
 
