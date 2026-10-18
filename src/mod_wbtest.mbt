@@ -207,3 +207,25 @@ async test "process_markdown_page: priority frontmatter > data > builtin vars" {
   guard res2.data is @core.Doc(html2) else { fail("expected Doc") }
   assert_true(html2.contains("title: Default Site Title"))
 }
+
+///|
+test "search client assets: embedded template and scripts integrity" {
+  // 1. Verify default book template contains all necessary search dialog elements
+  assert_true(book_templates_default_html.contains("id=\"searchOverlay\""))
+  assert_true(book_templates_default_html.contains("id=\"searchInput\""))
+  assert_true(book_templates_default_html.contains("id=\"searchResults\""))
+  assert_true(book_templates_default_html.contains("id=\"searchOpen\""))
+  assert_true(book_templates_default_html.contains("id=\"searchClose\""))
+
+  // 2. Verify embedded main.js contains the enhanced search logic
+  assert_true(book_scripts_main_js.contains("function initSearch()"))
+  assert_true(book_scripts_main_js.contains("highlightMatches"))
+  assert_true(book_scripts_main_js.contains("getSnippet"))
+  assert_true(book_scripts_main_js.contains("scored.sort"))
+  assert_true(book_scripts_main_js.contains("is-active"))
+  assert_true(book_scripts_main_js.contains("fetch('/index.json')"))
+
+  // 3. Verify styles contain active and highlight mark styles
+  assert_true(book_styles_index_css.contains(".search-result.is-active"))
+  assert_true(book_styles_index_css.contains(".search-result mark"))
+}

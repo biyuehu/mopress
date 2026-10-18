@@ -21,6 +21,7 @@ title: Changelog
 - **data:** Cache loaded data directory to avoid redundant disk reads ([60e49e1](https://github.com/biyuehu/mbdoc/commit/60e49e1))
 - **core:** Skip rewriting unchanged files using content hashing in Thing::write_if_changed ([4d695f4](https://github.com/biyuehu/mbdoc/commit/4d695f4))
 - **serve:** Add live reload client injection and status endpoint to mopress serve ([36380b1](https://github.com/biyuehu/mbdoc/commit/36380b1))
+- **search:** Enhance client search with multi-word scoring, snippet context, and keyboard navigation ([ddf793d](https://github.com/biyuehu/mbdoc/commit/ddf793d))
 
 ### 🩹 Fixes
 
@@ -62,6 +63,6 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 
 
