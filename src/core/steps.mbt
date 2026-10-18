@@ -32,8 +32,8 @@ pub fn[T : Show] render_markdown(item : Item[T]) -> Item[Html] {
 /// Renders an already-parsed Markdown AST directly to HTML, replacing
 /// `item`'s data with the resulting HTML string.
 pub fn render_markdown_from_ast(item : Item[@markdown.Markdown]) -> Item[Html] {
-  let { html, .. } = item.data |> @renderer.render_markdown
-  item.map(_ => html)
+  let { html, toc, } = item.data |> @renderer.render_markdown
+  item.set_var("toc", toc_to_template_value(toc)).map(_ => html)
 }
 
 ///|
@@ -56,8 +56,11 @@ pub fn render_markdown_and_frontmatter_from_ast(
   item : Item[@markdown.Markdown],
   frontmatter : Map[String, String],
 ) -> Item[Html] {
-  let { html, .. } = item.data |> @renderer.render_markdown
-  item.map(_ => html, vars=frontmatter.map((_, v) => v |> @template.String))
+  let { html, toc, } = item.data |> @renderer.render_markdown
+  item
+  .set_var("toc", toc_to_template_value(toc))
+  .add_vars(frontmatter.map((_, v) => v |> @template.String))
+  .map(_ => html)
 }
 
 ///|

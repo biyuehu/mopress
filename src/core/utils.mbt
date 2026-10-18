@@ -85,6 +85,23 @@ fn ensure_dir_for_file(filepath : String) -> Unit raise @fs.IOError {
 }
 
 ///|
+fn toc_to_template_value(toc : @renderer.Toc) -> @template.Value {
+  let arr : Array[@template.Value] = []
+  for item in toc {
+    arr.push(
+      @template.Value::Object(
+        Map([
+          ("level", @template.Value::Number(item.level.to_double())),
+          ("title", @template.Value::String(item.title)),
+          ("anchor", @template.Value::String(item.anchor)),
+        ]),
+      ),
+    )
+  }
+  @template.Value::Array(arr)
+}
+
+///|
 
 ///|
 fn compute_bytes_hash(bytes : Bytes) -> String {

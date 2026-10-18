@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>$if(title)$$title$$else$$site_title$$endif$</title>
+</head>
+<body>
+  <nav class="toc">
+    $for(toc)$
+    <a class="toc-link depth-$item.level$" href="#$item.anchor$">$item.title$</a>
+    $endfor$
+  </nav>
+  <main>
+    $body$
+  </main>
+</body>
+</html>

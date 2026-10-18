@@ -302,3 +302,28 @@ test "thing: byte_size calculates correct sizes" {
   ])
   assert_eq(multi.byte_size(), 7)
 }
+
+///|
+test "render_markdown: populates toc variable in Item vars" {
+  let md_content = "# Heading One\n\nSome text.\n\n## Sub Heading\n\nMore text.\n\n### Sub Sub\n"
+  let item = Item::new(md_content, "page.md")
+  let rendered = render_markdown(item)
+  guard rendered.vars.get("toc") is Some(Array(toc_list)) else {
+    fail("expected toc array in vars")
+  }
+  assert_eq(toc_list.length(), 3)
+  guard toc_list[0] is Object(h1) else { fail("expected Object for h1") }
+  assert_eq(h1.get("level"), Some(@template.Value::Number(1.0)))
+  assert_eq(h1.get("title"), Some(@template.Value::String("Heading One")))
+  assert_eq(h1.get("anchor"), Some(@template.Value::String("heading-one")))
+
+  guard toc_list[1] is Object(h2) else { fail("expected Object for h2") }
+  assert_eq(h2.get("level"), Some(@template.Value::Number(2.0)))
+  assert_eq(h2.get("title"), Some(@template.Value::String("Sub Heading")))
+  assert_eq(h2.get("anchor"), Some(@template.Value::String("sub-heading")))
+
+  guard toc_list[2] is Object(h3) else { fail("expected Object for h3") }
+  assert_eq(h3.get("level"), Some(@template.Value::Number(3.0)))
+  assert_eq(h3.get("title"), Some(@template.Value::String("Sub Sub")))
+  assert_eq(h3.get("anchor"), Some(@template.Value::String("sub-sub")))
+}

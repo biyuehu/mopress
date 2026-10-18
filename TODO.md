@@ -23,7 +23,7 @@
   - [x] Data sources preloading and caching
   - [x] Incremental build with content hashing
   - [x] Dev server live reloading (`mopress serve`)
-- [ ] Table of Contents (TOC) extraction & `$toc$` template variable
+- [x] Table of Contents (TOC) extraction & `$toc$` template variable
 - [x] Built-in client search UI & modal (powered by existing `index.json`)
 - [ ] i18n / multi-language support
 - [x] JSON / YAML / TOML data sources

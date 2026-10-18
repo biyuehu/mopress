@@ -229,3 +229,46 @@ test "search client assets: embedded template and scripts integrity" {
   assert_true(book_styles_index_css.contains(".search-result.is-active"))
   assert_true(book_styles_index_css.contains(".search-result mark"))
 }
+
+///|
+async test "process_markdown_page: exposes toc template variable" {
+  let base = @config.BookConfig::default()
+  let config = {
+    ..base,
+    extensions: {
+      ..base.extensions,
+      template: "src/testdata/toc_template.html",
+    },
+  }
+  let md =
+    #|# Introduction
+    #|
+    #|First section.
+    #|
+    #|## Background
+    #|
+    #|Some background info.
+    #|
+    #|## Architecture Details
+    #|
+    #|More deep details.
+  let raw = @core.Item::new(md, "toc_page.md")
+  let result = process_markdown_page(raw, config, empty_summary())
+  guard result.data is @core.Doc(html) else { fail("expected Doc") }
+  assert_true(
+    html.contains(
+      "<a class=\"toc-link depth-1\" href=\"#introduction\">Introduction</a>",
+    ),
+  )
+  assert_true(
+    html.contains(
+      "<a class=\"toc-link depth-2\" href=\"#background\">Background</a>",
+    ),
+  )
+  assert_true(
+    html.contains(
+      "<a class=\"toc-link depth-2\" href=\"#architecture-details\">Architecture Details</a>",
+    ),
+  )
+  assert_true(html.contains("<h1 id=\"introduction\">"))
+}

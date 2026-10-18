@@ -172,6 +172,23 @@ $endif$
 
 在 Site 模式下，可以使用 `@data.load_data(item, "data")` Step 将数据目录手动挂载进自定义管线。详细说明请参考 [组合 Steps](../site-mode/composing-steps.md)。
 
+### 文章目录大纲（TOC）
+
+每篇 Markdown 页面渲染时，其标题大纲会自动提取并注入到 `$toc$` 模板变量中。`$toc$` 是一个对象数组，每个元素包含：
+- `item.level`: 标题层级（1 ~ 6）
+- `item.title`: 标题文本内容
+- `item.anchor`: 标题对应的锚点 slug
+
+在模板中可直接遍历 `$toc$` 生成右侧或侧边目录导航：
+
+```html
+<nav class="toc">
+  $for(toc)$
+  <a class="toc-item depth-$item.level$" href="#$item.anchor$">$item.title$</a>
+  $endfor$
+</nav>
+```
+
 ## 严格模式与宽松模式
 
 模板渲染有两种模式：
