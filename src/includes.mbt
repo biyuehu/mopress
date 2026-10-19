@@ -12,11 +12,44 @@ let book_scripts_main_js : String =
   #|
   #|const MOBILE_WIDTH = 768
   #|
-  #|function initMobileSidebar() {
+  #|function initSidebar() {
   #|  if (!docRoot) return
-  #|  const update = () => window.innerWidth < MOBILE_WIDTH && !!docRoot?.classList.toggle('nav-collapsed', true)
-  #|  window.addEventListener('resize', update, { passive: true })
-  #|  update()
+  #|  const isMobile = () => window.innerWidth <= MOBILE_WIDTH
+  #|
+  #|  const toggle = () => {
+  #|    if (isMobile()) {
+  #|      docRoot.classList.toggle('nav-open')
+  #|    } else {
+  #|      docRoot.classList.toggle('nav-collapsed')
+  #|    }
+  #|  }
+  #|
+  #|  const closeMobile = () => {
+  #|    if (isMobile()) {
+  #|      docRoot.classList.remove('nav-open')
+  #|    }
+  #|  }
+  #|
+  #|  $('#navToggle')?.addEventListener('click', toggle)
+  #|  $('#sidebarBackdrop')?.addEventListener('click', closeMobile)
+  #|
+  #|  docRoot.querySelectorAll('.nav-item').forEach((item) => {
+  #|    item.addEventListener('click', () => {
+  #|      if (isMobile()) {
+  #|        closeMobile()
+  #|      }
+  #|    })
+  #|  })
+  #|
+  #|  window.addEventListener(
+  #|    'resize',
+  #|    () => {
+  #|      if (!isMobile()) {
+  #|        docRoot.classList.remove('nav-open')
+  #|      }
+  #|    },
+  #|    { passive: true }
+  #|  )
   #|}
   #|
   #|function initProgressBar() {
@@ -228,7 +261,6 @@ let book_scripts_main_js : String =
   #|}
   #|
   #|document.addEventListener('DOMContentLoaded', () => {
-  #|  $('#navToggle')?.addEventListener('click', () => !!docRoot?.classList.toggle('nav-collapsed'))
   #|  $('#themeToggle')?.addEventListener('click', () => {
   #|    const cur = getMode()
   #|    const next = cur === 'system' ? 'light' : cur === 'light' ? 'dark' : 'system'
@@ -240,7 +272,7 @@ let book_scripts_main_js : String =
   #|    if (getMode() === 'system') initThemeRender()
   #|  })
   #|
-  #|  initMobileSidebar()
+  #|  initSidebar()
   #|  initProgressBar()
   #|  initSearch()
   #|  initThemeRender()
@@ -331,17 +363,64 @@ let book_styles_index_css : String =
   #|  display: flex;
   #|  flex-direction: column;
   #|  border-right: 0.5px solid var(--border);
-  #|  transition:
-  #|    width 0.18s ease,
-  #|    opacity 0.18s ease;
   #|  height: 100vh;
   #|}
   #|
-  #|.doc-root.nav-collapsed .sidebar {
-  #|  width: 0;
-  #|  border-right: none;
-  #|  pointer-events: none;
-  #|  opacity: 0;
+  #|@media (min-width: 769px) {
+  #|  .sidebar {
+  #|    transition:
+  #|      width 0.18s ease,
+  #|      opacity 0.18s ease;
+  #|  }
+  #|
+  #|  .doc-root.nav-collapsed .sidebar {
+  #|    width: 0;
+  #|    border-right: none;
+  #|    pointer-events: none;
+  #|    opacity: 0;
+  #|  }
+  #|}
+  #|
+  #|.sidebar-backdrop {
+  #|  display: none;
+  #|}
+  #|
+  #|@media (max-width: 768px) {
+  #|  .sidebar {
+  #|    position: fixed;
+  #|    top: 0;
+  #|    bottom: 0;
+  #|    left: 0;
+  #|    z-index: 100;
+  #|    height: 100vh;
+  #|    height: 100dvh;
+  #|    width: min(var(--nav-w), 82vw);
+  #|    background: var(--bg);
+  #|    transform: translateX(-100%);
+  #|    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  #|    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  #|  }
+  #|
+  #|  .doc-root.nav-open .sidebar {
+  #|    transform: translateX(0);
+  #|    pointer-events: auto;
+  #|  }
+  #|
+  #|  .sidebar-backdrop {
+  #|    display: block;
+  #|    position: fixed;
+  #|    inset: 0;
+  #|    background: rgba(0, 0, 0, 0.45);
+  #|    z-index: 90;
+  #|    opacity: 0;
+  #|    pointer-events: none;
+  #|    transition: opacity 0.22s ease;
+  #|  }
+  #|
+  #|  .doc-root.nav-open .sidebar-backdrop {
+  #|    opacity: 1;
+  #|    pointer-events: auto;
+  #|  }
   #|}
   #|
   #|.sidebar-header {
@@ -1177,6 +1256,7 @@ let book_templates_default_html : String =
   #|        </span>
   #|      </div>
   #|    </nav>
+  #|    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   #|
   #|    <div class="main">
   #|      <div class="topbar">
@@ -1689,4 +1769,4 @@ let site_styles_default_css : String =
 pub let version : String = "0.4.0"
 
 ///|
-let build_time : String = "2026/10/19 16:12:30"
+let build_time : String = "2026/10/19 16:21:38"

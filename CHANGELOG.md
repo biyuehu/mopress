@@ -19,6 +19,7 @@
 - **serve:** Add live reload client injection and status endpoint to mopress serve ([36380b1](https://github.com/biyuehu/mbdoc/commit/36380b1))
 - **search:** Enhance client search with multi-word scoring, snippet context, and keyboard navigation ([ddf793d](https://github.com/biyuehu/mbdoc/commit/ddf793d))
 - **core:** Extract TOC from rendered markdown and expose as \\$ template variable ([b664ed6](https://github.com/biyuehu/mbdoc/commit/b664ed6))
+- **docs:** Enhance meta tags and SEO metadata for landing page ([f38b5cd](https://github.com/biyuehu/mbdoc/commit/f38b5cd))
 
 ### 🩹 Fixes
 

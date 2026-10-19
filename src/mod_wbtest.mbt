@@ -356,3 +356,28 @@ test "docs/index.html: metadata and SEO tags integrity" {
     ),
   )
 }
+
+///|
+test "sidebar client assets: responsive CSS drawer and mobile sidebar integrity" {
+  // 1. Template contains sidebarBackdrop element for mobile drawer
+  assert_true(book_templates_default_html.contains("id=\"sidebarBackdrop\""))
+  assert_true(
+    book_templates_default_html.contains("class=\"sidebar-backdrop\""),
+  )
+
+  // 2. CSS contains responsive drawer styles and backdrop
+  assert_true(book_styles_index_css.contains("@media (max-width: 768px)"))
+  assert_true(book_styles_index_css.contains(".doc-root.nav-open .sidebar"))
+  assert_true(book_styles_index_css.contains(".sidebar-backdrop"))
+  assert_true(book_styles_index_css.contains("@media (min-width: 769px)"))
+  assert_true(
+    book_styles_index_css.contains(".doc-root.nav-collapsed .sidebar"),
+  )
+
+  // 3. Scripts contain initSidebar without initial DOM mutation (no FOUC / stutter)
+  assert_true(book_scripts_main_js.contains("function initSidebar()"))
+  assert_true(book_scripts_main_js.contains("sidebarBackdrop"))
+  assert_true(book_scripts_main_js.contains("nav-open"))
+  assert_true(book_scripts_main_js.contains("nav-collapsed"))
+  assert_false(book_scripts_main_js.contains("function initMobileSidebar()"))
+}

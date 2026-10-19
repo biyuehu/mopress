@@ -8,11 +8,44 @@ const getMode = () => localStorage.getItem('theme') || 'system'
 
 const MOBILE_WIDTH = 768
 
-function initMobileSidebar() {
+function initSidebar() {
   if (!docRoot) return
-  const update = () => window.innerWidth < MOBILE_WIDTH && !!docRoot?.classList.toggle('nav-collapsed', true)
-  window.addEventListener('resize', update, { passive: true })
-  update()
+  const isMobile = () => window.innerWidth <= MOBILE_WIDTH
+
+  const toggle = () => {
+    if (isMobile()) {
+      docRoot.classList.toggle('nav-open')
+    } else {
+      docRoot.classList.toggle('nav-collapsed')
+    }
+  }
+
+  const closeMobile = () => {
+    if (isMobile()) {
+      docRoot.classList.remove('nav-open')
+    }
+  }
+
+  $('#navToggle')?.addEventListener('click', toggle)
+  $('#sidebarBackdrop')?.addEventListener('click', closeMobile)
+
+  docRoot.querySelectorAll('.nav-item').forEach((item) => {
+    item.addEventListener('click', () => {
+      if (isMobile()) {
+        closeMobile()
+      }
+    })
+  })
+
+  window.addEventListener(
+    'resize',
+    () => {
+      if (!isMobile()) {
+        docRoot.classList.remove('nav-open')
+      }
+    },
+    { passive: true }
+  )
 }
 
 function initProgressBar() {
@@ -224,7 +257,6 @@ function initThemeRender() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  $('#navToggle')?.addEventListener('click', () => !!docRoot?.classList.toggle('nav-collapsed'))
   $('#themeToggle')?.addEventListener('click', () => {
     const cur = getMode()
     const next = cur === 'system' ? 'light' : cur === 'light' ? 'dark' : 'system'
@@ -236,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (getMode() === 'system') initThemeRender()
   })
 
-  initMobileSidebar()
+  initSidebar()
   initProgressBar()
   initSearch()
   initThemeRender()
