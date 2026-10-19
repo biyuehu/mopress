@@ -22,6 +22,7 @@ title: Changelog
 - **core:** Skip rewriting unchanged files using content hashing in Thing::write_if_changed ([4d695f4](https://github.com/biyuehu/mbdoc/commit/4d695f4))
 - **serve:** Add live reload client injection and status endpoint to mopress serve ([36380b1](https://github.com/biyuehu/mbdoc/commit/36380b1))
 - **search:** Enhance client search with multi-word scoring, snippet context, and keyboard navigation ([ddf793d](https://github.com/biyuehu/mbdoc/commit/ddf793d))
+- **core:** Extract TOC from rendered markdown and expose as \\$ template variable ([b664ed6](https://github.com/biyuehu/mbdoc/commit/b664ed6))
 
 ### 🩹 Fixes
 

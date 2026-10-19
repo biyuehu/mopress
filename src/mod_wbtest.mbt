@@ -272,3 +272,87 @@ async test "process_markdown_page: exposes toc template variable" {
   )
   assert_true(html.contains("<h1 id=\"introduction\">"))
 }
+
+///|
+test "docs/index.html: metadata and SEO tags integrity" {
+  let content = @fs.read_file_to_string("docs/index.html")
+  // 1. Basic meta tags
+  assert_true(content.contains("<meta charset=\"UTF-8\">"))
+  assert_true(
+    content.contains(
+      "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+    ),
+  )
+  assert_true(
+    content.contains(
+      "<title>MoPress — 面向 MoonBit 生态的文档与静态站点生成器</title>",
+    ),
+  )
+  assert_true(content.contains("<meta name=\"description\""))
+  assert_true(content.contains("<meta name=\"keywords\""))
+  assert_true(
+    content.contains("<meta name=\"author\" content=\"Himeno Sena\">"),
+  )
+  assert_true(
+    content.contains("<meta name=\"robots\" content=\"index, follow\">"),
+  )
+  assert_true(
+    content.contains("<meta name=\"theme-color\" content=\"#0b0d12\">"),
+  )
+  assert_true(content.contains("<meta name=\"color-scheme\" content=\"dark\">"))
+
+  // 2. Open Graph tags
+  assert_true(
+    content.contains("<meta property=\"og:type\" content=\"website\">"),
+  )
+  assert_true(
+    content.contains(
+      "<meta property=\"og:url\" content=\"https://mopress.himeno-sena.com/\">",
+    ),
+  )
+  assert_true(content.contains("<meta property=\"og:title\""))
+  assert_true(content.contains("<meta property=\"og:description\""))
+  assert_true(
+    content.contains(
+      "<meta property=\"og:image\" content=\"https://himeno-sena.com/favicon.ico\">",
+    ),
+  )
+  assert_true(
+    content.contains("<meta property=\"og:site_name\" content=\"MoPress\">"),
+  )
+  assert_true(
+    content.contains("<meta property=\"og:locale\" content=\"zh_CN\">"),
+  )
+
+  // 3. Twitter Card tags
+  assert_true(
+    content.contains("<meta name=\"twitter:card\" content=\"summary\">"),
+  )
+  assert_true(
+    content.contains(
+      "<meta name=\"twitter:url\" content=\"https://mopress.himeno-sena.com/\">",
+    ),
+  )
+  assert_true(content.contains("<meta name=\"twitter:title\""))
+  assert_true(content.contains("<meta name=\"twitter:description\""))
+  assert_true(
+    content.contains(
+      "<meta name=\"twitter:image\" content=\"https://himeno-sena.com/favicon.ico\">",
+    ),
+  )
+  assert_true(
+    content.contains("<meta name=\"twitter:creator\" content=\"@HimenoSena\">"),
+  )
+
+  // 4. Canonical and icon
+  assert_true(
+    content.contains(
+      "<link rel=\"canonical\" href=\"https://mopress.himeno-sena.com/\">",
+    ),
+  )
+  assert_true(
+    content.contains(
+      "<link rel=\"icon\" href=\"https://himeno-sena.com/favicon.ico\" type=\"image/x-icon\">",
+    ),
+  )
+}
