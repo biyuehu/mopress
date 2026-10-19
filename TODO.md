@@ -27,7 +27,7 @@
 - [x] Built-in client search UI & modal (powered by existing `index.json`)
 - [ ] i18n / multi-language support
 - [x] JSON / YAML / TOML data sources
-- [ ] Common step combinators for Site Mode (e.g. excerpt, reading time, pagination)
+- [x] Common step combinators for Site Mode (e.g. excerpt, reading time, pagination)
 
 ## Site Mode
 

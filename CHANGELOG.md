@@ -20,6 +20,7 @@
 - **search:** Enhance client search with multi-word scoring, snippet context, and keyboard navigation ([ddf793d](https://github.com/biyuehu/mbdoc/commit/ddf793d))
 - **core:** Extract TOC from rendered markdown and expose as \\$ template variable ([b664ed6](https://github.com/biyuehu/mbdoc/commit/b664ed6))
 - **docs:** Enhance meta tags and SEO metadata for landing page ([f38b5cd](https://github.com/biyuehu/mbdoc/commit/f38b5cd))
+- **core,summary,config:** Add fine-grained atomic SEO steps, robots.txt generator, and book integration ([e5d5258](https://github.com/biyuehu/mbdoc/commit/e5d5258))
 
 ### 🩹 Fixes
 

@@ -10,15 +10,27 @@ import {
 }
 
 // Values
+pub fn[T : Show] add_excerpt(Item[T], separator? : String, max_length? : Int, var_name? : String) -> Item[T]
+
+pub fn[T : Show] add_reading_time(Item[T], words_per_minute? : Int, words_var? : String, time_var? : String) -> Item[T]
+
 pub fn apply_template(Item[String], Array[@template.TemplateNode]) -> Item[String]
 
 pub fn apply_template_strict(Item[String], Array[@template.TemplateNode]) -> Item[String] raise
 
+pub fn calculate_reading_time(String, words_per_minute? : Int) -> Int
+
 pub fn compute_explain_report(Options, Array[Rule]) -> ExplainReport raise @fs.IOError
+
+pub fn count_words(String) -> Int
 
 pub fn explain(Options, Array[Rule]) -> Unit raise @fs.IOError
 
+pub fn extract_excerpt(String, max_length? : Int, separator? : String) -> String
+
 pub fn[T : Show] extract_markdown(Item[T]) -> Item[(Map[String, String], String)]
+
+pub fn generate_pagination(Array[PaginatedItem], page_size? : Int, base_path? : String, template_path~ : String) -> Thing raise
 
 pub fn import_css(Item[String], Array[String]) -> Item[String]
 
@@ -47,6 +59,8 @@ pub async fn mo_serve(Options) -> Unit
 pub async fn mopress(Array[Rule], options? : Options) -> Unit
 
 pub async fn[E] mopress_with(options? : Options, (Options) -> E, (Options, E) -> Array[Rule]) -> Unit
+
+pub fn paginate(Array[PaginatedItem], PaginationConfig) -> Thing raise
 
 pub fn[T : Show] parse_markdown(Item[T]) -> Item[Array[@markdown.Block]]
 
@@ -130,6 +144,7 @@ pub fn[T, R] Item::map_with_raise(Self[T], (T) -> R raise, target? : String, ext
 pub fn[T] Item::new(T, String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T : Eq] Item::not_equal(Self[T], Self[T]) -> Bool
 pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
+pub fn[T] Item::to_paginated_item(Self[T], url? : String?) -> PaginatedItem
 pub fn[T : @debug.Debug] Item::to_repr(Self[T]) -> @debug.Repr
 
 pub(all) struct OpenGraphOptions {
@@ -171,6 +186,30 @@ pub fn PageAnalysis::not_equal(Self, Self) -> Bool
 pub fn PageAnalysis::to_json(Self) -> Json
 pub fn PageAnalysis::to_repr(Self) -> @debug.Repr
 pub impl ToJson for PageAnalysis
+
+pub(all) struct PaginatedItem {
+  title : String
+  url : String
+  date : String?
+  description : String?
+  excerpt : String?
+  vars : Map[String, @template.Value]
+} derive(Eq, @debug.Debug)
+pub fn PaginatedItem::default() -> Self
+pub fn PaginatedItem::equal(Self, Self) -> Bool
+pub fn PaginatedItem::not_equal(Self, Self) -> Bool
+pub fn PaginatedItem::to_repr(Self) -> @debug.Repr
+pub fn PaginatedItem::to_template_value(Self) -> @template.Value
+
+pub(all) struct PaginationConfig {
+  page_size : Int
+  base_path : String
+  template_path : String
+} derive(Eq, @debug.Debug)
+pub fn PaginationConfig::default() -> Self
+pub fn PaginationConfig::equal(Self, Self) -> Bool
+pub fn PaginationConfig::not_equal(Self, Self) -> Bool
+pub fn PaginationConfig::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Rule {
   Glob(String, Handler)

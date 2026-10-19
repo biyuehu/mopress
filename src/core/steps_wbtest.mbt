@@ -430,3 +430,127 @@ test "inject_feed_and_sitemap_discovery: injects discovery tags into head" {
     ),
   )
 }
+
+///|
+test "count_words and calculate_reading_time" {
+  // English text
+  assert_eq(count_words("Hello world this is a test"), 6)
+  // Chinese text (each CJK char is 1 word)
+  assert_eq(count_words("你好世界，这是一个测试"), 10)
+  // Mixed text
+  assert_eq(count_words("MoonBit 编程语言 is awesome!"), 7)
+  // Ignored code blocks and HTML tags
+  assert_eq(count_words("<div>Hello</div> ```fn main() {}``` world"), 2)
+
+  // Reading time
+  assert_eq(calculate_reading_time("", words_per_minute=300), 0)
+  assert_eq(calculate_reading_time("Short text", words_per_minute=300), 1)
+  // 600 words with 300 wpm = 2 mins
+  let mut long_text = ""
+  for i = 0; i < 600; i = i + 1 {
+    long_text = long_text + "字"
+  }
+  assert_eq(calculate_reading_time(long_text, words_per_minute=300), 2)
+}
+
+///|
+test "add_reading_time: sets template variables" {
+  let item = Item::new("Hello world from MoonBit! 你好世界！", "post.md")
+  let result = add_reading_time(item, words_per_minute=300)
+  guard result.vars.get("word_count") is Some(Number(count)) else {
+    fail("expected word_count number")
+  }
+  assert_eq(count, 8.0)
+  guard result.vars.get("reading_time") is Some(Number(mins)) else {
+    fail("expected reading_time number")
+  }
+  assert_eq(mins, 1.0)
+}
+
+///|
+test "extract_excerpt and add_excerpt" {
+  // 1. Explicit separator <!--more-->
+  let content1 = "# Title\n\nIntroductory summary.\n<!--more-->\nDeep content."
+  assert_eq(extract_excerpt(content1), "Introductory summary.")
+
+  // 2. Explicit separator with space <!-- more -->
+  let content2 = "First part.\n<!-- more -->\nSecond part."
+  assert_eq(extract_excerpt(content2), "First part.")
+
+  // 3. Fallback to first non-empty paragraph (skipping frontmatter and H1)
+  let content3 =
+    #|---
+    #|title: Post
+    #|---
+    #|
+    #|# Welcome
+    #|
+    #|This is the first real paragraph of the article.
+    #|
+    #|This is the second paragraph.
+  assert_eq(
+    extract_excerpt(content3),
+    "This is the first real paragraph of the article.",
+  )
+
+  // 4. Max length truncation
+  let long_p = "12345678901234567890"
+  assert_eq(extract_excerpt(long_p, max_length=10), "1234567890...")
+
+  // 5. add_excerpt step
+  let item = Item::new(content1, "post.md")
+  let res_item = add_excerpt(item)
+  guard res_item.vars.get("excerpt") is Some(String(ex)) else {
+    fail("expected excerpt var")
+  }
+  assert_eq(ex, "Introductory summary.")
+}
+
+///|
+test "paginate: splits items into pages and renders templates" {
+  // Create dummy archive template
+  let tpl_src =
+    #|Page: $page_number$/$total_pages$
+    #|$for(posts)$
+    #|- $item.title$ ($item.url$)
+    #|$endfor$
+    #|prev: $prev_url$ next: $next_url$
+  let template_file = "src/core/testdata/pagination_template.html"
+  @fs.write_string_to_file(template_file, tpl_src)
+
+  let items : Array[PaginatedItem] = [
+    { ..PaginatedItem::default(), title: "Post 1", url: "/posts/1.html", },
+    { ..PaginatedItem::default(), title: "Post 2", url: "/posts/2.html", },
+    { ..PaginatedItem::default(), title: "Post 3", url: "/posts/3.html", },
+  ]
+
+  let thing = generate_pagination(
+    items,
+    page_size=2,
+    base_path="blog",
+    template_path=template_file,
+  )
+  guard thing is Multiple(pages) else { fail("expected Multiple pages") }
+  assert_eq(pages.length(), 2)
+
+  // Page 1: blog/index.html with Post 1 & Post 2
+  assert_eq(pages[0].0, "blog/index.html")
+  guard pages[0].1 is Doc(p1_html) else { fail("expected Doc") }
+  assert_true(p1_html.contains("Page: 1/2"))
+  assert_true(p1_html.contains("Post 1 (/posts/1.html)"))
+  assert_true(p1_html.contains("Post 2 (/posts/2.html)"))
+  assert_false(p1_html.contains("Post 3"))
+  assert_true(p1_html.contains("next: /blog/page-2.html"))
+
+  // Page 2: blog/page-2.html with Post 3
+  assert_eq(pages[1].0, "blog/page-2.html")
+  guard pages[1].1 is Doc(p2_html) else { fail("expected Doc") }
+  assert_true(p2_html.contains("Page: 2/2"))
+  assert_true(p2_html.contains("Post 3 (/posts/3.html)"))
+  assert_true(p2_html.contains("prev: /blog/index.html"))
+
+  // Cleanup
+  @fs.remove_file(template_file) catch {
+    _ => ()
+  }
+}

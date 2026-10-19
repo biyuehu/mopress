@@ -570,3 +570,87 @@ pub extend TwitterCardOptions with @debug.Debug::{to_repr}
 pub fn TwitterCardOptions::default() -> TwitterCardOptions {
   { card: None, title: None, description: None, image: None, creator: None, }
 }
+
+///|
+/// A summary of a page or post used for list rendering and pagination.
+pub(all) struct PaginatedItem {
+  title : String
+  url : String
+  date : String?
+  description : String?
+  excerpt : String?
+  vars : Map[String, @template.Value]
+} derive(Eq, @debug.Debug)
+
+///|
+pub extend PaginatedItem with Eq::{not_equal, equal}
+
+///|
+pub extend PaginatedItem with @debug.Debug::{to_repr}
+
+///|
+pub fn PaginatedItem::default() -> PaginatedItem {
+  {
+    title: "",
+    url: "",
+    date: None,
+    description: None,
+    excerpt: None,
+    vars: Map([]),
+  }
+}
+
+///|
+/// Converts a `PaginatedItem` into a template `Value::Object` for rendering.
+pub fn PaginatedItem::to_template_value(
+  self : PaginatedItem,
+) -> @template.Value {
+  let m : Map[String, @template.Value] = Map([
+    ("title", @template.Value::String(self.title)),
+    ("url", @template.Value::String(self.url)),
+  ])
+  match self.date {
+    Some(d) => m["date"] = @template.Value::String(d)
+    None => ()
+  }
+  match self.description {
+    Some(d) => m["description"] = @template.Value::String(d)
+    None => ()
+  }
+  match self.excerpt {
+    Some(e) => m["excerpt"] = @template.Value::String(e)
+    None => ()
+  }
+  for k, v in self.vars {
+    if !m.contains(k) {
+      m[k] = v
+    }
+  }
+  @template.Value::Object(m)
+}
+
+///|
+/// Configuration for site-mode pagination.
+pub(all) struct PaginationConfig {
+  /// Number of items per page.
+  page_size : Int32
+  /// Output directory/path prefix, e.g. "posts" -> "posts/index.html", "posts/page-2.html".
+  base_path : String
+  /// Template file path used to render each page.
+  template_path : String
+} derive(Eq, @debug.Debug)
+
+///|
+pub extend PaginationConfig with Eq::{not_equal, equal}
+
+///|
+pub extend PaginationConfig with @debug.Debug::{to_repr}
+
+///|
+pub fn PaginationConfig::default() -> PaginationConfig {
+  {
+    page_size: 10,
+    base_path: "posts",
+    template_path: "templates/default.html",
+  }
+}

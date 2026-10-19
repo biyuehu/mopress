@@ -413,6 +413,386 @@ pub fn use_transformer(
   handlers.fold(init=item, (cur, h) => h(cur))
 }
 
+///|
+/// Counts words and characters in the content, supporting both CJK characters
+/// (counted individually) and Western words (whitespace-delimited).
+pub fn count_words(content : String) -> Int32 {
+  let mut in_tag = false
+  let mut in_code_fence = false
+  let mut cjk_count = 0
+  let mut western_words = 0
+  let mut in_word = false
+
+  let len = content.length()
+  let mut i = 0
+  while i < len {
+    let ch = content[i]
+
+    // Handle code fence ```
+    if ch == '`' &&
+      i + 2 < len &&
+      content[i + 1] == '`' &&
+      content[i + 2] == '`' {
+      in_code_fence = !in_code_fence
+      i += 3
+      continue
+    }
+    if in_code_fence {
+      i += 1
+      continue
+    }
+
+    // Handle HTML tag <...>
+    if ch == '<' {
+      in_tag = true
+      i += 1
+      continue
+    }
+    if ch == '>' && in_tag {
+      in_tag = false
+      i += 1
+      continue
+    }
+    if in_tag {
+      i += 1
+      continue
+    }
+    let code = ch.to_int()
+    // CJK unified ideographs
+    if (code >= 0x4E00 && code <= 0x9FFF) || (code >= 0x3400 && code <= 0x4DBF) {
+      cjk_count += 1
+      if in_word {
+        western_words += 1
+        in_word = false
+      }
+    } else if (ch >= 'a' && ch <= 'z') ||
+      (ch >= 'A' && ch <= 'Z') ||
+      (ch >= '0' && ch <= '9') {
+      in_word = true
+    } else if in_word {
+      western_words += 1
+      in_word = false
+    }
+    i += 1
+  }
+  if in_word {
+    western_words += 1
+  }
+  cjk_count + western_words
+}
+
+///|
+/// Estimates the reading time in minutes for the given content.
+pub fn calculate_reading_time(
+  content : String,
+  words_per_minute~ : Int32 = 300,
+) -> Int32 {
+  let words = count_words(content)
+  let wpm = if words_per_minute <= 0 { 300 } else { words_per_minute }
+  if words == 0 {
+    0
+  } else {
+    let mins = (words + wpm - 1) / wpm
+    if mins < 1 {
+      1
+    } else {
+      mins
+    }
+  }
+}
+
+///|
+/// Appends reading time and word count variables (`$word_count$`, `$reading_time$`)
+/// to `item`'s template variables.
+pub fn[T : Show] add_reading_time(
+  item : Item[T],
+  words_per_minute~ : Int32 = 300,
+  words_var~ : String = "word_count",
+  time_var~ : String = "reading_time",
+) -> Item[T] {
+  let content = item.data.to_string()
+  let words = count_words(content)
+  let mins = calculate_reading_time(content, words_per_minute~)
+  item
+  .set_var(words_var, @template.Value::Number(words.to_double()))
+  .set_var(words_var + "_str", @template.Value::String(words.to_string()))
+  .set_var(time_var, @template.Value::Number(mins.to_double()))
+  .set_var(time_var + "_str", @template.Value::String(mins.to_string()))
+}
+
+///|
+/// Helper to strip basic Markdown syntax and HTML tags from a string.
+fn strip_markdown_formatting(s : String) -> String {
+  let b = StringBuilder()
+  let mut in_tag = false
+  for ch in s {
+    if ch == '<' {
+      in_tag = true
+      continue
+    }
+    if ch == '>' && in_tag {
+      in_tag = false
+      continue
+    }
+    if in_tag {
+      continue
+    }
+    if ch == '*' || ch == '_' || ch == '`' || ch == '#' {
+      continue
+    }
+    b.write_char(ch)
+  }
+  b.to_string().trim().to_owned()
+}
+
+///|
+/// Extracts an excerpt string from content.
+pub fn extract_excerpt(
+  content : String,
+  max_length~ : Int32 = 200,
+  separator~ : String = "<!--more-->",
+) -> String {
+  let sep_idx = match content.find(separator) {
+    Some(idx) => Some(idx)
+    None =>
+      if separator == "<!--more-->" {
+        content.find("<!-- more -->")
+      } else {
+        None
+      }
+  }
+  match sep_idx {
+    Some(idx) => {
+      let raw_excerpt = Show::to_string(content[0:idx])
+      let lines = raw_excerpt
+        .replace_all(old="\r\n", new="\n")
+        .split("\n")
+        .to_array()
+      let p_lines : Array[String] = []
+      let mut in_fm = false
+      for i, line in lines {
+        let trimmed = line.trim().to_owned()
+        if i == 0 && trimmed == "---" {
+          in_fm = true
+          continue
+        }
+        if in_fm {
+          if trimmed == "---" {
+            in_fm = false
+          }
+          continue
+        }
+        if trimmed == "" || trimmed.has_prefix("#") {
+          continue
+        }
+        p_lines.push(trimmed)
+      }
+      let combined = p_lines.join(" ")
+      let stripped = strip_markdown_formatting(combined)
+      if stripped.length() <= max_length {
+        stripped
+      } else {
+        Show::to_string(stripped[0:max_length]) + "..."
+      }
+    }
+    None => {
+      let lines = content
+        .replace_all(old="\r\n", new="\n")
+        .split("\n")
+        .to_array()
+      let p_lines : Array[String] = []
+      let mut found_paragraph = false
+      let mut in_fm = false
+      for idx, line in lines {
+        let trimmed = line.trim().to_owned()
+        if idx == 0 && trimmed == "---" {
+          in_fm = true
+          continue
+        }
+        if in_fm {
+          if trimmed == "---" {
+            in_fm = false
+          }
+          continue
+        }
+        if !found_paragraph {
+          if trimmed == "" ||
+            trimmed.has_prefix("#") ||
+            trimmed.has_prefix("```") {
+            continue
+          }
+          found_paragraph = true
+          p_lines.push(trimmed)
+        } else {
+          if trimmed == "" {
+            break
+          }
+          p_lines.push(trimmed)
+        }
+      }
+      let combined = p_lines.join(" ")
+      let stripped = strip_markdown_formatting(combined)
+      if stripped.length() <= max_length {
+        stripped
+      } else {
+        Show::to_string(stripped[0:max_length]) + "..."
+      }
+    }
+  }
+}
+
+///|
+/// Extracts an excerpt and attaches it as a template variable `$excerpt$`.
+pub fn[T : Show] add_excerpt(
+  item : Item[T],
+  separator~ : String = "<!--more-->",
+  max_length~ : Int32 = 200,
+  var_name~ : String = "excerpt",
+) -> Item[T] {
+  match item.vars.get(var_name) {
+    Some(_) => item
+    None => {
+      let content = item.data.to_string()
+      let excerpt = extract_excerpt(content, max_length~, separator~)
+      item.set_var(var_name, @template.Value::String(excerpt))
+    }
+  }
+}
+
+///|
+/// Converts an Item into a PaginatedItem for archive and list rendering.
+pub fn[T] Item::to_paginated_item(
+  self : Item[T],
+  url~ : String? = None,
+) -> PaginatedItem {
+  let title = match self.vars.get("title") {
+    Some(@template.Value::String(t)) => t
+    _ => self.target
+  }
+  let date = match self.vars.get("date") {
+    Some(@template.Value::String(d)) => Some(d)
+    _ => None
+  }
+  let description = match self.vars.get("description") {
+    Some(@template.Value::String(d)) => Some(d)
+    _ => None
+  }
+  let excerpt = match self.vars.get("excerpt") {
+    Some(@template.Value::String(e)) => Some(e)
+    _ => None
+  }
+  {
+    title,
+    url: url.unwrap_or(self.location()),
+    date,
+    description,
+    excerpt,
+    vars: self.vars,
+  }
+}
+
+///|
+/// Renders an array of items into paginated HTML pages wrapped in `Thing::Multiple`.
+pub fn paginate(
+  items : Array[PaginatedItem],
+  config : PaginationConfig,
+) -> Thing raise {
+  let template = config.template_path
+    |> @fs.read_file_to_string
+    |> @template.parse_template
+  let page_size = if config.page_size <= 0 { 10 } else { config.page_size }
+  let total_items = items.length()
+  let total_pages = if total_items == 0 {
+    1
+  } else {
+    (total_items + page_size - 1) / page_size
+  }
+  let base = if config.base_path == "" || config.base_path == "." {
+    ""
+  } else if config.base_path.has_suffix("/") {
+    Show::to_string(config.base_path[0:config.base_path.length() - 1])
+  } else {
+    config.base_path
+  }
+  let outputs : Array[(String, Thing)] = []
+  for page_num = 1; page_num <= total_pages; page_num = page_num + 1 {
+    let start_idx = (page_num - 1) * page_size
+    let end_idx = if start_idx + page_size > total_items {
+      total_items
+    } else {
+      start_idx + page_size
+    }
+    let page_slice : Array[PaginatedItem] = []
+    for i = start_idx; i < end_idx; i = i + 1 {
+      page_slice.push(items[i])
+    }
+    let out_path = if page_num == 1 {
+      if base == "" {
+        "index.html"
+      } else {
+        base + "/index.html"
+      }
+    } else if base == "" {
+      "page-\{page_num}.html"
+    } else {
+      base + "/page-\{page_num}.html"
+    }
+    let prev_url = if page_num == 1 {
+      ""
+    } else if page_num == 2 {
+      if base == "" {
+        "/index.html"
+      } else {
+        "/" + base + "/index.html"
+      }
+    } else if base == "" {
+      "/page-\{page_num - 1}.html"
+    } else {
+      "/" + base + "/page-\{page_num - 1}.html"
+    }
+    let next_url = if page_num < total_pages {
+      if base == "" {
+        "/page-\{page_num + 1}.html"
+      } else {
+        "/" + base + "/page-\{page_num + 1}.html"
+      }
+    } else {
+      ""
+    }
+    let ctx : Map[String, @template.Value] = Map([
+      ("page_number", @template.Value::Number(page_num.to_double())),
+      ("total_pages", @template.Value::Number(total_pages.to_double())),
+      ("total_items", @template.Value::Number(total_items.to_double())),
+      ("has_prev", @template.Value::Bool(page_num > 1)),
+      ("has_next", @template.Value::Bool(page_num < total_pages)),
+      ("prev_url", @template.Value::String(prev_url)),
+      ("next_url", @template.Value::String(next_url)),
+      (
+        "items",
+        @template.Value::Array(page_slice.map(it => it.to_template_value())),
+      ),
+      (
+        "posts",
+        @template.Value::Array(page_slice.map(it => it.to_template_value())),
+      ),
+    ])
+    let rendered = template |> @template.apply_template(ctx)
+    outputs.push((out_path, Thing::Doc(rendered)))
+  }
+  Thing::Multiple(outputs)
+}
+
+///|
+/// Generates paginated archive pages from a collection of items.
+pub fn generate_pagination(
+  items : Array[PaginatedItem],
+  page_size~ : Int32 = 10,
+  base_path~ : String = "posts",
+  template_path~ : String,
+) -> Thing raise {
+  paginate(items, { page_size, base_path, template_path, })
+}
+
 // pub fn minify_css(item : Item[String]) -> Item[String] {
 //   ...
 // }
