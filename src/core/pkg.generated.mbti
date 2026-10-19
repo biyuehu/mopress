@@ -26,7 +26,17 @@ pub fn import_js(Item[String], Array[String]) -> Item[String]
 
 pub fn inject_body(Item[String], String) -> Item[String]
 
+pub fn inject_canonical(Item[String], String) -> Item[String]
+
+pub fn inject_feed_discovery(Item[String], String, title? : String, mime_type? : String) -> Item[String]
+
 pub fn inject_head(Item[String], String) -> Item[String]
+
+pub fn inject_open_graph(Item[String], OpenGraphOptions) -> Item[String]
+
+pub fn inject_sitemap_discovery(Item[String], String) -> Item[String]
+
+pub fn inject_twitter_card(Item[String], TwitterCardOptions) -> Item[String]
 
 pub fn load_and_apply_template(Item[String], String, strict? : Bool) -> Item[String] raise
 
@@ -122,6 +132,20 @@ pub fn[T : Eq] Item::not_equal(Self[T], Self[T]) -> Bool
 pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
 pub fn[T : @debug.Debug] Item::to_repr(Self[T]) -> @debug.Repr
 
+pub(all) struct OpenGraphOptions {
+  title : String?
+  description : String?
+  url : String?
+  image : String?
+  site_name : String?
+  og_type : String?
+  locale : String?
+} derive(Eq, @debug.Debug)
+pub fn OpenGraphOptions::default() -> Self
+pub fn OpenGraphOptions::equal(Self, Self) -> Bool
+pub fn OpenGraphOptions::not_equal(Self, Self) -> Bool
+pub fn OpenGraphOptions::to_repr(Self) -> @debug.Repr
+
 pub(all) struct Options {
   src : String
   dest : String
@@ -204,6 +228,18 @@ pub fn Thing::not_equal(Self, Self) -> Bool
 pub fn Thing::to_repr(Self) -> @debug.Repr
 pub fn Thing::write(Self, String, String) -> Unit raise @fs.IOError
 pub fn Thing::write_if_changed(Self, String, String) -> Bool raise @fs.IOError
+
+pub(all) struct TwitterCardOptions {
+  card : String?
+  title : String?
+  description : String?
+  image : String?
+  creator : String?
+} derive(Eq, @debug.Debug)
+pub fn TwitterCardOptions::default() -> Self
+pub fn TwitterCardOptions::equal(Self, Self) -> Bool
+pub fn TwitterCardOptions::not_equal(Self, Self) -> Bool
+pub fn TwitterCardOptions::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 pub type Frontmatter = Map[String, String]

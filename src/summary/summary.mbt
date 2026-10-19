@@ -760,3 +760,26 @@ pub fn generate_sitemap_xml(
   out.write_string("</urlset>\n")
   out.to_string()
 }
+
+///|
+/// Renders standard `robots.txt` content, optionally including a reference
+/// to the site's `sitemap.xml`.
+pub fn generate_robots_txt(
+  sitemap_url~ : String? = None,
+  allow~ : Array[String] = ["/"],
+  disallow~ : Array[String] = [],
+) -> String {
+  let b = StringBuilder()
+  b.write_string("User-agent: *\n")
+  for a in allow {
+    b.write_string("Allow: \{a}\n")
+  }
+  for d in disallow {
+    b.write_string("Disallow: \{d}\n")
+  }
+  match sitemap_url {
+    Some(url) => b.write_string("\nSitemap: \{url}\n")
+    None => ()
+  }
+  b.to_string()
+}

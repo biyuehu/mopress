@@ -361,6 +361,7 @@ test "apply_feature_presets on constructed config" {
   let config = {
     ..base,
     features: {
+      ..base.features,
       highlight_enabled: true,
       highlight_theme: "monokai",
       mathjax_enabled: true,
@@ -368,4 +369,31 @@ test "apply_feature_presets on constructed config" {
   }.apply_feature_presets()
   assert_true(config.extensions.import_css[0].has_suffix("monokai.min.css"))
   assert_eq(config.extensions.inject_head.length(), 1)
+}
+
+///|
+test "parse SEO features configuration" {
+  // 1. Defaults are true
+  let default_cfg = @config.BookConfig::parse("title = \"Test\"")
+  assert_true(default_cfg.features.open_graph_enabled)
+  assert_true(default_cfg.features.twitter_card_enabled)
+  assert_true(default_cfg.features.robots_txt_enabled)
+
+  // 2. Explicitly disabled
+  let disabled_toml =
+    #|title = "Test"
+    #|[features]
+    #|open-graph = false
+    #|twitter-card = false
+    #|robots-txt = false
+  let disabled_cfg = @config.BookConfig::parse(disabled_toml)
+  assert_false(disabled_cfg.features.open_graph_enabled)
+  assert_false(disabled_cfg.features.twitter_card_enabled)
+  assert_false(disabled_cfg.features.robots_txt_enabled)
+
+  // 3. Serialized to toml contains SEO flags
+  let toml = disabled_cfg.to_toml()
+  assert_true(toml.contains("open-graph = false"))
+  assert_true(toml.contains("twitter-card = false"))
+  assert_true(toml.contains("robots-txt = false"))
 }

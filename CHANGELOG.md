@@ -31,6 +31,7 @@
 - **glob:** Degrade ** to * when not a standalone path segment ([3450466](https://github.com/biyuehu/mbdoc/commit/3450466))
 - **glob:** Normalize backslash paths across all platforms and eliminate to_json deprecation warnings ([0c17219](https://github.com/biyuehu/mbdoc/commit/0c17219))
 - **docs:** Restore @block steps marker in process_markdown_page ([2a8054c](https://github.com/biyuehu/mbdoc/commit/2a8054c))
+- **docs:** Eliminate mobile sidebar flash by using CSS drawer and responsive init ([b21706a](https://github.com/biyuehu/mbdoc/commit/b21706a))
 
 ### 📖 Documentation
 

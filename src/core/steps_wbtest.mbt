@@ -327,3 +327,106 @@ test "render_markdown: populates toc variable in Item vars" {
   assert_eq(h3.get("title"), Some(@template.Value::String("Sub Sub")))
   assert_eq(h3.get("anchor"), Some(@template.Value::String("sub-sub")))
 }
+
+///|
+test "inject_canonical: injects canonical link tag into head" {
+  let item = Item::new(
+    "<head><title>Test</title></head><body>hi</body>", "test.html",
+  )
+  let res = inject_canonical(item, "https://example.com/test.html")
+  assert_true(
+    res.data.contains(
+      "<link rel=\"canonical\" href=\"https://example.com/test.html\">",
+    ),
+  )
+}
+
+///|
+test "inject_open_graph: injects og tags into head" {
+  let item = Item::new("<head></head>", "test.html")
+  let res = inject_open_graph(item, {
+    title: Some("My Page"),
+    description: Some("Description with \"quotes\""),
+    url: Some("https://example.com/page"),
+    image: Some("https://example.com/logo.png"),
+    site_name: Some("My Site"),
+    og_type: Some("article"),
+    locale: Some("zh_CN"),
+  })
+  assert_true(
+    res.data.contains("<meta property=\"og:title\" content=\"My Page\">"),
+  )
+  assert_true(
+    res.data.contains(
+      "<meta property=\"og:description\" content=\"Description with &quot;quotes&quot;\">",
+    ),
+  )
+  assert_true(
+    res.data.contains(
+      "<meta property=\"og:url\" content=\"https://example.com/page\">",
+    ),
+  )
+  assert_true(
+    res.data.contains(
+      "<meta property=\"og:image\" content=\"https://example.com/logo.png\">",
+    ),
+  )
+  assert_true(
+    res.data.contains("<meta property=\"og:site_name\" content=\"My Site\">"),
+  )
+  assert_true(
+    res.data.contains("<meta property=\"og:type\" content=\"article\">"),
+  )
+  assert_true(
+    res.data.contains("<meta property=\"og:locale\" content=\"zh_CN\">"),
+  )
+}
+
+///|
+test "inject_twitter_card: injects twitter tags into head" {
+  let item = Item::new("<head></head>", "test.html")
+  let res = inject_twitter_card(item, {
+    card: Some("summary_large_image"),
+    title: Some("Title"),
+    description: Some("Desc"),
+    image: Some("https://example.com/img.png"),
+    creator: Some("@author"),
+  })
+  assert_true(
+    res.data.contains(
+      "<meta name=\"twitter:card\" content=\"summary_large_image\">",
+    ),
+  )
+  assert_true(
+    res.data.contains("<meta name=\"twitter:title\" content=\"Title\">"),
+  )
+  assert_true(
+    res.data.contains("<meta name=\"twitter:description\" content=\"Desc\">"),
+  )
+  assert_true(
+    res.data.contains(
+      "<meta name=\"twitter:image\" content=\"https://example.com/img.png\">",
+    ),
+  )
+  assert_true(
+    res.data.contains("<meta name=\"twitter:creator\" content=\"@author\">"),
+  )
+}
+
+///|
+test "inject_feed_and_sitemap_discovery: injects discovery tags into head" {
+  let item = Item::new("<head></head>", "test.html")
+  let res = item
+    |> inject_feed_discovery("https://example.com/feed.xml", title="My Feed")
+    |> inject_sitemap_discovery("https://example.com/sitemap.xml")
+  assert_true(
+    res.data.contains(
+      "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"My Feed\" href=\"https://example.com/feed.xml\">",
+    ),
+  )
+  assert_true(
+    res.data.contains(
+      "<link rel=\"sitemap\" type=\"application/xml\" title=\"Sitemap\" href=\"https://example.com/sitemap.xml\">",
+    ),
+  )
+}

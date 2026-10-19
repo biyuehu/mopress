@@ -317,8 +317,114 @@ pub async fn process_markdown_page(
     |> @core.load_and_apply_template(config.extensions.template)
   @core.record_step_trace("apply_template", @async.now() - t_tpl_0)
 
+  let with_seo = templated
+    |> x => {
+      let mut page = x
+      let loc = x.location().replace_all(old="\\", new="/")
+      let url_path = if loc.has_prefix("/") { loc } else { "/" + loc }
+      let full_page_url = config.site_url.map(base => {
+        let b = if base.has_suffix("/") {
+          Show::to_string(base[0:base.length() - 1])
+        } else {
+          base
+        }
+        b + url_path
+      })
+      let fm = seprated.data.0
+
+      // 1. Canonical URL
+      match full_page_url {
+        Some(u) => page = page |> @core.inject_canonical(u)
+        None => ()
+      }
+
+      // 2. Open Graph
+      let page_title = fm.get("title").unwrap_or(config.title)
+      let page_desc = match fm.get("description") {
+        Some(d) => Some(d)
+        None =>
+          if config.description != "" {
+            Some(config.description)
+          } else {
+            None
+          }
+      }
+      let page_image = match fm.get("image") {
+        Some(img) => Some(img)
+        None =>
+          if config.logo != "" {
+            Some(config.logo)
+          } else if config.favicon != "" {
+            Some(config.favicon)
+          } else {
+            None
+          }
+      }
+      let og_enabled = config.features.open_graph_enabled &&
+        fm.get("open_graph") != Some("false")
+      if og_enabled {
+        page = page
+          |> @core.inject_open_graph({
+            title: Some(page_title),
+            description: page_desc,
+            url: full_page_url,
+            image: page_image,
+            site_name: Some(config.title),
+            og_type: Some("article"),
+            locale: Some(config.language),
+          })
+      }
+
+      // 3. Twitter Card
+      let twitter_enabled = config.features.twitter_card_enabled &&
+        fm.get("twitter_card") != Some("false")
+      if twitter_enabled {
+        let card_type = match fm.get("twitter_card") {
+          Some("summary_large_image") => "summary_large_image"
+          _ => "summary"
+        }
+        page = page
+          |> @core.inject_twitter_card({
+            card: Some(card_type),
+            title: Some(page_title),
+            description: page_desc,
+            image: page_image,
+            creator: None,
+          })
+      }
+
+      // 4. Feed & Sitemap discovery
+      if config.feed_enabled && config.site_url is Some(site_url) {
+        let feed_href = if site_url.has_suffix("/") {
+          site_url + "feed.xml"
+        } else {
+          site_url + "/feed.xml"
+        }
+        page = page
+          |> @core.inject_feed_discovery(feed_href, title=config.title)
+      }
+      if config.sitemap_enabled {
+        let sitemap_url = match config.site_url {
+          Some(s) =>
+            if s.has_suffix("/") {
+              s + "sitemap.xml"
+            } else {
+              s + "/sitemap.xml"
+            }
+          None =>
+            if config.base_url.has_suffix("/") {
+              config.base_url + "sitemap.xml"
+            } else {
+              config.base_url + "/sitemap.xml"
+            }
+        }
+        page = page |> @core.inject_sitemap_discovery(sitemap_url)
+      }
+      page
+    }
+
   let t_assets_0 = @async.now()
-  let final_item = templated
+  let final_item = with_seo
     |> @core.import_css(config.extensions.import_css)
     |> @core.import_js(config.extensions.import_js)
     |> @core.use_css(config.extensions.use_css)
@@ -389,6 +495,28 @@ fn build_book_rules(
                   @core.Doc(@summary.generate_sitemap_xml(config, metas)),
                 ),
               )
+              if config.features.robots_txt_enabled {
+                let sitemap_url = match config.site_url {
+                  Some(s) => Some(s + "/sitemap.xml")
+                  None =>
+                    if config.base_url.has_suffix("/") {
+                      Some(
+                        Show::to_string(
+                          config.base_url[0:config.base_url.length() - 1],
+                        ) +
+                        "/sitemap.xml",
+                      )
+                    } else {
+                      Some(config.base_url + "/sitemap.xml")
+                    }
+                }
+                outputs.push(
+                  (
+                    "robots.txt",
+                    @core.Doc(@summary.generate_robots_txt(sitemap_url~)),
+                  ),
+                )
+              }
             }
             @core.Multiple(outputs)
           })

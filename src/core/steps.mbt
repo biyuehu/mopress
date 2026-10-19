@@ -219,6 +219,150 @@ pub fn inject_head(item : Item[Html], code : String) -> Item[Html] {
 }
 
 ///|
+/// Injects a canonical link (`<link rel="canonical" href="...">`) into
+/// `item`'s `<head>`.
+pub fn inject_canonical(item : Item[Html], url : String) -> Item[Html] {
+  let tag = "<link rel=\"canonical\" href=\"\{escape_html_attr(url)}\">\n"
+  item.map(data => data |> inject_into_head(tag))
+}
+
+///|
+/// Injects Open Graph metadata (`<meta property="og:*">`) into `item`'s `<head>`.
+pub fn inject_open_graph(
+  item : Item[Html],
+  options : OpenGraphOptions,
+) -> Item[Html] {
+  let b = StringBuilder()
+  match options.og_type {
+    Some(t) =>
+      b.write_string(
+        "<meta property=\"og:type\" content=\"\{escape_html_attr(t)}\">\n",
+      )
+    None => ()
+  }
+  match options.url {
+    Some(u) =>
+      b.write_string(
+        "<meta property=\"og:url\" content=\"\{escape_html_attr(u)}\">\n",
+      )
+    None => ()
+  }
+  match options.title {
+    Some(t) =>
+      b.write_string(
+        "<meta property=\"og:title\" content=\"\{escape_html_attr(t)}\">\n",
+      )
+    None => ()
+  }
+  match options.description {
+    Some(d) =>
+      b.write_string(
+        "<meta property=\"og:description\" content=\"\{escape_html_attr(d)}\">\n",
+      )
+    None => ()
+  }
+  match options.image {
+    Some(i) =>
+      b.write_string(
+        "<meta property=\"og:image\" content=\"\{escape_html_attr(i)}\">\n",
+      )
+    None => ()
+  }
+  match options.site_name {
+    Some(s) =>
+      b.write_string(
+        "<meta property=\"og:site_name\" content=\"\{escape_html_attr(s)}\">\n",
+      )
+    None => ()
+  }
+  match options.locale {
+    Some(l) =>
+      b.write_string(
+        "<meta property=\"og:locale\" content=\"\{escape_html_attr(l)}\">\n",
+      )
+    None => ()
+  }
+  let tags = b.to_string()
+  if tags == "" {
+    item
+  } else {
+    item.map(data => data |> inject_into_head(tags))
+  }
+}
+
+///|
+/// Injects Twitter Card metadata (`<meta name="twitter:*">`) into `item`'s `<head>`.
+pub fn inject_twitter_card(
+  item : Item[Html],
+  options : TwitterCardOptions,
+) -> Item[Html] {
+  let b = StringBuilder()
+  match options.card {
+    Some(c) =>
+      b.write_string(
+        "<meta name=\"twitter:card\" content=\"\{escape_html_attr(c)}\">\n",
+      )
+    None => ()
+  }
+  match options.title {
+    Some(t) =>
+      b.write_string(
+        "<meta name=\"twitter:title\" content=\"\{escape_html_attr(t)}\">\n",
+      )
+    None => ()
+  }
+  match options.description {
+    Some(d) =>
+      b.write_string(
+        "<meta name=\"twitter:description\" content=\"\{escape_html_attr(d)}\">\n",
+      )
+    None => ()
+  }
+  match options.image {
+    Some(i) =>
+      b.write_string(
+        "<meta name=\"twitter:image\" content=\"\{escape_html_attr(i)}\">\n",
+      )
+    None => ()
+  }
+  match options.creator {
+    Some(c) =>
+      b.write_string(
+        "<meta name=\"twitter:creator\" content=\"\{escape_html_attr(c)}\">\n",
+      )
+    None => ()
+  }
+  let tags = b.to_string()
+  if tags == "" {
+    item
+  } else {
+    item.map(data => data |> inject_into_head(tags))
+  }
+}
+
+///|
+/// Injects an RSS/Atom feed auto-discovery link into `item`'s `<head>`.
+pub fn inject_feed_discovery(
+  item : Item[Html],
+  feed_url : String,
+  title~ : String = "Feed",
+  mime_type~ : String = "application/atom+xml",
+) -> Item[Html] {
+  let tag = "<link rel=\"alternate\" type=\"\{escape_html_attr(mime_type)}\" title=\"\{escape_html_attr(title)}\" href=\"\{escape_html_attr(feed_url)}\">\n"
+  item.map(data => data |> inject_into_head(tag))
+}
+
+///|
+/// Injects a sitemap auto-discovery link into `item`'s `<head>`.
+pub fn inject_sitemap_discovery(
+  item : Item[Html],
+  sitemap_url : String,
+) -> Item[Html] {
+  let tag = "<link rel=\"sitemap\" type=\"application/xml\" title=\"Sitemap\" href=\"\{escape_html_attr(sitemap_url)}\">\n"
+  item.map(data => data |> inject_into_head(tag))
+}
+
+///|
 /// Appends `html` as a raw HTML snippet to be injected at the end of the
 /// rendered page's `<body>`.
 pub fn inject_body(item : Item[Html], code : String) -> Item[Html] {

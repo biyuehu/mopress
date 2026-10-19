@@ -73,6 +73,9 @@ pub(all) struct FeaturesConfig {
   highlight_enabled : Bool
   highlight_theme : String
   mathjax_enabled : Bool
+  open_graph_enabled : Bool
+  twitter_card_enabled : Bool
+  robots_txt_enabled : Bool
 } derive(Eq, ToJson, @debug.Debug)
 pub fn FeaturesConfig::default() -> Self
 pub fn FeaturesConfig::equal(Self, Self) -> Bool

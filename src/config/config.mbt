@@ -78,6 +78,12 @@ pub(all) struct FeaturesConfig {
   highlight_theme : String
   /// Whether MathJax rendering of mathematical notation is enabled.
   mathjax_enabled : Bool
+  /// Whether Open Graph metadata is injected into pages.
+  open_graph_enabled : Bool
+  /// Whether Twitter Card metadata is injected into pages.
+  twitter_card_enabled : Bool
+  /// Whether robots.txt is generated when sitemap is enabled.
+  robots_txt_enabled : Bool
 } derive(Eq, ToJson, @debug.Debug)
 
 ///|
@@ -244,6 +250,9 @@ pub fn BookConfig::to_toml(self : BookConfig) -> String {
     "highlight-theme = \{toml_string(self.features.highlight_theme)}\n",
   )
   b.write_string("mathjax-enabled = \{self.features.mathjax_enabled}\n")
+  b.write_string("open-graph = \{self.features.open_graph_enabled}\n")
+  b.write_string("twitter-card = \{self.features.twitter_card_enabled}\n")
+  b.write_string("robots-txt = \{self.features.robots_txt_enabled}\n")
   b.write_string("\n[extensions]\n")
   b.write_string("template = \{toml_string(self.extensions.template)}\n")
   b.write_string("assets = \{toml_string_array(self.extensions.assets)}\n")
@@ -327,6 +336,21 @@ pub fn BookConfig::parse(
         default.features.highlight_theme,
       ),
       mathjax_enabled: read_bool(features, "mathjax-enabled"),
+      open_graph_enabled: read_bool_or(
+        features,
+        "open-graph",
+        default.features.open_graph_enabled,
+      ),
+      twitter_card_enabled: read_bool_or(
+        features,
+        "twitter-card",
+        default.features.twitter_card_enabled,
+      ),
+      robots_txt_enabled: read_bool_or(
+        features,
+        "robots-txt",
+        default.features.robots_txt_enabled,
+      ),
     },
     extensions: {
       template: read_string(extensions, "template", default.extensions.template),
@@ -385,6 +409,9 @@ pub impl Default for FeaturesConfig with fn default() -> FeaturesConfig {
     highlight_enabled: false,
     highlight_theme: "github",
     mathjax_enabled: false,
+    open_graph_enabled: true,
+    twitter_card_enabled: true,
+    robots_txt_enabled: true,
   }
 }
 

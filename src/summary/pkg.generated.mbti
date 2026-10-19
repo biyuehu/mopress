@@ -10,6 +10,8 @@ import {
 // Values
 pub fn generate_feed_xml(@config.BookConfig, Array[PageMeta], String) -> String
 
+pub fn generate_robots_txt(sitemap_url? : String?, allow? : Array[String], disallow? : Array[String]) -> String
+
 pub fn generate_sitemap_xml(@config.BookConfig, Array[PageMeta]) -> String
 
 pub fn md_to_plain(String) -> String

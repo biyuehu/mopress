@@ -307,7 +307,7 @@ test "docs/index.html: metadata and SEO tags integrity" {
   )
   assert_true(
     content.contains(
-      "<meta property=\"og:url\" content=\"https://mopress.himeno-sena.com/\">",
+      "<meta property=\"og:url\" content=\"https://mo.himeno-sena.com/\">",
     ),
   )
   assert_true(content.contains("<meta property=\"og:title\""))
@@ -330,7 +330,7 @@ test "docs/index.html: metadata and SEO tags integrity" {
   )
   assert_true(
     content.contains(
-      "<meta name=\"twitter:url\" content=\"https://mopress.himeno-sena.com/\">",
+      "<meta name=\"twitter:url\" content=\"https://mo.himeno-sena.com/\">",
     ),
   )
   assert_true(content.contains("<meta name=\"twitter:title\""))
@@ -347,7 +347,7 @@ test "docs/index.html: metadata and SEO tags integrity" {
   // 4. Canonical and icon
   assert_true(
     content.contains(
-      "<link rel=\"canonical\" href=\"https://mopress.himeno-sena.com/\">",
+      "<link rel=\"canonical\" href=\"https://mo.himeno-sena.com/\">",
     ),
   )
   assert_true(
@@ -380,4 +380,115 @@ test "sidebar client assets: responsive CSS drawer and mobile sidebar integrity"
   assert_true(book_scripts_main_js.contains("nav-open"))
   assert_true(book_scripts_main_js.contains("nav-collapsed"))
   assert_false(book_scripts_main_js.contains("function initMobileSidebar()"))
+}
+
+///|
+test "generate_robots_txt: outputs valid robots.txt" {
+  // 1. Without sitemap
+  let r1 = @summary.generate_robots_txt()
+  assert_true(r1.contains("User-agent: *\nAllow: /\n"))
+  assert_false(r1.contains("Sitemap:"))
+
+  // 2. With sitemap and disallow
+  let r2 = @summary.generate_robots_txt(
+    sitemap_url=Some("https://example.com/sitemap.xml"),
+    disallow=["/private/"],
+  )
+  assert_true(r2.contains("Disallow: /private/\n"))
+  assert_true(r2.contains("Sitemap: https://example.com/sitemap.xml\n"))
+}
+
+///|
+async test "process_markdown_page: injects fine-grained SEO tags in Book mode" {
+  let base = @config.BookConfig::default()
+  let config = {
+    ..base,
+    title: "My Doc",
+    description: "Doc description",
+    site_url: Some("https://example.com"),
+    logo: "https://example.com/logo.png",
+    feed_enabled: true,
+    sitemap_enabled: true,
+    extensions: { ..base.extensions, template: "src/testdata/template.html", },
+  }
+
+  // Case 1: Standard page with auto-derived SEO tags
+  let raw1 = @core.Item::new(
+    "---\ntitle: Guide\nimage: https://example.com/guide.png\n---\nBody", "guide.md",
+  )
+  let res1 = process_markdown_page(raw1, config, empty_summary())
+  guard res1.data is @core.Doc(html1) else { fail("expected Doc") }
+  assert_true(
+    html1.contains(
+      "<link rel=\"canonical\" href=\"https://example.com/guide.html\">",
+    ),
+  )
+  assert_true(html1.contains("<meta property=\"og:title\" content=\"Guide\">"))
+  assert_true(
+    html1.contains(
+      "<meta property=\"og:image\" content=\"https://example.com/guide.png\">",
+    ),
+  )
+  assert_true(
+    html1.contains("<meta property=\"og:site_name\" content=\"My Doc\">"),
+  )
+  assert_true(
+    html1.contains("<meta name=\"twitter:card\" content=\"summary\">"),
+  )
+  assert_true(
+    html1.contains(
+      "<link rel=\"alternate\" type=\"application/atom+xml\" title=\"My Doc\" href=\"https://example.com/feed.xml\">",
+    ),
+  )
+  assert_true(
+    html1.contains(
+      "<link rel=\"sitemap\" type=\"application/xml\" title=\"Sitemap\" href=\"https://example.com/sitemap.xml\">",
+    ),
+  )
+
+  // Case 2: Frontmatter disables open_graph and twitter_card
+  let raw2 = @core.Item::new(
+    "---\ntitle: Secret\nopen_graph: false\ntwitter_card: false\n---\nBody", "secret.md",
+  )
+  let res2 = process_markdown_page(raw2, config, empty_summary())
+  guard res2.data is @core.Doc(html2) else { fail("expected Doc") }
+  assert_false(html2.contains("<meta property=\"og:"))
+  assert_false(html2.contains("<meta name=\"twitter:"))
+}
+
+///|
+async test "build_book_rules: generates robots.txt when enabled" {
+  let base = @config.BookConfig::default()
+  let config = {
+    ..base,
+    src: feed_fixture,
+    sitemap_enabled: true,
+    site_url: Some("https://example.com"),
+    features: { ..base.features, robots_txt_enabled: true, },
+  }
+  let summary = feed_summary()
+  let dummy_404 = @core.Item::new(@core.Doc("404"), "404.html")
+  let rules = build_book_rules(config, summary, dummy_404, silent=true)
+  guard rules[0] is Glob(_, Text(handler)) else {
+    fail("expected summary glob")
+  }
+  let item = @core.Item::new("SUMMARY", "SUMMARY.md")
+  let result = handler(item)
+  guard result.data is @core.Multiple(outputs) else {
+    fail("expected multiple outputs")
+  }
+  let mut found_robots = false
+  for out in outputs {
+    if out.0 == "robots.txt" {
+      found_robots = true
+      guard out.1 is @core.Doc(content) else {
+        fail("expected Doc for robots.txt")
+      }
+      assert_true(content.contains("User-agent: *\nAllow: /\n"))
+      assert_true(
+        content.contains("Sitemap: https://example.com/sitemap.xml\n"),
+      )
+    }
+  }
+  assert_true(found_robots)
 }

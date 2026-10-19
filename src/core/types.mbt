@@ -518,3 +518,55 @@ pub type Html = String
 ///|
 /// A set of named template variables, as carried by `Item.vars`.
 pub type Vars = Map[String, @template.Value]
+
+///|
+/// Options for generating Open Graph metadata tags (`<meta property="og:*">`).
+pub(all) struct OpenGraphOptions {
+  title : String?
+  description : String?
+  url : String?
+  image : String?
+  site_name : String?
+  og_type : String?
+  locale : String?
+} derive(Eq, @debug.Debug)
+
+///|
+pub extend OpenGraphOptions with Eq::{not_equal, equal}
+
+///|
+pub extend OpenGraphOptions with @debug.Debug::{to_repr}
+
+///|
+pub fn OpenGraphOptions::default() -> OpenGraphOptions {
+  {
+    title: None,
+    description: None,
+    url: None,
+    image: None,
+    site_name: None,
+    og_type: None,
+    locale: None,
+  }
+}
+
+///|
+/// Options for generating Twitter Card metadata tags (`<meta name="twitter:*">`).
+pub(all) struct TwitterCardOptions {
+  card : String?
+  title : String?
+  description : String?
+  image : String?
+  creator : String?
+} derive(Eq, @debug.Debug)
+
+///|
+pub extend TwitterCardOptions with Eq::{not_equal, equal}
+
+///|
+pub extend TwitterCardOptions with @debug.Debug::{to_repr}
+
+///|
+pub fn TwitterCardOptions::default() -> TwitterCardOptions {
+  { card: None, title: None, description: None, image: None, creator: None, }
+}
