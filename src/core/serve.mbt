@@ -234,7 +234,7 @@ fn percent_decode_unreserved(part : String) -> String {
       match decoded {
         Some(ch) =>
           if is_unreserved_url_unit(ch) {
-            out.write_string(Int32::unsafe_to_char(ch.to_int()).to_string())
+            out.write_char(ch.to_int().unsafe_to_char())
             index = index + 3
             continue
           } else {
