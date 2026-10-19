@@ -13,7 +13,7 @@ pub fn apply_template_strict(Array[TemplateNode], Map[String, Value]) -> String 
 
 pub fn[T : Show] parse_template(T) -> Array[TemplateNode] raise TemplateParseError
 
-pub async fn[T] with_render_counter(@ref.Ref[Int], async () -> T) -> T
+pub async fn[T] with_render_counter(@ref.Ref[Int32], async () -> T) -> T
 
 // Errors
 pub suberror TemplateParseError {

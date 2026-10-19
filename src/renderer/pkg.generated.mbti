@@ -36,7 +36,7 @@ pub fn RenderedMarkdown::not_equal(Self, Self) -> Bool
 pub fn RenderedMarkdown::to_repr(Self) -> @debug.Repr
 
 pub(all) struct TocItem {
-  level : Int
+  level : Int32
   title : String
   anchor : String
 } derive(Eq, ToJson, @debug.Debug)

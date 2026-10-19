@@ -34,6 +34,7 @@
 - **glob:** Normalize backslash paths across all platforms and eliminate to_json deprecation warnings ([0c17219](https://github.com/biyuehu/mbdoc/commit/0c17219))
 - **docs:** Restore @block steps marker in process_markdown_page ([2a8054c](https://github.com/biyuehu/mbdoc/commit/2a8054c))
 - **docs:** Eliminate mobile sidebar flash by using CSS drawer and responsive init ([b21706a](https://github.com/biyuehu/mbdoc/commit/b21706a))
+- **mbti:** Synchronize generated interface files with latest toolchain Int32 signatures ([9ecb759](https://github.com/biyuehu/mbdoc/commit/9ecb759))
 
 ### 📖 Documentation
 

@@ -34,7 +34,7 @@ pub(all) struct BookConfig {
   base_url : String
   site_url : String?
   feed_enabled : Bool
-  feed_limit : Int
+  feed_limit : Int32
   sitemap_enabled : Bool
   features : FeaturesConfig
   extensions : ExtensionsConfig

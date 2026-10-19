@@ -13,7 +13,7 @@ pub fn[T : Show] parse_markdown(T) -> Array[Block]
 
 // Types and methods
 pub(all) enum Block {
-  Heading(Int, Array[Inline])
+  Heading(Int32, Array[Inline])
   Paragraph(Array[Inline])
   ThematicBreak
   CodeBlock(String?, String)
@@ -51,7 +51,7 @@ pub impl Plainable for Inline
 
 pub(all) struct ListBlock {
   ordered : Bool
-  start : Int?
+  start : Int32?
   items : Array[Array[Block]]
 } derive(Eq, ToJson, @debug.Debug, @json.FromJson)
 pub fn ListBlock::equal(Self, Self) -> Bool
