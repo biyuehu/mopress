@@ -75,3 +75,25 @@ test "load_data_dir_cached: caches result and can be cleared" {
   guard val3 is Object(map3) else { fail("expected Object") }
   assert_true(map3.contains("authors"))
 }
+
+///|
+test "load_data_dir: loads yaml and yml files" {
+  let val = @data.load_data_dir("src/data/testdata")
+  guard val is Object(map) else { fail("expected Object") }
+  assert_true(map.contains("team"))
+
+  guard map.get("team") is Some(Object(team_obj)) else {
+    fail("expected team Object")
+  }
+  guard team_obj.get("team") is Some(Object(team_info)) else {
+    fail("expected team property Object")
+  }
+  assert_eq(team_info.get("name"), Some(@template.Value::String("Core Team")))
+  assert_eq(team_info.get("lead"), Some(@template.Value::String("Alice")))
+  assert_eq(team_info.get("count"), Some(@template.Value::Number(5.0)))
+  guard team_info.get("tags") is Some(Array(tags)) else {
+    fail("expected tags Array")
+  }
+  assert_eq(tags.length(), 3)
+  assert_eq(tags[0], @template.Value::String("moonbit"))
+}

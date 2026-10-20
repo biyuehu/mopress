@@ -75,6 +75,16 @@ pub fn load_data_dir(dir : String) -> @template.Value {
       } catch {
         _ => ()
       }
+    } else if ext == ".yaml" || ext == ".yml" {
+      try {
+        let content = @fs.read_file_to_string(full_path)
+        let docs = @yaml.Yaml::load_from_string(content)
+        if docs.length() > 0 {
+          result[stem] = value_from_yaml(docs[0])
+        }
+      } catch {
+        _ => ()
+      }
     }
   }
   @template.Value::Object(result)
@@ -112,4 +122,25 @@ pub fn[T] load_data(
 ) -> @core.Item[T] {
   let data = if cached { load_data_dir_cached(dir) } else { load_data_dir(dir) }
   item.set_var("data", data)
+}
+
+///|
+/// Converts a `@yaml.Yaml` value into a `@template.Value`.
+pub fn value_from_yaml(yaml : @yaml.Yaml) -> @template.Value {
+  match yaml {
+    Null => @template.Value::Object(Map([]))
+    Boolean(b) => @template.Value::Bool(b)
+    Integer(i) => @template.Value::Number(i.to_double())
+    Real(f, ..) => @template.Value::Number(f)
+    String(s) => @template.Value::String(s)
+    Array(arr) => @template.Value::Array(arr.map(value_from_yaml))
+    Map(m) => {
+      let res : Map[String, @template.Value] = Map([])
+      for k, v in m {
+        res[k] = value_from_yaml(v)
+      }
+      @template.Value::Object(res)
+    }
+    BadValue => @template.Value::Object(Map([]))
+  }
 }

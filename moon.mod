@@ -7,6 +7,7 @@ import {
   "moonbitlang/x@0.5.5",
   "moonbitlang/async@0.22.4",
   "moonbit-community/chalk@0.0.1",
+  "moonbit-community/yaml@0.0.8",
 }
 
 readme = "README.mbt.md"

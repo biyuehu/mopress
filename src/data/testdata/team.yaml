@@ -1,0 +1,9 @@
+team:
+  name: "Core Team"
+  lead: "Alice"
+  count: 5
+  tags:
+    - moonbit
+    - ssg
+    - static
+

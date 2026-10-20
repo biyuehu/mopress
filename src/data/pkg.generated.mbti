@@ -5,6 +5,7 @@ import {
   "himeno/mopress/core",
   "himeno/mopress/template",
   "moonbit-community/toml",
+  "moonbit-community/yaml",
 }
 
 // Values
@@ -17,6 +18,8 @@ pub fn load_data_dir(String) -> @template.Value
 pub fn load_data_dir_cached(String) -> @template.Value
 
 pub fn value_from_toml(@toml.TomlValue) -> @template.Value
+
+pub fn value_from_yaml(@yaml.Yaml) -> @template.Value
 
 // Errors
 
