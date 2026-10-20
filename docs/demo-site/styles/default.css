@@ -179,3 +179,20 @@ p.caption {
     float: none;
   }
 }
+
+.post-meta {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 1.5em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #eee;
+}
+
+.reading-time {
+  margin-right: 0.75em;
+}
+
+.word-count {
+  color: #888;
+}
+

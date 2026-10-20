@@ -23,6 +23,7 @@ writeFileSync(
 			["docs/demo-site/index.md", "site_index_md"],
 			["docs/demo-site/about.md", "site_about_md"],
 			["docs/demo-site/contact.md", "site_contact_md"],
+			["docs/demo-site/posts/hello-world.md", "site_posts_hello_world_md"],
 			["docs/demo-site/site.mbtx", "site_site_mbtx"],
 			["docs/demo-site/templates/default.html", "site_templates_default_html"],
 			["docs/demo-site/styles/default.css", "site_styles_default_css"],

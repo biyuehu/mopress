@@ -492,3 +492,27 @@ async test "build_book_rules: generates robots.txt when enabled" {
   }
   assert_true(found_robots)
 }
+
+///|
+test "handle_new scaffold: embedded site assets contain expected content" {
+  // site.mbtx should reference the new SEO steps and excerpt/reading_time combinators
+  assert_true(site_site_mbtx.contains("add_excerpt"))
+  assert_true(site_site_mbtx.contains("add_reading_time"))
+  assert_true(site_site_mbtx.contains("inject_open_graph"))
+  assert_true(site_site_mbtx.contains("inject_twitter_card"))
+  assert_true(site_site_mbtx.contains("load_and_apply_template"))
+
+  // template should use $reading_time$ and $word_count$
+  assert_true(site_templates_default_html.contains("reading_time"))
+  assert_true(site_templates_default_html.contains("word_count"))
+
+  // default CSS should style .post-meta
+  assert_true(site_styles_default_css.contains(".post-meta"))
+
+  // example post should contain the <!--more--> excerpt separator
+  assert_true(site_posts_hello_world_md.contains("<!--more-->"))
+  assert_true(site_posts_hello_world_md.contains("title:"))
+
+  // index page should exist
+  assert_false(site_index_md.is_empty())
+}

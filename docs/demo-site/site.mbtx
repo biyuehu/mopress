@@ -10,10 +10,28 @@ async fn main {
       "**/*.md",
       Text(raw => {
         raw
+        |> @core.add_excerpt(separator="<!--more-->", max_length=160)
+        |> @core.add_reading_time(words_per_minute=300)
         |> @core.set_extension(".html")
         |> @core.render_markdown_and_frontmatter
         |> @core.load_and_apply_template("templates/default.html")
-        |> @core.use_js(["console.log('hi, moonbit! hi, mopress!')"])
+        |> @core.inject_open_graph({
+          og_type: Some("website"),
+          url: None,
+          title: None,
+          description: None,
+          image: None,
+          site_name: Some("MoPress Site"),
+          locale: Some("en"),
+        })
+        |> @core.inject_twitter_card({
+          card: Some("summary"),
+          title: None,
+          description: None,
+          image: None,
+          creator: None,
+        })
+        |> @core.use_js(["console.log('Built with MoPress Site Mode')"])
         |> @core.unify
       }),
     ),

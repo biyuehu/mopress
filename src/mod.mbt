@@ -108,11 +108,28 @@ fn handle_new(dir : String) -> Unit raise {
     path.join("templates/default.html") |> Show::to_string,
     site_templates_default_html,
   )
+  @fs.create_dir(path.join("posts") |> Show::to_string)
+  @fs.write_string_to_file(
+    path.join("posts/hello-world.md") |> Show::to_string,
+    site_posts_hello_world_md,
+  )
   @fs.write_string_to_file(
     path.join("site.mbtx") |> Show::to_string,
     site_site_mbtx,
   )
-  @c.chalk().modifier(Bold).color(Green).render("Creation complete.") |> println
+  @c.chalk()
+  .modifier(Bold)
+  .color(Green)
+  .render("Site-mode project created at: \{dir}")
+  |> println
+  println(
+    (
+      #|
+      #|Get started:
+      #|  cd \{dir}
+      #|  moon run --target native site.mbtx build
+    ),
+  )
 }
 
 ///|
