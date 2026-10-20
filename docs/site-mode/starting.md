@@ -28,6 +28,8 @@ cd <dir>
 ├── index.md
 ├── about.md
 ├── contact.md
+├── posts
+│   └── hello-world.md
 ├── templates
 │   └── default.html
 └── styles

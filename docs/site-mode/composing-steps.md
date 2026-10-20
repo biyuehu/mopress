@@ -37,6 +37,60 @@ pub fn render_markdown_and_frontmatter_from_ast(
 
 `render_markdown` 直接将文本解析并渲染为 HTML，不处理元数据，如果输入本身带有元数据块，元数据会被当作正文的一部分一并渲染，通常不是想要的效果。`render_markdown_and_frontmatter` 在渲染前先调用 `separate_frontmatter` 分离元数据，避免这个问题。`render_markdown_from_ast`、`render_markdown_and_frontmatter_from_ast` 是以上两者基于已经解析好的语法树的对应版本，适用于在解析和渲染之间插入了自定义处理逻辑（如转换器）的场景，其中 `render_markdown_and_frontmatter_from_ast` 需要额外显式传入元数据，因为语法树本身不携带元数据信息。
 
+### 内容摘录与阅读时间
+
+```moonbit
+pub fn[T : Show] add_excerpt(
+  item : Item[T],
+  separator? : String, // 默认为 "<!--more-->"
+  max_length? : Int32, // 默认为 200
+  var_name? : String,  // 默认为 "excerpt"
+) -> Item[T]
+
+pub fn[T : Show] add_reading_time(
+  item : Item[T],
+  words_per_minute? : Int32, // 默认为 300
+  words_var? : String,       // 默认为 "word_count"
+  time_var? : String,        // 默认为 "reading_time"
+) -> Item[T]
+```
+
+`add_excerpt` 会查找 `separator` 分隔符或按最大字数提取纯文本摘要，并将结果写入模板变量 `var_name`（默认 `$excerpt$`）；`add_reading_time` 统计中英文混合词数并按每分钟阅读速度估算阅读分钟数，分别写入 `$word_count$` 与 `$reading_time$` 模板变量。
+
+### 细粒度 SEO 注入
+
+```moonbit
+pub fn inject_canonical(item : Item[Html], url : String) -> Item[Html]
+
+pub fn inject_open_graph(item : Item[Html], options : OpenGraphOptions) -> Item[Html]
+
+pub fn inject_twitter_card(item : Item[Html], options : TwitterCardOptions) -> Item[Html]
+
+pub fn inject_feed_discovery(
+  item : Item[Html],
+  feed_url : String,
+  title? : String,
+  mime_type? : String,
+) -> Item[Html]
+
+pub fn inject_sitemap_discovery(item : Item[Html], sitemap_url : String) -> Item[Html]
+```
+
+这些 step 用于向页面 `<head>` 注入标准 SEO 标签，包括规范链接（Canonical URL）、Open Graph 社交元数据、Twitter Card 标签，以及 RSS/Atom Feed 与 Sitemap 的自动发现声明。
+
+### 分页生成
+
+```moonbit
+pub fn generate_pagination(
+  items : Array[PaginatedItem],
+  page_size? : Int32,          // 默认为 10
+  base_path? : String,         // 默认为 "posts"
+  template_path~ : String,
+) -> Thing raise
+```
+
+`generate_pagination` 将传入的 `PaginatedItem` 列表按 `page_size` 切分为多个分页（如 `posts/index.html`、`posts/page/2/index.html` 等），并在每个分页中注入 `items`、`current_page`、`total_pages`、`prev_url`、`next_url` 等模板变量。
+
 ### 模板与资源注入
 
 ```moonbit
