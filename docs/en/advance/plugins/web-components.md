@@ -27,3 +27,4 @@ Simply register the custom element definition script in `sena.toml`:
 [extensions]
 import_js = ["/scripts/tabs.js"]
 ```
+

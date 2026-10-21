@@ -34,3 +34,4 @@ In Book mode, the built-in template engine and SEO/Feed generators recognize sta
 ## Custom Frontmatter
 
 You can define arbitrary custom keys (e.g. `draft: true`, `hero_image: /banner.jpg`). In Book mode, all frontmatter keys are automatically transformed into template variables accessible via `$var_name$`.
+

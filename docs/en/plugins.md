@@ -22,3 +22,4 @@ Explore community plugins and skills in the official MoonBit community repositor
 - [External Plugin Protocol](./advance/plugins/protocol.md)
 - [Web Components Guide](./advance/plugins/web-components.md)
 - [MoonBit Native Modules](./advance/plugins/moonbit-modules.md)
+

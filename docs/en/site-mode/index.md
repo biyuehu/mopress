@@ -26,3 +26,4 @@ Site mode is the programmatic way to use MoPress: instead of relying exclusively
 - [Rules, Handlers, and Steps](./rules-handlers-steps.md): Core concepts and lifecycle.
 - [Composing Steps](./composing-steps.md): Built-in steps and composition patterns.
 - [Output Formats](./output-formats.md): Documents, assets, and data emission.
+

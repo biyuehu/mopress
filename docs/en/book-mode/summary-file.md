@@ -42,3 +42,4 @@ Key rules:
 `SUMMARY.md` **only** defines navigation metadata (sidebar hierarchy, breadcrumbs, previous/next links). It does **not** restrict which files are compiled.
 
 During Book mode builds, MoPress discovers and compiles all matching Markdown files in your source directory. Unlisted Markdown files are still rendered to HTML, but will not have sidebar links or previous/next breadcrumbs calculated. Conversely, links in `SUMMARY.md` pointing to non-existent files will cause a build error.
+

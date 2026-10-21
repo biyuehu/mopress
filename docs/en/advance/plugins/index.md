@@ -16,3 +16,4 @@ MoPress provides three complementary plugin architectures suited to different en
 
 - **Preprocessors**: Run on raw Markdown text before AST parsing.
 - **Transformers**: Run on parsed Markdown AST blocks before HTML rendering.
+

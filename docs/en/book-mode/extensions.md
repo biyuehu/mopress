@@ -26,3 +26,4 @@ The `[extensions]` table in `sena.toml` configures templates, asset copying, hea
 
 - **Preprocessors**: Run on raw text before parsing. E.g. `preprocessors = ["python expand_macros.py"]`.
 - **Transformers**: Run on parsed AST blocks via JSON protocol. E.g. `transformers = ["node highlight.js"]`.
+

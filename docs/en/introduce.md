@@ -26,3 +26,4 @@ Both modes share the same foundational engine (Markdown parsing, template engine
 <div align="center">
   <a href="https://i.arimuraromi.com/donate" target="_blank"><strong style="border-radius: 5px; padding: 10px; background-color: rgb(250, 58, 33); color: white; text-decoration: none;">👉 Keep This Project Alive 👈</strong></a>
 </div>
+

@@ -38,3 +38,4 @@ $if(next)$
   <a href="$next.location$">$next.title$ →</a>
 $endif$
 ```
+

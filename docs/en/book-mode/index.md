@@ -14,3 +14,4 @@ Book mode is inspired by mdBook, providing an out-of-the-box documentation site 
 - [Extension Configuration](./extensions.md): External preprocessors and AST transformers.
 - [Feature Presets](./features.md): Built-in features like search, KaTeX, and code copy buttons.
 - [Page Customization](./pages.md): Custom templates, stylesheet injections, and script inclusions.
+

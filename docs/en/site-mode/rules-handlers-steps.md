@@ -48,3 +48,4 @@ Handlers determine how matched files are loaded and handled:
 - `Handler::text(pipeline)`: Reads file content as UTF-8 string.
 - `Handler::binary(pipeline)`: Reads file content as raw bytes.
 - `Handler::copy()`: Copies the file as-is without processing.
+

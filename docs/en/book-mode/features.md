@@ -20,3 +20,4 @@ The `[features]` table in `sena.toml` provides convenient one-click flags for co
 ## How Presets Work
 
 `features` act as configuration syntactic sugar. During config loading, active feature flags automatically append necessary assets (CSS/JS files, tags) directly into your extension pipeline. If you need bespoke custom styling or custom CDNs, simply keep the preset disabled and provide your custom assets via `[extensions]`.
+

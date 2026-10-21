@@ -35,3 +35,4 @@ pub fn scan_files_with(
 - `*.md`: Matches all Markdown files in the current folder.
 - `assets/**/*`: Matches all assets recursively within the `assets` folder.
 - `src/?.md`: Matches single-character names like `src/a.md`.
+

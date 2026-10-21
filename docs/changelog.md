@@ -59,6 +59,7 @@ title: Changelog
 - Comprehensive proofreading and documentation update for CLI, features, pages, and i18n ([ae9c6a8](https://github.com/biyuehu/mbdoc/commit/ae9c6a8))
 - **i18n:** Add English documentation, language switcher, and en navigation ([07b879f](https://github.com/biyuehu/mbdoc/commit/07b879f))
 - **en:** Add Composing Steps and CLI Reference documentation ([a3dfc08](https://github.com/biyuehu/mbdoc/commit/a3dfc08))
+- **en:** Complete full English documentation translation and navigation tree ([84f6799](https://github.com/biyuehu/mbdoc/commit/84f6799))
 
 ### 🏡 Chore
 
