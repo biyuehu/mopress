@@ -25,6 +25,9 @@ title: 页面定制
 | `site_keywords` | String | 站点关键词，对应配置中的 `keywords` 字段 |
 | `site_authors` | String | 作者列表，对应配置中的 `authors` 字段，多个作者以顿号拼接的逗号连接 |
 | `site_language` | String | 站点主语言，对应配置中的 `language` 字段 |
+| `site_languages` | Array[String] | 站点支持的所有语言列表，对应配置中的 `languages` 字段，可配合 `$for(site_languages)$` 遍历渲染语言切换器 |
+| `toc` | Json | 页面提取的文章目录大纲（Table of Contents），包含各级标题与锚点信息 |
+| `data` | Object | 加载自 `data/` 目录下的结构化数据（JSON / TOML / YAML） |
 | `favicon` | String | favicon 路径，对应配置中的 `favicon` 字段 |
 | `logo` | String | 站点 Logo 路径，对应配置中的 `logo` 字段 |
 | `repository` | String | 源码仓库地址，对应配置中的 `repository` 字段，未配置时为空String |

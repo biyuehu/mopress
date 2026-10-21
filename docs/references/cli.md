@@ -18,8 +18,8 @@ mopress <command>
 
 | 命令 | 作用 |
 | --- | --- |
-| `init` | 初始化一个新的 Book 模式项目 |
-| `new` | 创建一个新的 Site 模式项目 |
+| `init` | 初始化一个新的 Book 模式项目，支持可选的目标目录：`mopress init [dir]` |
+| `new` | 创建一个新的 Site 模式项目：`mopress new <dir> [--template <blog|minimal>]` |
 | `build` | 构建站点（支持 `--no-emit` 空运行、`--analyze` 性能分析、`--analyze-json` 机器可读报告） |
 | `explain` | 打印规则匹配报告与预估输出列表（Dry-run） |
 | `serve` | 在本地启动开发服务器预览站点 |
@@ -29,20 +29,28 @@ mopress <command>
 ## mopress init
 
 ```bash
-mopress init
+mopress init [dir]
 ```
 
-针对的是 Book 模式用户。若当前目录下已存在配置文件，会打印提示信息后直接结束，不做任何修改，不会覆盖已有配置。否则会依次写入一份带默认值的配置文件；若模板、样式、脚本三个目录尚不存在，则分别创建；写入默认的模板文件、样式文件与脚本文件。
+专用于 **Book 模式** 用户初始化文档项目。
+- 若省略 `[dir]` 参数，默认在当前工作目录下初始化；
+- 若指定了 `[dir]` 参数，会在指定的子目录下创建并初始化 Book 模式骨架。
+
+若目标目录下已存在配置文件 `sena.toml`，会打印提示信息后直接安全退出，不会覆盖已有配置。否则会依次创建配置文件、`SUMMARY.md`、`index.md`，并在模板（`templates/`）、样式（`styles/`）、脚本（`scripts/`）以及插件（`plugins/`）目录中写入默认的脚手架资产。
 
 `init` 命令是幂等的：对一个已经初始化过的目录重复执行，只会因为配置文件已存在而提前退出，不会产生副作用。但这一判断只检查配置文件是否存在，如果手动删除了模板、样式、脚本目录中的某一个、但保留了配置文件，重新运行 `init` 并不会补齐这些被删除的目录与文件，因为 `handle_init` 的逻辑在检测到配置文件存在时会整体短路返回，不会继续往下逐项检查。
 
 ## mopress new
 
 ```bash
-mopress new <dir>
+mopress new <dir> [--template <blog|minimal>]
 ```
 
-针对的是 Site 模式用户。需输入一个目录参数。
+专用于 **Site 模式** 用户创建静态站点项目。
+- `<dir>`：必填参数，指定创建项目的目标目录；
+- `--template <blog|minimal>`（或 `-t`）：可选参数，指定初始模板类型：
+  - `blog`（默认）：包含完整的博客示例、示例博文（`posts/hello-world.md`）、SEO 元数据注入、阅读时长统计、正文摘要截取以及统一的管道脚本 `site.mbtx`；
+  - `minimal`：仅包含最基础的静态页面（`index.md`、`about.md`、`contact.md`）和轻量构建脚本，适合定制自己的独特渲染管线。
 
 ## mopress build
 

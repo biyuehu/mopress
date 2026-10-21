@@ -25,6 +25,7 @@
 - **new:** Upgrade site-mode scaffold with SEO, excerpt, reading-time, and posts/ example ([ba51579](https://github.com/biyuehu/mbdoc/commit/ba51579))
 - **data:** Add YAML (.yaml/.yml) structured data source support ([0cccbf3](https://github.com/biyuehu/mbdoc/commit/0cccbf3))
 - **cli:** Support init [dir] target and new <dir> [--template <blog ([minimal>]](https://github.com/biyuehu/mbdoc/commit/minimal>]))
+- **i18n:** Add multi-language configuration, hreflang injection, and template variables ([d97ee2f](https://github.com/biyuehu/mbdoc/commit/d97ee2f))
 
 ### 🩹 Fixes
 
@@ -71,7 +72,7 @@
 
 ### ❤️ Contributors
 
-- D47bc67 ([@romi](https://github.com/romi))
 - Romi ([@biyuehu](https://github.com/biyuehu))
+- D47bc67 ([@romi](https://github.com/romi))
 
 

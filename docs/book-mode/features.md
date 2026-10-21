@@ -12,9 +12,12 @@ title: 功能预设
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `highlight_enabled` | Bool | 是否启用代码块语法高亮 |
-| `highlight_theme` | String | 语法高亮使用的主题名称，仅在 `highlight_enabled` 为 `true` 时生效 |
-| `mathjax_enabled` | Bool | 是否启用 MathJax 数学公式渲染 |
+| `highlight-enabled` | Bool | 是否启用代码块语法高亮，默认 `false` |
+| `highlight-theme` | String | 语法高亮使用的主题名称，默认 `"github"`，仅在 `highlight-enabled` 为 `true` 时生效 |
+| `mathjax-enabled` | Bool | 是否启用 MathJax 数学公式渲染，默认 `false` |
+| `open-graph` | Bool | 是否自动注入 Open Graph 社交元数据标签，默认 `true` |
+| `twitter-card` | Bool | 是否自动注入 Twitter Card 元数据标签，默认 `true` |
+| `robots-txt` | Bool | 是否自动生成 `robots.txt` 爬虫指引文件，默认 `true` |
 
 ### 关于高亮主题
 
