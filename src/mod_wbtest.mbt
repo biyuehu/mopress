@@ -572,3 +572,31 @@ test "handle_init: supports custom directory" {
     _ => ()
   }
 }
+
+///|
+async test "process_markdown_page: injects i18n variables and hreflang links when configured" {
+  let base = @config.BookConfig::default()
+  let config = {
+    ..base,
+    title: "Multi Doc",
+    language: "en",
+    languages: ["en", "zh"],
+    site_url: Some("https://example.com"),
+    extensions: { ..base.extensions, template: "src/testdata/template.html", },
+  }
+
+  let raw = @core.Item::new("---\ntitle: Page\n---\nHello", "guide.md")
+  let res = process_markdown_page(raw, config, empty_summary())
+  guard res.data is @core.Doc(html) else { fail("expected Doc") }
+
+  assert_true(
+    html.contains(
+      "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/guide.html\">",
+    ),
+  )
+  assert_true(
+    html.contains(
+      "<link rel=\"alternate\" hreflang=\"zh\" href=\"https://example.com/zh/guide.html\">",
+    ),
+  )
+}

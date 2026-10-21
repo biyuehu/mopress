@@ -25,6 +25,8 @@ pub(all) struct BookConfig {
   authors : Array[String]
   /// The site's primary language, e.g. as an HTML `lang` attribute value.
   language : String
+  /// Additional supported languages for multi-language (i18n) sites.
+  languages : Array[String]
   /// Optional URL to the site's source repository, surfaced via the
   /// `repository` template variable when present (defaults to an empty
   /// string in templates when absent).
@@ -231,6 +233,9 @@ pub fn BookConfig::to_toml(self : BookConfig) -> String {
   b.write_string("logo = \{toml_string(self.logo)}\n")
   b.write_string("authors = \{toml_string_array(self.authors)}\n")
   b.write_string("language = \{toml_string(self.language)}\n")
+  if !self.languages.is_empty() {
+    b.write_string("languages = \{toml_string_array(self.languages)}\n")
+  }
   b.write_string("src = \{toml_string(self.src)}\n")
   b.write_string("dest = \{toml_string(self.dest)}\n")
   match self.repository {
@@ -316,6 +321,7 @@ pub fn BookConfig::parse(
     favicon: read_string(root, "favicon", default.favicon),
     logo: read_string(root, "logo", default.logo),
     language: read_string(root, "language", default.language),
+    languages: read_string_array(root, "languages"),
     repository: read_optional_string(root, "repository"),
     src: read_string(root, "src", default.src),
     dest: read_string(root, "dest", default.dest),
@@ -380,6 +386,7 @@ pub impl Default for BookConfig with fn default() -> BookConfig {
     logo: "https://himeno-sena.com/favicon.ico",
     authors: ["Himeno Sena"],
     language: "en",
+    languages: [],
     repository: Some("https://github.com/biyuehu/mopress"),
     src: "./",
     dest: "./dest",

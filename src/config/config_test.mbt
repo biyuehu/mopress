@@ -397,3 +397,20 @@ test "parse SEO features configuration" {
   assert_true(toml.contains("twitter-card = false"))
   assert_true(toml.contains("robots-txt = false"))
 }
+
+///|
+test "parse BookConfig: parses languages array" {
+  let toml =
+    #|title = "Multilingual Doc"
+    #|language = "zh"
+    #|languages = ["zh", "en", "ja"]
+  let cfg = @config.BookConfig::parse(toml)
+  assert_eq(cfg.language, "zh")
+  assert_eq(cfg.languages.length(), 3)
+  assert_eq(cfg.languages[0], "zh")
+  assert_eq(cfg.languages[1], "en")
+  assert_eq(cfg.languages[2], "ja")
+
+  let serialized = cfg.to_toml()
+  assert_true(serialized.contains("languages = [\"zh\", \"en\", \"ja\"]"))
+}

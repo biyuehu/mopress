@@ -25,7 +25,7 @@
   - [x] Dev server live reloading (`mopress serve`)
 - [x] Table of Contents (TOC) extraction & `$toc$` template variable
 - [x] Built-in client search UI & modal (powered by existing `index.json`)
-- [ ] i18n / multi-language support
+- [x] i18n / multi-language support
 - [x] JSON / YAML / TOML data sources
 - [x] Common step combinators for Site Mode (e.g. excerpt, reading time, pagination)
 

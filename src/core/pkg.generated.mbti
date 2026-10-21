@@ -36,6 +36,8 @@ pub fn import_css(Item[String], Array[String]) -> Item[String]
 
 pub fn import_js(Item[String], Array[String]) -> Item[String]
 
+pub fn inject_alternate_languages(Item[String], Array[(String, String)]) -> Item[String]
+
 pub fn inject_body(Item[String], String) -> Item[String]
 
 pub fn inject_canonical(Item[String], String) -> Item[String]

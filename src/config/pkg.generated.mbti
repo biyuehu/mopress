@@ -28,6 +28,7 @@ pub(all) struct BookConfig {
   logo : String
   authors : Array[String]
   language : String
+  languages : Array[String]
   repository : String?
   src : String
   dest : String

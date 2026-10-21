@@ -354,6 +354,29 @@ pub fn inject_feed_discovery(
 
 ///|
 /// Injects a sitemap auto-discovery link into `item`'s `<head>`.
+
+///|
+/// Injects alternate language links (`<link rel="alternate" hreflang="..." href="...">`) into `item`'s `<head>`.
+pub fn inject_alternate_languages(
+  item : Item[Html],
+  alternates : Array[(String, String)],
+) -> Item[Html] {
+  if alternates.is_empty() {
+    item
+  } else {
+    let b = StringBuilder()
+    for alt in alternates {
+      let (lang, url) = alt
+      b.write_string(
+        "<link rel=\"alternate\" hreflang=\"\{escape_html_attr(lang)}\" href=\"\{escape_html_attr(url)}\">\n",
+      )
+    }
+    let tags = b.to_string()
+    item.map(data => data |> inject_into_head(tags))
+  }
+}
+
+///|
 pub fn inject_sitemap_discovery(
   item : Item[Html],
   sitemap_url : String,

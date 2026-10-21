@@ -24,6 +24,7 @@
 - **core:** Implement excerpt, reading time, and pagination combinators for site mode ([e43b994](https://github.com/biyuehu/mbdoc/commit/e43b994))
 - **new:** Upgrade site-mode scaffold with SEO, excerpt, reading-time, and posts/ example ([ba51579](https://github.com/biyuehu/mbdoc/commit/ba51579))
 - **data:** Add YAML (.yaml/.yml) structured data source support ([0cccbf3](https://github.com/biyuehu/mbdoc/commit/0cccbf3))
+- **cli:** Support init [dir] target and new <dir> [--template <blog ([minimal>]](https://github.com/biyuehu/mbdoc/commit/minimal>]))
 
 ### 🩹 Fixes
 
@@ -70,6 +71,7 @@
 
 ### ❤️ Contributors
 
+- D47bc67 ([@romi](https://github.com/romi))
 - Romi ([@biyuehu](https://github.com/biyuehu))
 
 

@@ -554,3 +554,25 @@ test "paginate: splits items into pages and renders templates" {
     _ => ()
   }
 }
+
+///|
+test "inject_alternate_languages: injects hreflang link tags into head" {
+  let item = Item::new(
+    "<!DOCTYPE html><html><head><title>Test</title></head><body>Hello</body></html>",
+    "page.html",
+  )
+  let updated = inject_alternate_languages(item, [
+    ("en", "https://example.com/page.html"),
+    ("zh", "https://example.com/zh/page.html"),
+  ])
+  assert_true(
+    updated.data.contains(
+      "<link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/page.html\">",
+    ),
+  )
+  assert_true(
+    updated.data.contains(
+      "<link rel=\"alternate\" hreflang=\"zh\" href=\"https://example.com/zh/page.html\">",
+    ),
+  )
+}

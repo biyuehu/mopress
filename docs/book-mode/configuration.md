@@ -25,6 +25,7 @@ title: 配置
 | `logo` | String | 站点 Logo 文件路径 |
 | `authors` | Array[String] | 作者列表，渲染时会以逗号拼接 |
 | `language` | String | 站点主语言，用于 HTML 的 `lang` 属性 |
+| `languages` | Array[String] | 站点支持的所有语言列表，用于多语言（i18n）站点与 `hreflang` 标签生成 |
 | `repository` | String? | 源码仓库地址，若填写会通过 `repository` 变量暴露给模板 |
 | `src` | String | 源文件目录，相对于项目根目录 |
 | `dest` | String | 构建输出目录，相对于项目根目录 |

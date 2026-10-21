@@ -331,6 +331,12 @@ pub async fn process_markdown_page(
           ("site_keywords", config.keywords |> String),
           ("site_authors", config.authors.join(",") |> String),
           ("site_language", config.language |> String),
+          (
+            "site_languages",
+            @template.Value::Array(
+              config.languages.map(l => @template.Value::String(l)),
+            ),
+          ),
           ("favicon", config.favicon |> String),
           ("logo", config.logo |> String),
           ("repository", config.repository.unwrap_or("") |> String),
@@ -392,6 +398,24 @@ pub async fn process_markdown_page(
       match full_page_url {
         Some(u) => page = page |> @core.inject_canonical(u)
         None => ()
+      }
+      // Alternate language hreflang links
+      if !config.languages.is_empty() && config.site_url is Some(site_url) {
+        let b = if site_url.has_suffix("/") {
+          Show::to_string(site_url[0:site_url.length() - 1])
+        } else {
+          site_url
+        }
+        let alternates : Array[(String, String)] = []
+        for lang in config.languages {
+          let alt_url = if lang == config.language {
+            b + url_path
+          } else {
+            b + "/" + lang + url_path
+          }
+          alternates.push((lang, alt_url))
+        }
+        page = page |> @core.inject_alternate_languages(alternates)
       }
       // 2. Open Graph
       let page_title = fm.get("title").unwrap_or(config.title)
