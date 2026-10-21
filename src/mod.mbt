@@ -17,65 +17,90 @@ fn load_config(silent~ : Bool = false) -> @config.BookConfig raise {
 }
 
 ///|
-fn handle_init() -> Unit raise {
-  if @fs.path_exists(@config.file_name) {
+fn handle_init(target_dir? : String) -> Unit raise {
+  let root = match target_dir {
+    Some(d) => d
+    None => "."
+  }
+  let is_current = root == "."
+  let config_path = if is_current {
+    @config.file_name
+  } else {
+    @path.Path(root).join(@config.file_name) |> Show::to_string
+  }
+  if @fs.path_exists(config_path) {
     @c.chalk()
     .modifier(Bold)
     .color(Red)
-    .render("Configuration already exists, skipping initialization.")
+    .render(
+      "Configuration already exists, skipping initialization: " + config_path,
+    )
     |> println
     return
   }
-  println("Generating configuration: " + @config.file_name)
-  @fs.write_string_to_file(
-    @config.file_name,
-    @config.BookConfig::default().to_toml(),
-  )
-  if !@fs.path_exists("templates") {
-    println("Creating templates/")
-    @fs.create_dir("templates")
+  if !is_current && !@fs.path_exists(root) {
+    @fs.create_dir(root)
   }
-  if !@fs.path_exists("styles") {
-    println("Creating styles/")
-    @fs.create_dir("styles")
+  let subpath = fn(p : String) -> String {
+    if is_current {
+      p
+    } else {
+      @path.Path(root).join(p) |> Show::to_string
+    }
   }
-  if !@fs.path_exists("scripts") {
-    println("Creating scripts/")
-    @fs.create_dir("scripts")
+  let ensure_dir = fn(d : String) -> Unit raise {
+    let target = subpath(d)
+    if !@fs.path_exists(target) {
+      println("Creating \{target}/")
+      @fs.create_dir(target)
+    }
   }
-  if !@fs.path_exists("plugins") {
-    println("Creating plugins/")
-    @fs.create_dir("plugins")
-  }
-  if !@fs.path_exists("plugins/preprocessors") {
-    @fs.create_dir("plugins/preprocessors")
-  }
-  if !@fs.path_exists("plugins/transformers") {
-    @fs.create_dir("plugins/transformers")
-  }
-  if !@fs.path_exists("plugins/runtime") {
-    @fs.create_dir("plugins/runtime")
-  }
-  if !@fs.path_exists("plugins/preprocessors/github-alert.ts") {
+  println("Initializing Book-mode project: " + root)
+  println("Generating configuration: " + config_path)
+  @fs.write_string_to_file(config_path, @config.BookConfig::default().to_toml())
+  ensure_dir("templates")
+  ensure_dir("styles")
+  ensure_dir("scripts")
+  ensure_dir("plugins")
+  ensure_dir("plugins/preprocessors")
+  ensure_dir("plugins/transformers")
+  ensure_dir("plugins/runtime")
+  let gh_alert = subpath("plugins/preprocessors/github-alert.ts")
+  if !@fs.path_exists(gh_alert) {
     @fs.write_string_to_file(
-      "plugins/preprocessors/github-alert.ts", book_plugins_preprocessers_github_alert_ts,
+      gh_alert, book_plugins_preprocessers_github_alert_ts,
     )
   }
   println("Scaffolding default assets.")
   @fs.write_string_to_file(
-    "templates/default.html", book_templates_default_html,
+    subpath("templates/default.html"),
+    book_templates_default_html,
   )
-  @fs.write_string_to_file("styles/index.css", book_styles_index_css)
-  @fs.write_string_to_file("scripts/main.js", book_scripts_main_js)
-  @fs.write_string_to_file("index.md", book_index_md)
-  @fs.write_string_to_file("SUMMARY.md", book_summary_md)
-  @c.chalk().modifier(Bold).color(Green).render("Initialization complete.")
+  @fs.write_string_to_file(subpath("styles/index.css"), book_styles_index_css)
+  @fs.write_string_to_file(subpath("scripts/main.js"), book_scripts_main_js)
+  @fs.write_string_to_file(subpath("index.md"), book_index_md)
+  @fs.write_string_to_file(subpath("SUMMARY.md"), book_summary_md)
+  @c.chalk()
+  .modifier(Bold)
+  .color(Green)
+  .render("Book-mode initialization complete.")
   |> println
+  println(
+    (
+      #|
+      #|Get started:
+    ),
+  )
+  if !is_current {
+    println("  cd \{root}")
+  }
+  println("  mopress build")
+  println("  mopress serve")
 }
 
 ///|
-fn handle_new(dir : String) -> Unit raise {
-  println("Creating site-mode project: \{dir}")
+fn handle_new(dir : String, template~ : String = "blog") -> Unit raise {
+  println("Creating Site-mode project: \{dir} (template: \{template})")
   if @fs.path_exists(dir) {
     @c.chalk()
     .modifier(Bold)
@@ -94,10 +119,6 @@ fn handle_new(dir : String) -> Unit raise {
     path.join("about.md") |> Show::to_string,
     site_about_md,
   )
-  @fs.write_string_to_file(
-    path.join("contact.md") |> Show::to_string,
-    site_contact_md,
-  )
   @fs.create_dir(path.join("styles") |> Show::to_string)
   @fs.write_string_to_file(
     path.join("styles/default.css") |> Show::to_string,
@@ -108,28 +129,35 @@ fn handle_new(dir : String) -> Unit raise {
     path.join("templates/default.html") |> Show::to_string,
     site_templates_default_html,
   )
-  @fs.create_dir(path.join("posts") |> Show::to_string)
-  @fs.write_string_to_file(
-    path.join("posts/hello-world.md") |> Show::to_string,
-    site_posts_hello_world_md,
-  )
   @fs.write_string_to_file(
     path.join("site.mbtx") |> Show::to_string,
     site_site_mbtx,
   )
+  if template == "minimal" {
+    @fs.write_string_to_file(
+      path.join("contact.md") |> Show::to_string,
+      site_contact_md,
+    )
+  } else {
+    // default blog template includes posts example and contact.md
+    @fs.write_string_to_file(
+      path.join("contact.md") |> Show::to_string,
+      site_contact_md,
+    )
+    @fs.create_dir(path.join("posts") |> Show::to_string)
+    @fs.write_string_to_file(
+      path.join("posts/hello-world.md") |> Show::to_string,
+      site_posts_hello_world_md,
+    )
+  }
   @c.chalk()
   .modifier(Bold)
   .color(Green)
   .render("Site-mode project created at: \{dir}")
   |> println
-  println(
-    (
-      #|
-      #|Get started:
-      #|  cd \{dir}
-      #|  moon run --target native site.mbtx build
-    ),
-  )
+  println("\nGet started:")
+  println("  cd \{dir}")
+  println("  moon run --target native site.mbtx build")
 }
 
 ///|
@@ -144,8 +172,8 @@ fn handle_help() -> Unit {
       #|  build --analyze    Build and output performance breakdown analysis
       #|  build --analyze-json  Build and output analysis report in JSON format
       #|  explain            Print which files each rule matches
-      #|  init               Initialize a new book-mode project
-      #|  new                Create a new site-mode project
+      #|  init [dir]         Initialize a new book-mode project (defaults to current dir)
+      #|  new <dir>          Create a new site-mode project (--template <blog|minimal>)
       #|  serve              Serve the site locally
       #|  version            Print the version number
       #|  help               Print this help message
@@ -188,12 +216,30 @@ fn handle_version() -> Unit {
 async fn command_handler() -> Unit {
   let args = @env.args()
   match (if args.length() > 1 { args[1] } else { "" }) {
-    "init" => handle_init()
+    "init" => {
+      let target_dir = if args.length() > 2 && !args[2].has_prefix("-") {
+        Some(args[2])
+      } else {
+        None
+      }
+      handle_init(target_dir?)
+    }
     "new" =>
       if args.length() > 2 {
-        handle_new(args[2])
+        let dir = args[2]
+        let mut template = "blog"
+        for i = 3; i < args.length(); i = i + 1 {
+          if (args[i] == "--template" || args[i] == "-t") &&
+            i + 1 < args.length() {
+            template = args[i + 1]
+          }
+        }
+        handle_new(dir, template~)
       } else {
-        @c.chalk().modifier(Bold).color(Red).render("Usage: mopress new <dir>")
+        @c.chalk()
+        .modifier(Bold)
+        .color(Red)
+        .render("Usage: mopress new <dir> [--template <blog|minimal>]")
         |> println
       }
     "build" =>
@@ -244,7 +290,6 @@ pub async fn process_markdown_page(
   let t_sep_0 = @async.now()
   let seprated = raw |> @core.separate_frontmatter
   @core.record_step_trace("separate_frontmatter", @async.now() - t_sep_0)
-
   let t_prep_0 = @async.now()
   let text = @bridge.run_markdown_preprocessors(
     config,
@@ -252,15 +297,12 @@ pub async fn process_markdown_page(
     raw.target,
   )
   @core.record_step_trace("run_preprocessors", @async.now() - t_prep_0)
-
   let t_parse_0 = @async.now()
   let parsed_md = (seprated.map(_ => text) |> @core.parse_markdown).data
   @core.record_step_trace("parse_markdown", @async.now() - t_parse_0)
-
   let t_trans_0 = @async.now()
   let ast = @bridge.run_markdown_transformers(config, parsed_md, raw.target)
   @core.record_step_trace("run_transformers", @async.now() - t_trans_0)
-
   // @block steps
   let t_render_0 = @async.now()
   let rendered_html = @core.render_markdown_and_frontmatter_from_ast(
@@ -268,7 +310,6 @@ pub async fn process_markdown_page(
     seprated.data.0,
   )
   @core.record_step_trace("render_markdown", @async.now() - t_render_0)
-
   let t_tpl_0 = @async.now()
   let item_with_vars = rendered_html
     |> @core.set_extension(".html")
@@ -333,7 +374,6 @@ pub async fn process_markdown_page(
   let templated = item_with_vars
     |> @core.load_and_apply_template(config.extensions.template)
   @core.record_step_trace("apply_template", @async.now() - t_tpl_0)
-
   let with_seo = templated
     |> x => {
       let mut page = x
@@ -348,13 +388,11 @@ pub async fn process_markdown_page(
         b + url_path
       })
       let fm = seprated.data.0
-
       // 1. Canonical URL
       match full_page_url {
         Some(u) => page = page |> @core.inject_canonical(u)
         None => ()
       }
-
       // 2. Open Graph
       let page_title = fm.get("title").unwrap_or(config.title)
       let page_desc = match fm.get("description") {
@@ -391,7 +429,6 @@ pub async fn process_markdown_page(
             locale: Some(config.language),
           })
       }
-
       // 3. Twitter Card
       let twitter_enabled = config.features.twitter_card_enabled &&
         fm.get("twitter_card") != Some("false")
@@ -409,7 +446,6 @@ pub async fn process_markdown_page(
             creator: None,
           })
       }
-
       // 4. Feed & Sitemap discovery
       if config.feed_enabled && config.site_url is Some(site_url) {
         let feed_href = if site_url.has_suffix("/") {
@@ -439,7 +475,6 @@ pub async fn process_markdown_page(
       }
       page
     }
-
   let t_assets_0 = @async.now()
   let final_item = with_seo
     |> @core.import_css(config.extensions.import_css)
@@ -563,7 +598,6 @@ pub fn explain_book(config : @config.BookConfig) -> Unit raise {
     )
     |> @markdown.parse_markdown
     |> @summary.parse_summary()
-
   let stub = @core.Item::new(@core.Empty, "404.html")
   @core.explain(
     { src: config.src, dest: config.dest, },
@@ -586,14 +620,12 @@ pub async fn build_book(
     )
     |> @markdown.parse_markdown
     |> @summary.parse_summary()
-
   let not_found_page = process_markdown_page(
     @core.Item::new(book_404_md, "404", extension=".md"),
     config,
     summary,
     silent=analyze_json,
   )
-
   @core.mo_build(
     { src: config.src, dest: config.dest, },
     build_book_rules(config, summary, not_found_page, silent=analyze_json),

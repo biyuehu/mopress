@@ -516,3 +516,59 @@ test "handle_new scaffold: embedded site assets contain expected content" {
   // index page should exist
   assert_false(site_index_md.is_empty())
 }
+
+///|
+test "handle_new: supports blog and minimal templates" {
+  let tmp_blog = "_build/test_scaffold_blog_unique"
+  let tmp_minimal = "_build/test_scaffold_minimal_unique"
+
+  if @fs.path_exists(tmp_blog) {
+    // cleanup in case prior run left it
+    @fs.remove_dir(tmp_blog) catch {
+      _ => ()
+    }
+  }
+  if @fs.path_exists(tmp_minimal) {
+    @fs.remove_dir(tmp_minimal) catch {
+      _ => ()
+    }
+  }
+
+  handle_new(tmp_blog, template="blog")
+  assert_true(@fs.path_exists(tmp_blog + "/index.md"))
+  assert_true(@fs.path_exists(tmp_blog + "/posts/hello-world.md"))
+  assert_true(@fs.path_exists(tmp_blog + "/site.mbtx"))
+
+  handle_new(tmp_minimal, template="minimal")
+  assert_true(@fs.path_exists(tmp_minimal + "/index.md"))
+  assert_true(@fs.path_exists(tmp_minimal + "/contact.md"))
+  assert_false(@fs.path_exists(tmp_minimal + "/posts"))
+
+  // clean up
+  @fs.remove_dir(tmp_blog) catch {
+    _ => ()
+  }
+  @fs.remove_dir(tmp_minimal) catch {
+    _ => ()
+  }
+}
+
+///|
+test "handle_init: supports custom directory" {
+  let tmp_book = "_build/test_init_book_unique"
+  if @fs.path_exists(tmp_book) {
+    @fs.remove_dir(tmp_book) catch {
+      _ => ()
+    }
+  }
+
+  handle_init(target_dir=tmp_book)
+  assert_true(@fs.path_exists(tmp_book + "/sena.toml"))
+  assert_true(@fs.path_exists(tmp_book + "/SUMMARY.md"))
+  assert_true(@fs.path_exists(tmp_book + "/index.md"))
+  assert_true(@fs.path_exists(tmp_book + "/templates/default.html"))
+
+  @fs.remove_dir(tmp_book) catch {
+    _ => ()
+  }
+}
