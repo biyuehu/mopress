@@ -49,3 +49,4 @@ Book Mode includes automated Feed and Sitemap generators:
 - **Primary and Secondary Languages**: Specify the default language with `language = "en"` and declare all supported locales with `languages = ["en", "zh"]`.
 - **Automatic hreflang Injection**: When `site_url` and `languages` are configured, MoPress automatically injects `<link rel="alternate" hreflang="..." href="...">` tags into `<head>` for every page.
 - **Template Integration**: The template context provides `$site_language$` and `$site_languages$`, enabling easy rendering of language switcher controls using `$for(site_languages)$`.
+

@@ -48,3 +48,5 @@
 - [Quick Start](./en/starting.md)
 - [Configuration](./en/configuration.md)
 - [Site Mode](./en/site-mode.md)
+- [Composing Steps](./en/composing-steps.md)
+- [CLI Reference](./en/cli.md)

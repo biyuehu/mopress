@@ -97,3 +97,4 @@ The compiled pages, extracted excerpts, reading time estimates, Open Graph/Twitt
 When creating a new site, you can choose between templates:
 - `mopress new my-blog --template blog` (default, with posts and full SEO pipeline)
 - `mopress new my-site --template minimal` (lightweight minimal pages)
+
