@@ -41,3 +41,10 @@
 [插件枢纽](./plugins.md)
 [贡献](./contributing.md)
 [Changelog](./changelog.md)
+
+## English
+
+- [Introduction](./en/index.md)
+- [Quick Start](./en/starting.md)
+- [Configuration](./en/configuration.md)
+- [Site Mode](./en/site-mode.md)

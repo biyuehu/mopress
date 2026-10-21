@@ -1194,149 +1194,177 @@ let book_styles_index_css : String =
   #|  font-weight: 500;
   #|}
   #|
+  #|.lang-switch-btn {
+  #|  display: inline-flex;
+  #|  align-items: center;
+  #|  padding: 0.2rem 0.5rem;
+  #|  font-size: 0.75rem;
+  #|  font-weight: 500;
+  #|  border-radius: 4px;
+  #|  border: 1px solid var(--border);
+  #|  color: var(--text);
+  #|  background: var(--bg);
+  #|  text-decoration: none;
+  #|  transition: all 0.15s ease;
+  #|}
+  #|
+  #|.lang-switch-btn:hover {
+  #|  border-color: var(--primary);
+  #|  color: var(--primary);
+  #|  background: var(--bg-hover, var(--bg));
+  #|}
 
 ///|
 let book_templates_default_html : String =
-  #|<!DOCTYPE html>
-  #|<!-- biome-ignore lint: lint/a11y/useValidLang -->
-  #|<html lang="$if(language)$$language$$else$$site_language$$endif$">
-  #|
-  #|<head>
-  #|  <meta charset="UTF-8">
-  #|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  #|  <title>$if(title)$$title$ - $site_title$$else$$site_title$$endif$</title>
-  #|  <link rel="icon" href="$favicon$" type="image/x-icon">
-  #|  <link rel="stylesheet" href="/styles/index.css">
-  #|  <meta name="description" content="$if(description)$$site_description$,$description$$else$$site_description$$endif$">
-  #|  <meta name="keywords" content="$if(keywords)$$site_keywords$,$keywords$$else$$site_keywords$$endif$">
-  #|  <meta name="authors" content="$if(authors)$$site_authors$,$authors$$else$$site_authors$$endif$">
-  #|</head>
-  #|
-  #|<body>
-  #|  <div class="doc-root" id="docRoot">
-  #|    <nav class="sidebar">
-  #|      <div class="sidebar-header">
-  #|        <a href="$base_url$" class="logo-row" style="text-decoration: none;">
-  #|          <img class="logo-mark" src="$logo$" alt="Logo" />
-  #|          <span class="logo-name">$site_title$</span>
-  #|        </a>
-  #|      </div>
-  #|      <div class="nav-scroll">
-  #|        $for(section.prefix_chapters)$
-  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
-  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
-  #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
-  #|          $item.title$
-  #|        </a>
-  #|        $endif$
-  #|        $endfor$
-  #|        $for(section.numbered_chapters)$
-  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
-  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
-  #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="$item.location$">
-  #|          <strong>$item.number$</strong>$item.title$
-  #|        </a>
-  #|        $endif$
-  #|        $endfor$
-  #|        $for(section.suffix_chapters)$
-  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
-  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
-  #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
-  #|          $item.title$</a>
-  #|        $endif$
-  #|        $endfor$
-  #|      </div>
-  #|      <div class="nav-footer">
-  #|        <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
-  #|            rel="noopener noreferrer">MoPress</a>
-  #|          <span class="nav-version">$version$</span>
-  #|        </span>
-  #|      </div>
-  #|    </nav>
-  #|    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-  #|
-  #|    <div class="main">
-  #|      <div class="topbar">
-  #|        <div class="topbar-left">
-  #|          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
-  #|            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-  #|              <title>toggle</title>
-  #|              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-  #|            </svg>
-  #|          </button>
-  #|          <button type="button" title="Search" id="searchOpen" aria-label="Search">
-  #|            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-  #|              <title>search</title>
-  #|              <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
-  #|              <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-  #|            </svg>
-  #|          </button>
-  #|        </div>
-  #|
-  #|        <div class="topbar-title" id="topbarTitle">$breadcrumb$</div>
-  #|
-  #|        <div class="topbar-right">
-  #|          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
-  #|          <a class="topbar-link" title="Open GitHub" href="$repository$" target="_blank" rel="noreferrer noopener">
-  #|            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-  #|              <title>github</title>
-  #|              <path
-  #|                d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
-  #|                fill="currentColor" opacity=".6" />
-  #|            </svg>
-  #|          </a>
-  #|        </div>
-  #|      </div>
-  #|
-  #|      <article class="content">
-  #|        $body$
-  #|        <div class="page-nav">
-  #|          $if(prev)$
-  #|          <a class="page-nav-btn" href="$prev.location$">
-  #|            <div class="page-nav-dir">← Prev</div>
-  #|            <div class="page-nav-title">$prev.title$</div>
-  #|          </a>
-  #|          $endif$
-  #|          $if(next)$
-  #|          <a class="page-nav-btn next" href="$next.location$">
-  #|            <div class="page-nav-dir">Next →</div>
-  #|            <div class="page-nav-title">$next.title$</div>
-  #|          </a>
-  #|          $endif$
-  #|        </div>
-  #|      </article>
-  #|    </div>
-  #|  </div>
-  #|  <div class="search-overlay" id="searchOverlay" hidden>
-  #|    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchDialogTitle">
-  #|      <div class="search-head">
-  #|        <div class="search-head-left">
-  #|          <div class="search-head-title" id="searchDialogTitle">Search</div>
-  #|          <div class="search-head-hint">Ctrl / ⌘ + K</div>
-  #|        </div>
-  #|
-  #|        <button type="button" title="Close Search" class="search-close" id="searchClose"
-  #|          aria-label="Close search">Esc</button>
-  #|      </div>
-  #|
-  #|      <div class="search-input-row">
-  #|        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-  #|          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
-  #|          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-  #|        </svg>
-  #|        <input id="searchInput" class="search-input" type="search" placeholder="Search..." autocomplete="off"
-  #|          spellcheck="false" />
-  #|      </div>
-  #|
-  #|      <div class="search-results" id="searchResults"></div>
-  #|    </div>
-  #|  </div>
-  #|  <script src="/scripts/main.js"></script>
-  #|</body>
-  #|
+  #|<!DOCTYPE html>
+  #|<!-- biome-ignore lint: lint/a11y/useValidLang -->
+  #|<html lang="$if(language)$$language$$else$$site_language$$endif$">
+  #|
+  #|<head>
+  #|  <meta charset="UTF-8">
+  #|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  #|  <title>$if(title)$$title$ - $site_title$$else$$site_title$$endif$</title>
+  #|  <link rel="icon" href="$favicon$" type="image/x-icon">
+  #|  <link rel="stylesheet" href="/styles/index.css">
+  #|  <meta name="description" content="$if(description)$$site_description$,$description$$else$$site_description$$endif$">
+  #|  <meta name="keywords" content="$if(keywords)$$site_keywords$,$keywords$$else$$site_keywords$$endif$">
+  #|  <meta name="authors" content="$if(authors)$$site_authors$,$authors$$else$$site_authors$$endif$">
+  #|</head>
+  #|
+  #|<body>
+  #|  <div class="doc-root" id="docRoot">
+  #|    <nav class="sidebar">
+  #|      <div class="sidebar-header">
+  #|        <a href="$base_url$" class="logo-row" style="text-decoration: none;">
+  #|          <img class="logo-mark" src="$logo$" alt="Logo" />
+  #|          <span class="logo-name">$site_title$</span>
+  #|        </a>
+  #|      </div>
+  #|      <div class="nav-scroll">
+  #|        $for(section.prefix_chapters)$
+  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
+  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
+  #|        $if(item.is_link)$
+  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
+  #|          $item.title$
+  #|        </a>
+  #|        $endif$
+  #|        $endfor$
+  #|        $for(section.numbered_chapters)$
+  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
+  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
+  #|        $if(item.is_link)$
+  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="$item.location$">
+  #|          <strong>$item.number$</strong>$item.title$
+  #|        </a>
+  #|        $endif$
+  #|        $endfor$
+  #|        $for(section.suffix_chapters)$
+  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
+  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
+  #|        $if(item.is_link)$
+  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
+  #|          $item.title$</a>
+  #|        $endif$
+  #|        $endfor$
+  #|      </div>
+  #|      <div class="nav-footer">
+  #|        <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
+  #|            rel="noopener noreferrer">MoPress</a>
+  #|          <span class="nav-version">$version$</span>
+  #|        </span>
+  #|      </div>
+  #|    </nav>
+  #|    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  #|
+  #|    <div class="main">
+  #|      <div class="topbar">
+  #|        <div class="topbar-left">
+  #|          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
+  #|            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+  #|              <title>toggle</title>
+  #|              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+  #|            </svg>
+  #|          </button>
+  #|          <button type="button" title="Search" id="searchOpen" aria-label="Search">
+  #|            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+  #|              <title>search</title>
+  #|              <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+  #|              <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+  #|            </svg>
+  #|          </button>
+  #|        </div>
+  #|
+  #|        <div class="topbar-title" id="topbarTitle">$breadcrumb$</div>
+  #|
+  #|        <div class="topbar-right">
+  #|          $if(language)$
+  #|          $if(language == "en")$
+  #|          <a class="lang-switch-btn" href="/index.html" title="切换到中文">🇨🇳 中文</a>
+  #|          $else$
+  #|          <a class="lang-switch-btn" href="/en/index.html" title="Switch to English">🇬🇧 EN</a>
+  #|          $endif$
+  #|          $else$
+  #|          <a class="lang-switch-btn" href="/en/index.html" title="Switch to English">🇬🇧 EN</a>
+  #|          $endif$
+  #|          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
+  #|          <a class="topbar-link" title="Open GitHub" href="$repository$" target="_blank" rel="noreferrer noopener">
+  #|            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+  #|              <title>github</title>
+  #|              <path
+  #|                d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
+  #|                fill="currentColor" opacity=".6" />
+  #|            </svg>
+  #|          </a>
+  #|        </div>
+  #|      </div>
+  #|
+  #|      <article class="content">
+  #|        $body$
+  #|        <div class="page-nav">
+  #|          $if(prev)$
+  #|          <a class="page-nav-btn" href="$prev.location$">
+  #|            <div class="page-nav-dir">← Prev</div>
+  #|            <div class="page-nav-title">$prev.title$</div>
+  #|          </a>
+  #|          $endif$
+  #|          $if(next)$
+  #|          <a class="page-nav-btn next" href="$next.location$">
+  #|            <div class="page-nav-dir">Next →</div>
+  #|            <div class="page-nav-title">$next.title$</div>
+  #|          </a>
+  #|          $endif$
+  #|        </div>
+  #|      </article>
+  #|    </div>
+  #|  </div>
+  #|  <div class="search-overlay" id="searchOverlay" hidden>
+  #|    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchDialogTitle">
+  #|      <div class="search-head">
+  #|        <div class="search-head-left">
+  #|          <div class="search-head-title" id="searchDialogTitle">Search</div>
+  #|          <div class="search-head-hint">Ctrl / ⌘ + K</div>
+  #|        </div>
+  #|
+  #|        <button type="button" title="Close Search" class="search-close" id="searchClose"
+  #|          aria-label="Close search">Esc</button>
+  #|      </div>
+  #|
+  #|      <div class="search-input-row">
+  #|        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+  #|          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+  #|          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+  #|        </svg>
+  #|        <input id="searchInput" class="search-input" type="search" placeholder="Search..." autocomplete="off"
+  #|          spellcheck="false" />
+  #|      </div>
+  #|
+  #|      <div class="search-results" id="searchResults"></div>
+  #|    </div>
+  #|  </div>
+  #|  <script src="/scripts/main.js"></script>
+  #|</body>
+  #|
   #|</html>
 
 ///|
@@ -1830,4 +1858,4 @@ let site_styles_default_css : String =
 pub let version : String = "0.4.0"
 
 ///|
-let build_time : String = "2026/10/21 19:55:03"
+let build_time : String = "2026/10/21 22:12:09"

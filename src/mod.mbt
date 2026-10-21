@@ -337,6 +337,13 @@ pub async fn process_markdown_page(
               config.languages.map(l => @template.Value::String(l)),
             ),
           ),
+          (
+            "is_en",
+            @template.Value::Bool(
+              x.location().replace_all(old="\\", new="/").has_prefix("/en/") ||
+              x.location().replace_all(old="\\", new="/").has_prefix("en/"),
+            ),
+          ),
           ("favicon", config.favicon |> String),
           ("logo", config.logo |> String),
           ("repository", config.repository.unwrap_or("") |> String),

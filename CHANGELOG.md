@@ -52,6 +52,7 @@
 - Update documentation for data_dir, variable priority, and build analyze options ([435fca2](https://github.com/biyuehu/mbdoc/commit/435fca2))
 - Align documentation with latest CLI flags and API signatures ([d90843e](https://github.com/biyuehu/mbdoc/commit/d90843e))
 - **site-mode:** Document excerpt, reading time, atomic SEO steps, and updated scaffold structure ([e6d6443](https://github.com/biyuehu/mbdoc/commit/e6d6443))
+- Comprehensive proofreading and documentation update for CLI, features, pages, and i18n ([ae9c6a8](https://github.com/biyuehu/mbdoc/commit/ae9c6a8))
 
 ### 🏡 Chore
 

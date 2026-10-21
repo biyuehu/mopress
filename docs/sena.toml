@@ -5,6 +5,7 @@ favicon = "https://himeno-sena.com/favicon.ico"
 logo = "https://himeno-sena.com/favicon.ico"
 authors = ["Himeno Sena"]
 language = "zh"
+languages = ["zh", "en"]
 repository = "https://github.com/biyuehu/mopress"
 src = "./"
 dest = "./dest"
