@@ -108,3 +108,4 @@ moon run --target native site.mbtx <args>
 ```
 
 `<args>` supports `build` (along with `--no-emit`, `--analyze`, `--analyze-json`), `serve`, and `explain`, behaving identically to their Book mode equivalents. `--target native` directs MoonBit to compile against the Native target.
+

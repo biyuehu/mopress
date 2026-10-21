@@ -44,9 +44,44 @@
 
 ## English
 
-- [Introduction](./en/index.md)
+[Introduction](./en/introduce.md)
+
+---
+
+### Guide
+
 - [Quick Start](./en/starting.md)
-- [Configuration](./en/configuration.md)
-- [Site Mode](./en/site-mode.md)
-- [Composing Steps](./en/composing-steps.md)
-- [CLI Reference](./en/cli.md)
+
+- [Book Mode](./en/book-mode/index.md)
+  - [Configuration (sena.toml)](./en/book-mode/configuration.md)
+  - [Structuring Chapters (SUMMARY.md)](./en/book-mode/summary-file.md)
+  - [Frontmatter Metadata](./en/book-mode/frontmatter.md)
+  - [Extension Configuration](./en/book-mode/extensions.md)
+  - [Feature Presets](./en/book-mode/features.md)
+  - [Page Customization](./en/book-mode/pages.md)
+
+- [Site Mode](./en/site-mode/index.md)
+  - [Starting](./en/site-mode/starting.md)
+  - [Rules, Handlers and Steps](./en/site-mode/rules-handlers-steps.md)
+  - [Composing Steps](./en/site-mode/composing-steps.md)
+  - [Output Formats](./en/site-mode/output-formats.md)
+
+- [Advanced](./en/advance/index.md)
+  - [Template Engine](./en/advance/template.md)
+  - [Glob Matching](./en/advance/glob.md)
+  - [Diverse Plugins](./en/advance/plugins/index.md)
+    - [External Plugin Protocol](./en/advance/plugins/protocol.md)
+    - [Web Components](./en/advance/plugins/web-components.md)
+    - [MoonBit Modules](./en/advance/plugins/moonbit-modules.md)
+
+### References
+
+- [Markdown Showcase](./en/references/markdown.md)
+- [CLI Reference](./en/references/cli.md)
+- [API Reference](./en/references/api.md)
+
+---
+
+[Plugins Hub](./en/plugins.md)
+[Contributing](./en/contributing.md)
+[Changelog](./en/changelog.md)

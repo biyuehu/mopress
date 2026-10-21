@@ -54,6 +54,7 @@
 - **site-mode:** Document excerpt, reading time, atomic SEO steps, and updated scaffold structure ([e6d6443](https://github.com/biyuehu/mbdoc/commit/e6d6443))
 - Comprehensive proofreading and documentation update for CLI, features, pages, and i18n ([ae9c6a8](https://github.com/biyuehu/mbdoc/commit/ae9c6a8))
 - **i18n:** Add English documentation, language switcher, and en navigation ([07b879f](https://github.com/biyuehu/mbdoc/commit/07b879f))
+- **en:** Add Composing Steps and CLI Reference documentation ([a3dfc08](https://github.com/biyuehu/mbdoc/commit/a3dfc08))
 
 ### 🏡 Chore
 

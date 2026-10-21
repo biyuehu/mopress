@@ -193,3 +193,4 @@ raw
 ## Complete Example
 
 Book mode's markdown processing function [`process_markdown_page`](https://mooncakes.io/docs/himeno/himeno/mopress#process_markdown_page) is the primary reference implementation for assembling steps into an end-to-end pipeline.
+
