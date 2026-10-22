@@ -37,6 +37,31 @@ function initSidebar() {
     })
   })
 
+  const navScroll = $('.nav-scroll')
+  if (navScroll) {
+    const savedScroll = sessionStorage.getItem('mopress_sidebar_scroll')
+    if (savedScroll !== null) {
+      navScroll.scrollTop = Number.parseInt(savedScroll, 10) || 0
+    } else {
+      const activeItem = navScroll.querySelector('.nav-item.active')
+      if (activeItem) {
+        const rect = activeItem.getBoundingClientRect()
+        const parentRect = navScroll.getBoundingClientRect()
+        if (rect.top < parentRect.top || rect.bottom > parentRect.bottom) {
+          activeItem.scrollIntoView({ block: 'nearest' })
+        }
+      }
+    }
+
+    navScroll.addEventListener(
+      'scroll',
+      () => {
+        sessionStorage.setItem('mopress_sidebar_scroll', navScroll.scrollTop)
+      },
+      { passive: true }
+    )
+  }
+
   window.addEventListener(
     'resize',
     () => {

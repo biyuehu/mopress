@@ -59,13 +59,14 @@ async fn serve_static_request(
 ) -> Unit {
   if request.path.has_prefix("/__mopress_live_reload") {
     let body = "{\"epoch\": \{live_reload_epoch.val}}"
+    let body_bytes = @utf8.encode(body)
     conn.send_response(200, "OK", extra_headers={
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Length": body.length().to_string(),
+      "Content-Length": body_bytes.length().to_string(),
       "Cache-Control": "no-cache, no-store, must-revalidate",
     })
     if request.meth != Head {
-      conn.write_string(body)
+      conn.write(body_bytes)
     }
     conn.end_response()
     return
@@ -144,13 +145,14 @@ async fn serve_file(
     } else {
       content + live_reload_script
     }
+    let injected_bytes = @utf8.encode(injected)
     conn.send_response(200, "OK", extra_headers={
       "Content-Type": content_type(file_path),
-      "Content-Length": injected.length().to_string(),
+      "Content-Length": injected_bytes.length().to_string(),
       "Cache-Control": "no-cache",
     })
     if !head_only {
-      conn.write_string(injected)
+      conn.write(injected_bytes)
     }
     conn.end_response()
     return
@@ -176,13 +178,14 @@ async fn send_text(
   body : String,
   head_only : Bool,
 ) -> Unit {
+  let body_bytes = @utf8.encode(body)
   conn.send_response(status, reason, extra_headers={
     "Content-Type": "text/plain; charset=utf-8",
-    "Content-Length": body.length().to_string(),
+    "Content-Length": body_bytes.length().to_string(),
     "Cache-Control": "no-cache",
   })
   if !head_only {
-    conn.write_string(body)
+    conn.write(body_bytes)
   }
   conn.end_response()
 }

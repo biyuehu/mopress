@@ -141,16 +141,19 @@ body {
 }
 
 .sidebar-header {
+  height: 2.95rem;
   flex-shrink: 0;
-  padding: 1.15rem 1.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
   border-bottom: 0.5px solid var(--border);
+  box-sizing: border-box;
 }
 
 .logo-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.25rem;
 }
 
 .logo-mark {

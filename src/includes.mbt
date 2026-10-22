@@ -41,6 +41,31 @@ let book_scripts_main_js : String =
   #|    })
   #|  })
   #|
+  #|  const navScroll = $('.nav-scroll')
+  #|  if (navScroll) {
+  #|    const savedScroll = sessionStorage.getItem('mopress_sidebar_scroll')
+  #|    if (savedScroll !== null) {
+  #|      navScroll.scrollTop = Number.parseInt(savedScroll, 10) || 0
+  #|    } else {
+  #|      const activeItem = navScroll.querySelector('.nav-item.active')
+  #|      if (activeItem) {
+  #|        const rect = activeItem.getBoundingClientRect()
+  #|        const parentRect = navScroll.getBoundingClientRect()
+  #|        if (rect.top < parentRect.top || rect.bottom > parentRect.bottom) {
+  #|          activeItem.scrollIntoView({ block: 'nearest' })
+  #|        }
+  #|      }
+  #|    }
+  #|
+  #|    navScroll.addEventListener(
+  #|      'scroll',
+  #|      () => {
+  #|        sessionStorage.setItem('mopress_sidebar_scroll', navScroll.scrollTop)
+  #|      },
+  #|      { passive: true }
+  #|    )
+  #|  }
+  #|
   #|  window.addEventListener(
   #|    'resize',
   #|    () => {
@@ -427,16 +452,19 @@ let book_styles_index_css : String =
   #|}
   #|
   #|.sidebar-header {
+  #|  height: 2.95rem;
   #|  flex-shrink: 0;
-  #|  padding: 1.15rem 1.25rem 0.5rem;
+  #|  display: flex;
+  #|  align-items: center;
+  #|  padding: 0 1.25rem;
   #|  border-bottom: 0.5px solid var(--border);
+  #|  box-sizing: border-box;
   #|}
   #|
   #|.logo-row {
   #|  display: flex;
   #|  align-items: center;
   #|  gap: 0.5rem;
-  #|  margin-bottom: 0.25rem;
   #|}
   #|
   #|.logo-mark {
@@ -1857,4 +1885,4 @@ let site_styles_default_css : String =
 pub let version : String = "0.4.0"
 
 ///|
-let build_time : String = "2026/10/22 12:01:49"
+let build_time : String = "2026/10/22 12:22:03"
