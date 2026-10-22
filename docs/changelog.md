@@ -60,6 +60,7 @@ title: Changelog
 - **i18n:** Add English documentation, language switcher, and en navigation ([07b879f](https://github.com/biyuehu/mbdoc/commit/07b879f))
 - **en:** Add Composing Steps and CLI Reference documentation ([a3dfc08](https://github.com/biyuehu/mbdoc/commit/a3dfc08))
 - **en:** Complete full English documentation translation and navigation tree ([84f6799](https://github.com/biyuehu/mbdoc/commit/84f6799))
+- **en:** Ensure newline at end of files ([db288c5](https://github.com/biyuehu/mbdoc/commit/db288c5))
 
 ### 🏡 Chore
 
@@ -80,7 +81,7 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 - D47bc67 ([@romi](https://github.com/romi))
 
 

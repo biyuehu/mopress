@@ -119,9 +119,12 @@ function initSearch() {
     currentMatches = list
     activeIndex = list.length > 0 ? 0 : -1
     if (list.length === 0) {
+      const isEn = document.documentElement.lang === 'en' || window.location.pathname.startsWith('/en/');
+      const noResults = isEn ? 'No matching results found' : '未找到匹配的结果';
+      const promptText = isEn ? 'Type keywords to search titles and content...' : '输入关键词搜索文章标题与内容...';
       results.innerHTML = input.value.trim()
-        ? `<div class="search-empty">未找到匹配的结果</div>`
-        : `<div class="search-empty">输入关键词搜索文章标题与内容...</div>`
+        ? `<div class="search-empty">${noResults}</div>`
+        : `<div class="search-empty">${promptText}</div>`
       return
     }
 

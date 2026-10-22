@@ -344,6 +344,30 @@ pub async fn process_markdown_page(
               x.location().replace_all(old="\\", new="/").has_prefix("en/"),
             ),
           ),
+          (
+            "target_lang_url",
+            {
+              let normalized = x.location().replace_all(old="\\", new="/")
+              let clean = if normalized.has_prefix("/") {
+                Show::to_string(normalized[1:])
+              } else {
+                normalized
+              }
+              let target = if clean.has_prefix("en/") {
+                let stripped = Show::to_string(clean[3:])
+                if stripped.is_empty() || stripped == "index.html" {
+                  "/index.html"
+                } else {
+                  "/" + stripped
+                }
+              } else if clean.is_empty() || clean == "index.html" {
+                "/en/index.html"
+              } else {
+                "/en/" + clean
+              }
+              String(target)
+            },
+          ),
           ("favicon", config.favicon |> String),
           ("logo", config.logo |> String),
           ("repository", config.repository.unwrap_or("") |> String),
