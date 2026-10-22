@@ -9,11 +9,52 @@ pub async fn mopress(
   let args = @env.args()
   let cmd = if args.length() > 1 { args[1] } else { "" }
   let no_emit = args.contains("--no-emit")
-  let analyze = args.contains("--analyze")
+  let analyze = !args.contains("--no-analyze")
+  let analyze_json = args.contains("--analyze-json")
   match cmd {
-    "build" => options |> mo_build(rules, no_emit~, analyze~)
-    "serve" => options |> mo_serve
-    "explain" => options |> explain(rules)
+    "build" => {
+      let allowed = ["--no-emit", "--no-analyze", "--analyze-json"]
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") && !allowed.contains(arg) {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for build: \{arg}")
+          |> println
+          return
+        }
+      }
+      options |> mo_build(rules, no_emit~, analyze~, analyze_json~)
+    }
+    "serve" => {
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for serve: \{arg}")
+          |> println
+          return
+        }
+      }
+      options |> mo_serve
+    }
+    "explain" => {
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for explain: \{arg}")
+          |> println
+          return
+        }
+      }
+      options |> explain(rules)
+    }
     opts =>
       @c.chalk().modifier(Bold).color(Red).render("Unknown command: \{opts}")
       |> println

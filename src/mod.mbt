@@ -167,16 +167,16 @@ fn handle_help() -> Unit {
       #|Usage: mopress <command>
       #|
       #|Commands:
-      #|  build              Build the site
-      #|  build --no-emit    Build without writing files to disk
-      #|  build --analyze    Build and output performance breakdown analysis
+      #|  build                 Build the site (with analysis by default)
+      #|  build --no-emit       Build without writing files to disk
+      #|  build --no-analyze    Build without outputting performance analysis
       #|  build --analyze-json  Build and output analysis report in JSON format
-      #|  explain            Print which files each rule matches
-      #|  init [dir]         Initialize a new book-mode project (defaults to current dir)
-      #|  new <dir>          Create a new site-mode project (--template <blog|minimal>)
-      #|  serve              Serve the site locally
-      #|  version            Print the version number
-      #|  help               Print this help message
+      #|  explain               Print which files each rule matches
+      #|  init [dir]            Initialize a new book-mode project (defaults to current dir)
+      #|  new <dir>             Create a new site-mode project (--template <blog|minimal>)
+      #|  serve                 Serve the site locally
+      #|  version               Print the version number
+      #|  help                  Print this help message
     ),
   )
 }
@@ -184,7 +184,7 @@ fn handle_help() -> Unit {
 ///|
 async fn handle_build(
   no_emit~ : Bool = false,
-  analyze~ : Bool = false,
+  analyze~ : Bool = true,
   analyze_json~ : Bool = false,
 ) -> Unit {
   let config = load_config(silent=analyze_json)
@@ -215,42 +215,168 @@ fn handle_version() -> Unit {
 ///|
 async fn command_handler() -> Unit {
   let args = @env.args()
-  match (if args.length() > 1 { args[1] } else { "" }) {
+  let cmd = if args.length() > 1 { args[1] } else { "" }
+  match cmd {
     "init" => {
-      let target_dir = if args.length() > 2 && !args[2].has_prefix("-") {
-        Some(args[2])
-      } else {
-        None
-      }
-      handle_init(target_dir?)
-    }
-    "new" =>
-      if args.length() > 2 {
-        let dir = args[2]
-        let mut template = "blog"
-        for i = 3; i < args.length(); i = i + 1 {
-          if (args[i] == "--template" || args[i] == "-t") &&
-            i + 1 < args.length() {
-            template = args[i + 1]
-          }
+      let mut target_dir : String? = None
+      let mut has_error = false
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for init: \{arg}")
+          |> println
+          has_error = true
+          break
+        } else if target_dir is None {
+          target_dir = Some(arg)
+        } else {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unexpected extra argument: \{arg}")
+          |> println
+          has_error = true
+          break
         }
-        handle_new(dir, template~)
-      } else {
-        @c.chalk()
-        .modifier(Bold)
-        .color(Red)
-        .render("Usage: mopress new <dir> [--template <blog|minimal>]")
-        |> println
       }
-    "build" =>
-      handle_build(
-        no_emit=args.contains("--no-emit"),
-        analyze=args.contains("--analyze"),
-        analyze_json=args.contains("--analyze-json"),
-      )
-    "serve" => handle_serve()
-    "explain" => handle_explain()
-    "version" => handle_version()
+      if !has_error {
+        handle_init(target_dir?)
+      }
+    }
+    "new" => {
+      let mut dir : String? = None
+      let mut template = "blog"
+      let mut has_error = false
+      let mut i = 2
+      while i < args.length() {
+        let arg = args[i]
+        if arg == "--template" || arg == "-t" {
+          if i + 1 < args.length() {
+            template = args[i + 1]
+            i = i + 2
+          } else {
+            @c.chalk()
+            .modifier(Bold)
+            .color(Red)
+            .render("Option \{arg} requires an argument")
+            |> println
+            has_error = true
+            break
+          }
+        } else if arg.has_prefix("-") {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for new: \{arg}")
+          |> println
+          has_error = true
+          break
+        } else if dir is None {
+          dir = Some(arg)
+          i = i + 1
+        } else {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unexpected extra argument: \{arg}")
+          |> println
+          has_error = true
+          break
+        }
+      }
+      if !has_error {
+        match dir {
+          Some(d) => handle_new(d, template~)
+          None =>
+            @c.chalk()
+            .modifier(Bold)
+            .color(Red)
+            .render("Usage: mopress new <dir> [--template <blog|minimal>]")
+            |> println
+        }
+      }
+    }
+    "build" => {
+      let allowed = ["--no-emit", "--no-analyze", "--analyze-json"]
+      let mut has_error = false
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") && !allowed.contains(arg) {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for build: \{arg}")
+          |> println
+          has_error = true
+          break
+        }
+      }
+      if !has_error {
+        handle_build(
+          no_emit=args.contains("--no-emit"),
+          analyze=!args.contains("--no-analyze"),
+          analyze_json=args.contains("--analyze-json"),
+        )
+      }
+    }
+    "serve" => {
+      let mut has_error = false
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for serve: \{arg}")
+          |> println
+          has_error = true
+          break
+        }
+      }
+      if !has_error {
+        handle_serve()
+      }
+    }
+    "explain" => {
+      let mut has_error = false
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for explain: \{arg}")
+          |> println
+          has_error = true
+          break
+        }
+      }
+      if !has_error {
+        handle_explain()
+      }
+    }
+    "version" => {
+      let mut has_error = false
+      for i = 2; i < args.length(); i = i + 1 {
+        let arg = args[i]
+        if arg.has_prefix("-") {
+          @c.chalk()
+          .modifier(Bold)
+          .color(Red)
+          .render("Unknown option for version: \{arg}")
+          |> println
+          has_error = true
+          break
+        }
+      }
+      if !has_error {
+        handle_version()
+      }
+    }
+    "help" => handle_help()
     _ => handle_help()
   }
 }
@@ -664,7 +790,7 @@ pub fn explain_book(config : @config.BookConfig) -> Unit raise {
 pub async fn build_book(
   config : @config.BookConfig,
   no_emit~ : Bool = false,
-  analyze~ : Bool = false,
+  analyze~ : Bool = true,
   analyze_json~ : Bool = false,
 ) -> Unit {
   if !analyze_json {

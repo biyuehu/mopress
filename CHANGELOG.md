@@ -42,6 +42,7 @@
 - **mbti:** Synchronize generated interface files with latest toolchain Int32 signatures ([9ecb759](https://github.com/biyuehu/mbdoc/commit/9ecb759))
 - **mbti:** Update generated interface files to Int32 signatures for latest toolchain ([d22efbd](https://github.com/biyuehu/mbdoc/commit/d22efbd))
 - **docs:** Resolve broken relative links in English docs ([cf97f72](https://github.com/biyuehu/mbdoc/commit/cf97f72))
+- **serve:** Use utf8 bytes length for Content-Length and sync topbar height ([973a3a1](https://github.com/biyuehu/mbdoc/commit/973a3a1))
 
 ### 📖 Documentation
 
@@ -80,6 +81,6 @@
 ### ❤️ Contributors
 
 - Romi ([@biyuehu](https://github.com/biyuehu))
-- D47bc67 <Romi>
+- D47bc67 ([@romi](https://github.com/romi))
 
 
