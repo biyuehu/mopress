@@ -31,6 +31,7 @@ title: Changelog
 - **cli:** Support init [dir] target and new <dir> [--template <blog ([minimal>]](https://github.com/biyuehu/mbdoc/commit/minimal>]))
 - **i18n:** Add multi-language configuration, hreflang injection, and template variables ([d97ee2f](https://github.com/biyuehu/mbdoc/commit/d97ee2f))
 - **i18n:** Smart language switcher for pages, bilingual UI, and bilingual auto-detect landing page ([c3a3131](https://github.com/biyuehu/mbdoc/commit/c3a3131))
+- **cli:** Default to analyze mode, add --no-analyze and strict option validation ([2b0a9e3](https://github.com/biyuehu/mbdoc/commit/2b0a9e3))
 
 ### 🩹 Fixes
 
@@ -85,6 +86,6 @@ title: Changelog
 ### ❤️ Contributors
 
 - Romi ([@biyuehu](https://github.com/biyuehu))
-- D47bc67 ([@romi](https://github.com/romi))
+- D47bc67 <Romi>
 
 

@@ -1272,30 +1272,13 @@ let book_templates_default_html : String =
   #|        </a>
   #|      </div>
   #|      <div class="nav-scroll">
-  #|        $for(section.prefix_chapters)$
-  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
-  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
-  #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
-  #|          $item.title$
-  #|        </a>
-  #|        $endif$
-  #|        $endfor$
-  #|        $for(section.numbered_chapters)$
+  #|        $for(section.chapters)$
   #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
   #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
   #|        $if(item.is_link)$
   #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active page-expanded$endif$" href="$item.location$">
-  #|          <strong>$item.number$</strong>$item.title$
+  #|          $if(item.number)$<strong>$item.number$</strong>$endif$$item.title$
   #|        </a>
-  #|        $endif$
-  #|        $endfor$
-  #|        $for(section.suffix_chapters)$
-  #|        $if(item.is_separator)$<div class="nav-separator"></div>$endif$
-  #|        $if(item.is_part_title)$<div class="nav-section-label">$item.title$</div>$endif$
-  #|        $if(item.is_link)$
-  #|        <a class="nav-item depth-$item.depth$$if(item.is_current)$ active$endif$" href="$item.location$">
-  #|          $item.title$</a>
   #|        $endif$
   #|        $endfor$
   #|      </div>
@@ -1885,4 +1868,4 @@ let site_styles_default_css : String =
 pub let version : String = "0.4.0"
 
 ///|
-let build_time : String = "2026/10/22 12:45:48"
+let build_time : String = "2026/10/22 14:44:38"

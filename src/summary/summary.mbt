@@ -74,18 +74,26 @@ fn flatten_items(
   current : String,
   base_url : String,
   numbered~ : Bool = false,
+  counter~ : Ref[Int32] = Ref(0),
   prefix~ : String = "",
 ) -> Array[Json] {
   let result : Array[Json] = []
-  let mut counter = 0
+  let mut local_counter = 0
   for item in items {
     match item {
       Separator => result.push({ "is_separator": Json(true) })
-      PartTitle(title) =>
+      PartTitle(title) => {
+        counter.val = 0
         result.push({ "is_part_title": Json(true), "title": Json(title) })
+      }
       Link(link) => {
-        counter += 1
-        let number = prefix + counter.to_string()
+        let number = if depth == 0 {
+          counter.val += 1
+          prefix + counter.val.to_string()
+        } else {
+          local_counter += 1
+          prefix + local_counter.to_string()
+        }
         let location = if base_url.has_suffix("/") {
           base_url[0:base_url.length() - 1] + link.location
         } else {
@@ -137,17 +145,26 @@ pub fn Summary::flatten(
   base_url : String,
 ) -> Json {
   let current = unify_url(current)
+  let prefix_flat = flatten_items(self.prefix_chapters, 0, current, base_url)
+  let numbered_flat = flatten_items(
+    self.numbered_chapters,
+    0,
+    current,
+    base_url,
+    numbered=true,
+  )
+  let suffix_flat = flatten_items(self.suffix_chapters, 0, current, base_url)
+  let chapters_flat : Array[Json] = []
+  chapters_flat.append(prefix_flat)
+  chapters_flat.append(numbered_flat)
+  chapters_flat.append(suffix_flat)
+
   {
     "title": Json(self.title),
-    "prefix_chapters": Json::array(
-      flatten_items(self.prefix_chapters, 0, current, base_url),
-    ),
-    "numbered_chapters": Json::array(
-      flatten_items(self.numbered_chapters, 0, current, base_url, numbered=true),
-    ),
-    "suffix_chapters": Json::array(
-      flatten_items(self.suffix_chapters, 0, current, base_url),
-    ),
+    "chapters": Json::array(chapters_flat),
+    "prefix_chapters": Json::array(prefix_flat),
+    "numbered_chapters": Json::array(numbered_flat),
+    "suffix_chapters": Json::array(suffix_flat),
   }
 }
 
