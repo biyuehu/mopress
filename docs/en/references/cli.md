@@ -4,7 +4,7 @@ title: CLI Reference
 
 # CLI Reference
 
-This page provides the complete reference for the `mopress` command-line executable. For day-to-day getting started guides, please refer to [Quick Start](../en/starting.md) (Book mode) or [Site Mode](../en/site-mode.md) first. This page is intended for reference purposes.
+This page provides the complete reference for the `mopress` command-line executable. For day-to-day getting started guides, please refer to [Quick Start](../starting.md) (Book mode) or [Site Mode](../site-mode/starting.md) first. This page is intended for reference purposes.
 
 ## Basic Usage
 
