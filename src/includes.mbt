@@ -677,6 +677,42 @@ let book_styles_index_css : String =
   #|  background: var(--bg);
   #|}
   #|
+  #|@media (max-width: 768px) {
+  #|  .topbar {
+  #|    display: flex;
+  #|    justify-content: space-between;
+  #|    padding: 0 0.75rem;
+  #|    gap: 0.5rem;
+  #|  }
+  #|
+  #|  .topbar-title {
+  #|    display: none !important;
+  #|  }
+  #|
+  #|  .topbar-left {
+  #|    flex-shrink: 0;
+  #|    gap: 0.35rem;
+  #|  }
+  #|
+  #|  .topbar-right {
+  #|    flex-shrink: 0;
+  #|    gap: 0.35rem;
+  #|  }
+  #|
+  #|  .topbar-link {
+  #|    padding: 0 0.4rem;
+  #|  }
+  #|
+  #|  .topbar-link span {
+  #|    display: none;
+  #|  }
+  #|
+  #|  .search-modal {
+  #|    width: calc(100% - 1rem);
+  #|    margin: 0 auto;
+  #|  }
+  #|}
+  #|
   #|.topbar button {
   #|  width: 1.75rem;
   #|  height: 1.75rem;
@@ -1869,4 +1905,4 @@ let site_styles_default_css : String =
 pub let version : String = "0.4.0"
 
 ///|
-let build_time : String = "2026/10/23 21:49:53"
+let build_time : String = "2026/10/23 22:02:13"

@@ -82,6 +82,7 @@
       font-size: 1.1rem;
       letter-spacing: 0.02em;
       text-decoration: none;
+      flex-shrink: 0;
     }
 
     .nav-links {
@@ -115,12 +116,48 @@
       cursor: pointer;
       text-decoration: none;
       transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
     .lang-btn:hover {
       color: var(--text);
       border-color: var(--accent);
       background: rgba(212, 154, 132, 0.1);
+    }
+
+    @media (max-width: 640px) {
+      nav {
+        padding: 0.75rem 1rem;
+        gap: 0.75rem;
+      }
+
+      .nav-links {
+        gap: 0.75rem;
+        font-size: 0.825rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .nav-links a.social-link {
+        display: none;
+      }
+
+      .hero {
+        padding: 4.5rem 1.25rem 3rem !important;
+      }
+
+      h1 {
+        font-size: 1.85rem !important;
+      }
+
+      .lead {
+        font-size: 0.98rem !important;
+        margin-bottom: 1.75rem !important;
+      }
+
+      section.features {
+        padding: 1rem 1.25rem 4rem !important;
+      }
     }
 
     .hero {
@@ -337,8 +374,8 @@
     <div class="nav-links">
       <a id="navDocs" href="/introduce.html">文档</a>
       <a id="navPlugins" href="/plugins.html">插件</a>
-      <a href="https://codeberg.org/lomi/mopress" target="_blank">Codeberg</a>
-      <a href="https://github.com/biyuehu/mopress" target="_blank">GitHub</a>
+      <a class="social-link" href="https://codeberg.org/lomi/mopress" target="_blank">Codeberg</a>
+      <a class="social-link" href="https://github.com/biyuehu/mopress" target="_blank">GitHub</a>
       <a id="navChangelog" href="/changelog.html">日志</a>
       <button type="button" class="lang-btn" id="langToggle">🇬🇧 EN</button>
     </div>

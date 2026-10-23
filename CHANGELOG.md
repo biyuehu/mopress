@@ -73,6 +73,7 @@
 - Exclude bridge test fixture from linguist stats ([f8658b9](https://github.com/biyuehu/mbdoc/commit/f8658b9))
 - Include generated mbti files in lefthook stage-generated ([35eeeae](https://github.com/biyuehu/mbdoc/commit/35eeeae))
 - Update lefthook.yml ([ed21e3e](https://github.com/biyuehu/mbdoc/commit/ed21e3e))
+- Update toggleBth text ([cf29f34](https://github.com/biyuehu/mbdoc/commit/cf29f34))
 
 ### ✅ Tests
 
