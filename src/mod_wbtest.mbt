@@ -14,6 +14,7 @@ fn empty_summary() -> @summary.Summary {
     prefix_chapters: [],
     numbered_chapters: [],
     suffix_chapters: [],
+    ordered_items: [],
   }
 }
 
@@ -69,6 +70,7 @@ fn feed_summary() -> @summary.Summary {
       }),
     ],
     suffix_chapters: [],
+    ordered_items: [],
   }
 }
 

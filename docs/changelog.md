@@ -48,6 +48,7 @@ title: Changelog
 - **mbti:** Update generated interface files to Int32 signatures for latest toolchain ([d22efbd](https://github.com/biyuehu/mbdoc/commit/d22efbd))
 - **docs:** Resolve broken relative links in English docs ([cf97f72](https://github.com/biyuehu/mbdoc/commit/cf97f72))
 - **serve:** Use utf8 bytes length for Content-Length and sync topbar height ([973a3a1](https://github.com/biyuehu/mbdoc/commit/973a3a1))
+- **summary:** Maintain linear chapter order and reset chapter numbers per part ([deb7b5f](https://github.com/biyuehu/mbdoc/commit/deb7b5f))
 
 ### 📖 Documentation
 
@@ -85,7 +86,7 @@ title: Changelog
 
 ### ❤️ Contributors
 
-- Romi ([@biyuehu](https://github.com/biyuehu))
+- Romi <biyuehuya@gmail.com>
 - D47bc67 <Romi>
 
 

@@ -49,6 +49,7 @@ pub(all) struct Summary {
   prefix_chapters : Array[SummaryItem]
   numbered_chapters : Array[SummaryItem]
   suffix_chapters : Array[SummaryItem]
+  ordered_items : Array[SummarySectionItem]
 } derive(Eq, @debug.Debug)
 pub fn Summary::breadcrumb(Self, String) -> String
 pub fn Summary::collect_page_meta(Self, String) -> Array[PageMeta] raise
@@ -77,6 +78,14 @@ pub(all) struct SummaryLink {
 pub fn SummaryLink::equal(Self, Self) -> Bool
 pub fn SummaryLink::not_equal(Self, Self) -> Bool
 pub fn SummaryLink::to_repr(Self) -> @debug.Repr
+
+pub(all) struct SummarySectionItem {
+  item : SummaryItem
+  numbered : Bool
+} derive(Eq, @debug.Debug)
+pub fn SummarySectionItem::equal(Self, Self) -> Bool
+pub fn SummarySectionItem::not_equal(Self, Self) -> Bool
+pub fn SummarySectionItem::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

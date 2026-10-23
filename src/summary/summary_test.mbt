@@ -212,6 +212,7 @@ test "breadcrumb" {
       }),
     ],
     suffix_chapters: [],
+    ordered_items: [],
   }
   assert_eq(s.breadcrumb("./intro.html"), "/ 说明")
   assert_eq(s.breadcrumb("./guide.html"), "/ 指南")
@@ -247,6 +248,7 @@ test "prev_next" {
       }),
     ],
     suffix_chapters: [],
+    ordered_items: [],
   }
   @debug.assert_eq(s.prev_next("./ghost.html"), (None, None))
   let (p, n) = s.prev_next("./b.html")
@@ -286,6 +288,7 @@ fn sample_summary() -> @summary.Summary {
       }),
     ],
     suffix_chapters: [],
+    ordered_items: [],
   }
 }
 
@@ -338,6 +341,7 @@ test "flatten includes separator and part title" {
     prefix_chapters: [@summary.SummaryItem::Separator],
     numbered_chapters: [@summary.SummaryItem::PartTitle("P")],
     suffix_chapters: [],
+    ordered_items: [],
   }
   let json = s.flatten("/x.html", "/").stringify()
   assert_true(json.contains("\"is_separator\":true"))
@@ -425,6 +429,7 @@ fn index_summary() -> @summary.Summary {
         nested_items: [],
       }),
     ],
+    ordered_items: [],
   }
 }
 
@@ -457,6 +462,7 @@ test "index_articles empty summary returns empty" {
     prefix_chapters: [],
     numbered_chapters: [],
     suffix_chapters: [],
+    ordered_items: [],
   }
   assert_eq(s.index_articles(index_fixture).length(), 0)
 }
@@ -475,6 +481,7 @@ test "index_articles raises on missing source file" {
     ],
     numbered_chapters: [],
     suffix_chapters: [],
+    ordered_items: [],
   }
   let raised = try {
     let _ = s.index_articles(index_fixture)

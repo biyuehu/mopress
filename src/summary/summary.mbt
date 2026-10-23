@@ -32,6 +32,18 @@ pub extend SummaryItem with Eq::{not_equal, equal}
 pub extend SummaryItem with @debug.Debug::{to_repr}
 
 ///|
+pub(all) struct SummarySectionItem {
+  item : SummaryItem
+  numbered : Bool
+} derive(Eq, Debug)
+
+///|
+pub extend SummarySectionItem with Eq::{not_equal, equal}
+
+///|
+pub extend SummarySectionItem with @debug.Debug::{to_repr}
+
+///|
 /// The parsed structure of a book's table of contents (`SUMMARY.md`),
 /// split into an optional prefix section, the main numbered chapters, and
 /// an optional suffix section — mirroring the conventional structure of
@@ -41,6 +53,7 @@ pub(all) struct Summary {
   prefix_chapters : Array[SummaryItem]
   numbered_chapters : Array[SummaryItem]
   suffix_chapters : Array[SummaryItem]
+  ordered_items : Array[SummarySectionItem]
 } derive(Eq, Debug)
 
 ///|
@@ -136,6 +149,71 @@ fn flatten_items(
 }
 
 ///|
+fn flatten_ordered_items(
+  items : Array[SummarySectionItem],
+  current : String,
+  base_url : String,
+) -> Array[Json] {
+  let result : Array[Json] = []
+  let counter : Ref[Int32] = Ref(0)
+  for sec in items {
+    match sec.item {
+      Separator => result.push({ "is_separator": Json(true) })
+      PartTitle(title) => {
+        counter.val = 0
+        result.push({ "is_part_title": Json(true), "title": Json(title) })
+      }
+      Link(link) => {
+        let number = if sec.numbered {
+          counter.val += 1
+          counter.val.to_string()
+        } else {
+          ""
+        }
+        let location = if base_url.has_suffix("/") {
+          base_url[0:base_url.length() - 1] + link.location
+        } else {
+          base_url + link.location
+        }
+        if sec.numbered {
+          result.push({
+            "is_link": Json(true),
+            "title": Json(link.title),
+            "location": location,
+            "source": link.source,
+            "depth": Json(0),
+            "is_current": Json(link.location == current),
+            "number": Json(number),
+          })
+        } else {
+          result.push({
+            "is_link": Json(true),
+            "title": Json(link.title),
+            "location": location,
+            "source": link.source,
+            "depth": Json(0),
+            "is_current": Json(link.location == current),
+          })
+        }
+        if link.nested_items.length() > 0 {
+          result.append(
+            flatten_items(
+              link.nested_items,
+              1,
+              current,
+              base_url,
+              numbered=sec.numbered,
+              prefix=if sec.numbered { number + "." } else { "" },
+            ),
+          )
+        }
+      }
+    }
+  }
+  result
+}
+
+///|
 /// Returns a JSON representation of this summary, rooted at `location`,
 /// e.g. for use as a template variable describing the current section's
 /// navigation structure.
@@ -154,10 +232,15 @@ pub fn Summary::flatten(
     numbered=true,
   )
   let suffix_flat = flatten_items(self.suffix_chapters, 0, current, base_url)
-  let chapters_flat : Array[Json] = []
-  chapters_flat.append(prefix_flat)
-  chapters_flat.append(numbered_flat)
-  chapters_flat.append(suffix_flat)
+  let chapters_flat = if self.ordered_items.length() > 0 {
+    flatten_ordered_items(self.ordered_items, current, base_url)
+  } else {
+    let flat : Array[Json] = []
+    flat.append(prefix_flat)
+    flat.append(numbered_flat)
+    flat.append(suffix_flat)
+    flat
+  }
 
   {
     "title": Json(self.title),
@@ -236,6 +319,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
   let prefix_chapters : Array[SummaryItem] = []
   let numbered_chapters : Array[SummaryItem] = []
   let suffix_chapters : Array[SummaryItem] = []
+  let ordered_items : Array[SummarySectionItem] = []
 
   let blocks = skip_title(doc)
 
@@ -255,6 +339,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
   fn flush_headings() -> Unit {
     for h in pending_headings {
       target().push(PartTitle(h))
+      ordered_items.push({ item: PartTitle(h), numbered: false, })
     }
     pending_headings.clear()
   }
@@ -266,6 +351,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
       ThematicBreak => {
         flush_headings()
         target().push(Separator)
+        ordered_items.push({ item: Separator, numbered: false, })
       }
       List(lb) => {
         if phase == 0 {
@@ -274,6 +360,7 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
         flush_headings()
         for item in parse_list_items(lb.items) {
           numbered_chapters.push(item)
+          ordered_items.push({ item, numbered: true, })
         }
       }
       Paragraph(inlines) => {
@@ -283,13 +370,14 @@ pub fn parse_summary(doc : @markdown.Markdown) -> Summary {
         }
         for item in extract_root_link_items(inlines) {
           target().push(item)
+          ordered_items.push({ item, numbered: false, })
         }
       }
       _ => ()
     }
   }
 
-  { title, prefix_chapters, numbered_chapters, suffix_chapters, }
+  { title, prefix_chapters, numbered_chapters, suffix_chapters, ordered_items, }
 }
 
 ///|
