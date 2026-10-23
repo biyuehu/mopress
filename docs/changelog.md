@@ -67,6 +67,7 @@ title: Changelog
 - **en:** Add Composing Steps and CLI Reference documentation ([a3dfc08](https://github.com/biyuehu/mbdoc/commit/a3dfc08))
 - **en:** Complete full English documentation translation and navigation tree ([84f6799](https://github.com/biyuehu/mbdoc/commit/84f6799))
 - **en:** Ensure newline at end of files ([db288c5](https://github.com/biyuehu/mbdoc/commit/db288c5))
+- Update cli options and summary structure rules in bilingual docs ([dd0cc20](https://github.com/biyuehu/mbdoc/commit/dd0cc20))
 
 ### 🏡 Chore
 
