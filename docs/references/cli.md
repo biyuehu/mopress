@@ -20,11 +20,13 @@ mopress <command>
 | --- | --- |
 | `init` | 初始化一个新的 Book 模式项目，支持可选的目标目录：`mopress init [dir]` |
 | `new` | 创建一个新的 Site 模式项目：`mopress new <dir> [--template <blog|minimal>]` |
-| `build` | 构建站点（支持 `--no-emit` 空运行、`--analyze` 性能分析、`--analyze-json` 机器可读报告） |
+| `build` | 构建站点（默认开启性能分析，支持 `--no-analyze`、`--no-emit` 空运行、`--analyze-json` 机器可读报告） |
 | `explain` | 打印规则匹配报告与预估输出列表（Dry-run） |
 | `serve` | 在本地启动开发服务器预览站点 |
 | `version` | 打印版本信息 |
 | `help` | 打印帮助信息 |
+
+> **严格参数校验**：所有子命令均对传入的命令行选项进行严格校验。若传入任何未定义的非法选项（例如 `mopress build --unknown`），命令将报错并中止执行，防止由于拼写错误而静默执行预期外的操作。
 
 ## mopress init
 
@@ -55,16 +57,20 @@ mopress new <dir> [--template <blog|minimal>]
 ## mopress build
 
 ```bash
-mopress build [--no-emit] [--analyze] [--analyze-json]
+mopress build [--no-emit] [--no-analyze] [--analyze-json]
 ```
 
 读取当前目录下的配置文件，执行完整的 Book 模式构建流程：解析导航结构、生成 404 页面、渲染所有 Markdown 内容并应用模板，最终将结果写入配置中指定的输出目录。构建过程中的任何失败都会中止整个构建。
 
+构建时**默认开启性能分析**，在构建完成后会自动在控制台中打印结构清晰的可视化性能分析报告，包括：
+- 各处理阶段（预处理、转换、Markdown 解析、渲染、模板渲染、静态资源注入等）的总体耗时、页面平均耗时、最大耗时与调用次数；
+- 各页面的 HTML 体积（格式化为 B/KB/MB）、渲染总耗时、模板渲染次数（含 partials 递归计数）以及该页面最慢的处理步骤；
+- 站点总产物体积、平均页面体积与构建总耗时。
+
+选项说明：
+- `--no-analyze`：关闭性能分析输出，仅输出标准构建进度日志。
+- `--analyze`：显式指定开启性能分析（由于默认已启用，通常无需手动传递）。
 - `--no-emit`：在内存中执行完整的构建与转换流程，但**不会将任何文件写入磁盘**，常用于 CI 测试和预检构建正确性。
-- `--analyze`：在控制台中打印美观的可视化性能分析报告，包括：
-  - 各处理阶段（预处理、转换、Markdown 解析、渲染、模板渲染、静态资源注入等）的总体耗时、页面平均耗时、最大耗时与调用次数；
-  - 各页面的 HTML 体积（格式化为 B/KB/MB）、渲染总耗时、模板渲染次数（含 partials 递归计数）以及该页面最慢的处理步骤；
-  - 站点总产物体积、平均页面体积与构建总耗时。
 - `--analyze-json`：静默构建日志，直接在标准输出（stdout）中输出一份机器可读的结构化 JSON 性能分析报告，方便与外部分析脚本、CI/CD 性能基线或监控系统集成。
 
 ## mopress explain

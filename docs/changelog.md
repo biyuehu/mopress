@@ -85,9 +85,13 @@ title: Changelog
 - **template:** Add comprehensive tests for loop variables, negation, and partials ([7fa4648](https://github.com/biyuehu/mbdoc/commit/7fa4648))
 - **mod:** Add test verifying embedded search template and script assets integrity ([7c61bf7](https://github.com/biyuehu/mbdoc/commit/7c61bf7))
 
+### 🎨 Styles
+
+- Update language switcher labels and format templates ([9367c91](https://github.com/biyuehu/mbdoc/commit/9367c91))
+
 ### ❤️ Contributors
 
-- Romi <biyuehuya@gmail.com>
-- D47bc67 <Romi>
+- Romi ([@biyuehu](https://github.com/biyuehu))
+- D47bc67 ([@romi](https://github.com/romi))
 
 

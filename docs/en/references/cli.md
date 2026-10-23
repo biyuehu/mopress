@@ -20,11 +20,13 @@ When `<command>` is omitted or unrecognised, `mopress` gracefully falls back to 
 | --- | --- |
 | `init` | Initialize a new Book mode project, with optional directory: `mopress init [dir]` |
 | `new` | Scaffold a new Site mode project: `mopress new <dir> [--template <blog\|minimal>]` |
-| `build` | Build the site (supports `--no-emit`, `--analyze`, `--analyze-json`) |
+| `build` | Build the site (analyze enabled by default, supports `--no-analyze`, `--no-emit`, `--analyze-json`) |
 | `explain` | Print rule match diagnostics and estimated output list (Dry-run) |
 | `serve` | Start a local development server for live preview |
 | `version` | Display version and build information |
 | `help` | Display usage and help information |
+
+> **Strict Option Validation**: All subcommands strictly validate incoming command-line options. If any unrecognised option is passed (e.g. `mopress build --unknown`), the command will immediately exit with an error, preventing accidental typos from executing unexpected actions silently.
 
 ## mopress init
 
@@ -55,16 +57,20 @@ Designed for **Site mode** users to create static site projects.
 ## mopress build
 
 ```bash
-mopress build [--no-emit] [--analyze] [--analyze-json]
+mopress build [--no-emit] [--no-analyze] [--analyze-json]
 ```
 
 Reads the configuration in the current working directory, executes the full Book mode build pipeline: parses navigation structure, generates 404 page, renders all Markdown pages with templates, and outputs results into the build target folder.
 
+Build performance profiling is **enabled by default**. Upon build completion, MoPress prints a clear terminal performance report, including:
+- Breakdown of build steps (preprocessing, AST transforms, markdown rendering, templates, asset injections) with total time, page average, max time, and call counts.
+- Page performance table with HTML output size (B/KB/MB), total render time, template render count (including recursive partials), and slowest step.
+- Overall stats: total page count, output byte size, average page size, and total build time.
+
+Option details:
+- `--no-analyze`: Disables performance profiling output, displaying only standard progress logs.
+- `--analyze`: Explicitly enables performance profiling (enabled by default; rarely needed manually).
 - `--no-emit`: Runs the entire build and transformation pipeline in memory **without writing any files to disk**. Ideal for CI verification and dry-run prechecks.
-- `--analyze`: Renders a clean visual performance analysis in the terminal, including:
-  - Breakdown of build steps (preprocessing, AST transforms, markdown rendering, templates, asset injections) with total time, page average, max time, and call counts.
-  - Page performance table with HTML output size (B/KB/MB), total render time, template render count (including recursive partials), and slowest step.
-  - Overall stats: total page count, output byte size, average page size, and total build time.
 - `--analyze-json`: Silences normal build logs and prints a machine-readable JSON performance report to standard output (`stdout`), suitable for CI/CD benchmarks and dashboards.
 
 ## mopress explain
