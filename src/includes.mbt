@@ -1313,9 +1313,9 @@ let book_templates_default_html : String =
   #|
   #|        <div class="topbar-right">
   #|          $if(is_en)$
-  #|          <a class="lang-switch-btn" href="$target_lang_url$" title="切换到中文">🇨🇳 中文</a>
+  #|          <a class="lang-switch-btn" href="$target_lang_url$" title="English">EN</a>
   #|          $else$
-  #|          <a class="lang-switch-btn" href="$target_lang_url$" title="Switch to English">🇬🇧 EN</a>
+  #|          <a class="lang-switch-btn" href="$target_lang_url$" title="简体中文">中文</a>
   #|          $endif$
   #|          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
   #|          <a class="topbar-link" title="Open GitHub" href="$repository$" target="_blank" rel="noreferrer noopener">
@@ -1365,7 +1365,8 @@ let book_templates_default_html : String =
   #|          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
   #|          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
   #|        </svg>
-  #|        <input id="searchInput" class="search-input" type="search" placeholder="$if(is_en)$Search documentation...$else$输入关键词搜索文档...$endif$" autocomplete="off"
+  #|        <input id="searchInput" class="search-input" type="search"
+  #|          placeholder="$if(is_en)$Search documentation...$else$输入关键词搜索文档...$endif$" autocomplete="off"
   #|          spellcheck="false" />
   #|      </div>
   #|
@@ -1868,4 +1869,4 @@ let site_styles_default_css : String =
 pub let version : String = "0.4.0"
 
 ///|
-let build_time : String = "2026/10/23 12:56:02"
+let build_time : String = "2026/10/23 13:37:45"

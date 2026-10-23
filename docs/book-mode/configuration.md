@@ -48,9 +48,11 @@ MoPress Book 模式开箱内置了站点地图（Sitemap）与 Atom 订阅源（
 ## 多语言（i18n）支持
 
 MoPress 支持构建多语言国际化文档：
+
 - **主语言与备选语言**：通过顶层 `language = "zh"` 指定主语言，通过 `languages = ["zh", "en", "ja"]` 指定支持的所有语言。
 - **SEO hreflang 自动注入**：当配置了 `site_url` 与 `languages` 时，MoPress 会自动在每个页面的 `<head>` 中注入所有对应语言版本的 `<link rel="alternate" hreflang="..." href="...">` 规范链接。
 - **模板语言切换**：页面模板上下文中提供 `$site_language$`（当前站点主语言）和 `$site_languages$`（所有语言列表），可在模板中通过 `$for(site_languages)$` 轻松遍历渲染语言切换器。
+
 ## 注意事项
 
 - 除 `[features]` 与 `[extensions]` 字段外，均会以不同形式自动注入为模板中的变量，具体行为参考 [页面定制](./pages.md)
