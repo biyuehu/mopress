@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<!-- biome-ignore lint: lint/a11y/useValidLang -->
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog - MoPress Book</title>
+  <link rel="icon" href="https://himeno-sena.com/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/styles/index.css">
+  <meta name="description" content="A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll">
+  <meta name="keywords" content="Documentation,Static Site Generator,SSG,MoonBit,MoonLang,Moon,Functional,Haskell,mdBook,Hakyll">
+  <meta name="authors" content="Himeno Sena">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Changelog">
+<meta property="og:description" content="A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll">
+<meta property="og:image" content="https://himeno-sena.com/favicon.ico">
+<meta property="og:site_name" content="MoPress Book">
+<meta property="og:locale" content="zh">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Changelog">
+<meta name="twitter:description" content="A modern documentation and static site generator for the MoonBit ecosystem, inspired by mdBook and Hakyll">
+<meta name="twitter:image" content="https://himeno-sena.com/favicon.ico">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css">
+<script>MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.min.js"></script></head>
+
+<body>
+  <div class="doc-root" id="docRoot">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="logo-row" style="text-decoration: none;">
+          <img class="logo-mark" src="https://himeno-sena.com/favicon.ico" alt="Logo" />
+          <span class="logo-name">MoPress Book</span>
+        </a>
+      </div>
+      <div class="nav-scroll">
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/introduce.html">
+          介绍
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        <div class="nav-section-label">指南</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/starting.html">
+          <strong>1</strong>快速开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/book-mode/index.html">
+          <strong>2</strong>Book 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/configuration.html">
+          <strong>2.1</strong>配置 (sena.toml)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/summary-file.html">
+          <strong>2.2</strong>组织章节 (SUMMARY.md)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/frontmatter.html">
+          <strong>2.3</strong>元数据
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/extensions.html">
+          <strong>2.4</strong>扩展配置
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/features.html">
+          <strong>2.5</strong>功能预设
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/book-mode/pages.html">
+          <strong>2.6</strong>页面定制
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/site-mode/index.html">
+          <strong>3</strong>Site 模式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/starting.html">
+          <strong>3.1</strong>开始
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/rules-handlers-steps.html">
+          <strong>3.2</strong>Rules, Handlers 和 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/composing-steps.html">
+          <strong>3.3</strong>组合 Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/site-mode/output-formats.html">
+          <strong>3.4</strong>输出格式
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/advance/index.html">
+          <strong>4</strong>高级
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/template.html">
+          <strong>4.1</strong>模板引擎
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/glob.html">
+          <strong>4.2</strong>Glob 匹配
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/advance/plugins/index.html">
+          <strong>4.3</strong>多样化的插件
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/protocol.html">
+          <strong>4.3.1</strong>外部插件协议
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/web-components.html">
+          <strong>4.3.2</strong>Web Components
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/advance/plugins/moonbit-modules.html">
+          <strong>4.3.3</strong>Moonbit 模块
+        </a>
+        
+        
+        
+        <div class="nav-section-label">参考</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/markdown.html">
+          <strong>1</strong>Markdown 演示
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/cli.html">
+          <strong>2</strong>CLI 参考
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/references/api.html">
+          <strong>3</strong>Api 参考
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/plugins.html">
+          插件枢纽
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/contributing.html">
+          贡献
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/changelog.html">
+          Changelog
+        </a>
+        
+        
+        
+        <div class="nav-section-label">English</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/introduce.html">
+          Introduction
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        <div class="nav-section-label">Guide</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/starting.html">
+          <strong>1</strong>Quick Start
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/book-mode/index.html">
+          <strong>2</strong>Book Mode
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/book-mode/configuration.html">
+          <strong>2.1</strong>Configuration (sena.toml)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/book-mode/summary-file.html">
+          <strong>2.2</strong>Structuring Chapters (SUMMARY.md)
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/book-mode/frontmatter.html">
+          <strong>2.3</strong>Frontmatter Metadata
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/book-mode/extensions.html">
+          <strong>2.4</strong>Extension Configuration
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/book-mode/features.html">
+          <strong>2.5</strong>Feature Presets
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/book-mode/pages.html">
+          <strong>2.6</strong>Page Customization
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/site-mode/index.html">
+          <strong>3</strong>Site Mode
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/site-mode/starting.html">
+          <strong>3.1</strong>Starting
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/site-mode/rules-handlers-steps.html">
+          <strong>3.2</strong>Rules, Handlers and Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/site-mode/composing-steps.html">
+          <strong>3.3</strong>Composing Steps
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/site-mode/output-formats.html">
+          <strong>3.4</strong>Output Formats
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/advance/index.html">
+          <strong>4</strong>Advanced
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/advance/template.html">
+          <strong>4.1</strong>Template Engine
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/advance/glob.html">
+          <strong>4.2</strong>Glob Matching
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-1" href="/en/advance/plugins/index.html">
+          <strong>4.3</strong>Diverse Plugins
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/en/advance/plugins/protocol.html">
+          <strong>4.3.1</strong>External Plugin Protocol
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/en/advance/plugins/web-components.html">
+          <strong>4.3.2</strong>Web Components
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-2" href="/en/advance/plugins/moonbit-modules.html">
+          <strong>4.3.3</strong>MoonBit Modules
+        </a>
+        
+        
+        
+        <div class="nav-section-label">References</div>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/references/markdown.html">
+          <strong>1</strong>Markdown Showcase
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/references/cli.html">
+          <strong>2</strong>CLI Reference
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/references/api.html">
+          <strong>3</strong>API Reference
+        </a>
+        
+        
+        <div class="nav-separator"></div>
+        
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/plugins.html">
+          Plugins Hub
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0" href="/en/contributing.html">
+          Contributing
+        </a>
+        
+        
+        
+        
+        
+        <a class="nav-item depth-0 active page-expanded" href="/en/changelog.html">
+          Changelog
+        </a>
+        
+        
+      </div>
+      <div class="nav-footer">
+        <span>Powered by <a href="https://github.com/biyuehu/MoPress" target="_blank"
+            rel="noopener noreferrer">MoPress</a>
+          <span class="nav-version">0.4.0</span>
+        </span>
+      </div>
+    </nav>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <button type="button" title="Toggle Sidebar" id="navToggle" aria-label="Toggle sidebar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>toggle</title>
+              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button type="button" title="Search" id="searchOpen" aria-label="Search">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>search</title>
+              <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+              <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="topbar-title" id="topbarTitle">/ Changelog</div>
+
+        <div class="topbar-right">
+          
+          <a class="lang-switch-btn" href="/changelog.html" title="English">EN</a>
+          
+          <button type="button" title="Toggle Theme" id="themeToggle" class="icon-btn">◐</button>
+          <a class="topbar-link" title="Open GitHub" href="https://github.com/biyuehu/mopress" target="_blank" rel="noreferrer noopener">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <title>github</title>
+              <path
+                d="M8 1C4.1 1 1 4.1 1 8c0 3.1 2 5.7 4.8 6.6.4.1.5-.2.5-.4v-1.4c-2 .4-2.4-.9-2.4-.9-.3-.8-.8-1-.8-1-.6-.4.1-.4.1-.4.7.1 1.1.7 1.1.7.6 1.1 1.7.8 2.1.6.1-.4.2-.8.5-1C5 10.7 3.5 10.1 3.5 7.6c0-.7.2-1.3.7-1.7-.1-.2-.3-.8.1-1.7 0 0 .5-.2 1.8.7.5-.1 1.1-.2 1.6-.2.5 0 1.1.1 1.6.2 1.2-.8 1.8-.7 1.8-.7.4.9.1 1.5.1 1.7.4.5.6 1 .6 1.7 0 2.5-1.5 3-2.9 3.2.2.2.4.6.4 1.2v1.8c0 .2.1.5.5.4C13 13.7 15 11.1 15 8c0-3.9-3.1-7-7-7z"
+                fill="currentColor" opacity=".6" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <article class="content">
+        <h1 id="changelog"><a href="#changelog" aria-hidden="true">Changelog</a></h1>
+<h2 id="v4-0-0-main"><a href="#v4-0-0-main" aria-hidden="true">v4.0.0...main</a></h2>
+<p><a href="https://github.com/biyuehu/mbdoc/compare/v4.0.0...main" target="_blank"  rel="noopener noreferrer">compare changes</a></p>
+<h3 id="🚀-enhancements"><a href="#🚀-enhancements" aria-hidden="true">🚀 Enhancements</a></h3>
+<ul><li><p>Add explain and --no-emit for build rules (<a href="https://github.com/biyuehu/mbdoc/commit/44dac1e" target="_blank"  rel="noopener noreferrer">44dac1e</a>)</p>
+</li><li><p>Add feed and sitemap generation (<a href="https://github.com/biyuehu/mbdoc/commit/2462a1c" target="_blank"  rel="noopener noreferrer">2462a1c</a>)</p>
+</li><li><p><strong>template:</strong> Add loop variables, if-negation, and partial arguments (<a href="https://github.com/biyuehu/mbdoc/commit/d167b63" target="_blank"  rel="noopener noreferrer">d167b63</a>)</p>
+</li><li><p><strong>plugins:</strong> Implement MoonBit Playground Web Component plugin (<a href="https://github.com/biyuehu/mbdoc/commit/06a411a" target="_blank"  rel="noopener noreferrer">06a411a</a>)</p>
+</li><li><p><strong>core:</strong> Enable concurrent file processing in mo_build (<a href="https://github.com/biyuehu/mbdoc/commit/954e574" target="_blank"  rel="noopener noreferrer">954e574</a>)</p>
+</li><li><p><strong>cli:</strong> Add --analyze flag to mopress build for performance profiling (<a href="https://github.com/biyuehu/mbdoc/commit/9914f5f" target="_blank"  rel="noopener noreferrer">9914f5f</a>)</p>
+</li><li><p><strong>cli:</strong> Support --analyze-json flag for machine-readable performance metrics (<a href="https://github.com/biyuehu/mbdoc/commit/cddc2c8" target="_blank"  rel="noopener noreferrer">cddc2c8</a>)</p>
+</li><li><p><strong>data:</strong> Support structured data directory (JSON and TOML) for templates (<a href="https://github.com/biyuehu/mbdoc/commit/e7e6cad" target="_blank"  rel="noopener noreferrer">e7e6cad</a>)</p>
+</li><li><p><strong>data:</strong> Cache loaded data directory to avoid redundant disk reads (<a href="https://github.com/biyuehu/mbdoc/commit/60e49e1" target="_blank"  rel="noopener noreferrer">60e49e1</a>)</p>
+</li><li><p><strong>core:</strong> Skip rewriting unchanged files using content hashing in Thing::write_if_changed (<a href="https://github.com/biyuehu/mbdoc/commit/4d695f4" target="_blank"  rel="noopener noreferrer">4d695f4</a>)</p>
+</li><li><p><strong>serve:</strong> Add live reload client injection and status endpoint to mopress serve (<a href="https://github.com/biyuehu/mbdoc/commit/36380b1" target="_blank"  rel="noopener noreferrer">36380b1</a>)</p>
+</li><li><p><strong>search:</strong> Enhance client search with multi-word scoring, snippet context, and keyboard navigation (<a href="https://github.com/biyuehu/mbdoc/commit/ddf793d" target="_blank"  rel="noopener noreferrer">ddf793d</a>)</p>
+</li><li><p><strong>core:</strong> Extract TOC from rendered markdown and expose as \\$ template variable (<a href="https://github.com/biyuehu/mbdoc/commit/b664ed6" target="_blank"  rel="noopener noreferrer">b664ed6</a>)</p>
+</li><li><p><strong>docs:</strong> Enhance meta tags and SEO metadata for landing page (<a href="https://github.com/biyuehu/mbdoc/commit/f38b5cd" target="_blank"  rel="noopener noreferrer">f38b5cd</a>)</p>
+</li><li><p><strong>core,summary,config:</strong> Add fine-grained atomic SEO steps, robots.txt generator, and book integration (<a href="https://github.com/biyuehu/mbdoc/commit/e5d5258" target="_blank"  rel="noopener noreferrer">e5d5258</a>)</p>
+</li><li><p><strong>core:</strong> Implement excerpt, reading time, and pagination combinators for site mode (<a href="https://github.com/biyuehu/mbdoc/commit/e43b994" target="_blank"  rel="noopener noreferrer">e43b994</a>)</p>
+</li><li><p><strong>new:</strong> Upgrade site-mode scaffold with SEO, excerpt, reading-time, and posts/ example (<a href="https://github.com/biyuehu/mbdoc/commit/ba51579" target="_blank"  rel="noopener noreferrer">ba51579</a>)</p>
+</li><li><p><strong>data:</strong> Add YAML (.yaml/.yml) structured data source support (<a href="https://github.com/biyuehu/mbdoc/commit/0cccbf3" target="_blank"  rel="noopener noreferrer">0cccbf3</a>)</p>
+</li><li><p><strong>cli:</strong> Support init [dir] target and new <dir> [--template <blog ([minimal>]](https://github.com/biyuehu/mbdoc/commit/minimal&gt;]))</p>
+</li><li><p><strong>i18n:</strong> Add multi-language configuration, hreflang injection, and template variables (<a href="https://github.com/biyuehu/mbdoc/commit/d97ee2f" target="_blank"  rel="noopener noreferrer">d97ee2f</a>)</p>
+</li></ul>
+<h3 id="🩹-fixes"><a href="#🩹-fixes" aria-hidden="true">🩹 Fixes</a></h3>
+<ul><li><p>Resolve warnings and migrate toml dependency (<a href="https://github.com/biyuehu/mbdoc/commit/2c6fac6" target="_blank"  rel="noopener noreferrer">2c6fac6</a>)</p>
+</li><li><p>Compute relative path correctly when scanning assets for glob matching (<a href="https://github.com/biyuehu/mbdoc/commit/6102682" target="_blank"  rel="noopener noreferrer">6102682</a>)</p>
+</li><li><p>Correct plugins directory names in init (<a href="https://github.com/biyuehu/mbdoc/commit/5fc543c" target="_blank"  rel="noopener noreferrer">5fc543c</a>)</p>
+</li><li><p>Serialize lefthook pre-commit commands and stage test output (<a href="https://github.com/biyuehu/mbdoc/commit/ca4c45a" target="_blank"  rel="noopener noreferrer">ca4c45a</a>)</p>
+</li><li><p>Serialize lefthook pre-commit commands to stage prebuild artifacts (<a href="https://github.com/biyuehu/mbdoc/commit/5d106ed" target="_blank"  rel="noopener noreferrer">5d106ed</a>)</p>
+</li><li><p><strong>glob:</strong> Degrade *<em> to </em> when not a standalone path segment (<a href="https://github.com/biyuehu/mbdoc/commit/3450466" target="_blank"  rel="noopener noreferrer">3450466</a>)</p>
+</li><li><p><strong>glob:</strong> Normalize backslash paths across all platforms and eliminate to_json deprecation warnings (<a href="https://github.com/biyuehu/mbdoc/commit/0c17219" target="_blank"  rel="noopener noreferrer">0c17219</a>)</p>
+</li><li><p><strong>docs:</strong> Restore @block steps marker in process_markdown_page (<a href="https://github.com/biyuehu/mbdoc/commit/2a8054c" target="_blank"  rel="noopener noreferrer">2a8054c</a>)</p>
+</li><li><p><strong>docs:</strong> Eliminate mobile sidebar flash by using CSS drawer and responsive init (<a href="https://github.com/biyuehu/mbdoc/commit/b21706a" target="_blank"  rel="noopener noreferrer">b21706a</a>)</p>
+</li><li><p><strong>mbti:</strong> Synchronize generated interface files with latest toolchain Int32 signatures (<a href="https://github.com/biyuehu/mbdoc/commit/9ecb759" target="_blank"  rel="noopener noreferrer">9ecb759</a>)</p>
+</li><li><p><strong>mbti:</strong> Update generated interface files to Int32 signatures for latest toolchain (<a href="https://github.com/biyuehu/mbdoc/commit/d22efbd" target="_blank"  rel="noopener noreferrer">d22efbd</a>)</p>
+</li></ul>
+<h3 id="📖-documentation"><a href="#📖-documentation" aria-hidden="true">📖 Documentation</a></h3>
+<ul><li><p>Fix API name and field inconsistencies (<a href="https://github.com/biyuehu/mbdoc/commit/ab45dee" target="_blank"  rel="noopener noreferrer">ab45dee</a>)</p>
+</li><li><p>Update TODO with new roadmap items and test gaps (<a href="https://github.com/biyuehu/mbdoc/commit/c4dae14" target="_blank"  rel="noopener noreferrer">c4dae14</a>)</p>
+</li><li><p>Fix TODO.md corruption (<a href="https://github.com/biyuehu/mbdoc/commit/c1362ae" target="_blank"  rel="noopener noreferrer">c1362ae</a>)</p>
+</li><li><p>Resolve documentation inconsistencies, add contributing guide, and automate index version update (<a href="https://github.com/biyuehu/mbdoc/commit/c9487e5" target="_blank"  rel="noopener noreferrer">c9487e5</a>)</p>
+</li><li><p>Document template loop variables, negation, and partial arguments (<a href="https://github.com/biyuehu/mbdoc/commit/84f34d8" target="_blank"  rel="noopener noreferrer">84f34d8</a>)</p>
+</li><li><p>Update TODO.md with data sources and build profiling completion (<a href="https://github.com/biyuehu/mbdoc/commit/db84b86" target="_blank"  rel="noopener noreferrer">db84b86</a>)</p>
+</li><li><p>Update documentation for data_dir, variable priority, and build analyze options (<a href="https://github.com/biyuehu/mbdoc/commit/435fca2" target="_blank"  rel="noopener noreferrer">435fca2</a>)</p>
+</li><li><p>Align documentation with latest CLI flags and API signatures (<a href="https://github.com/biyuehu/mbdoc/commit/d90843e" target="_blank"  rel="noopener noreferrer">d90843e</a>)</p>
+</li><li><p><strong>site-mode:</strong> Document excerpt, reading time, atomic SEO steps, and updated scaffold structure (<a href="https://github.com/biyuehu/mbdoc/commit/e6d6443" target="_blank"  rel="noopener noreferrer">e6d6443</a>)</p>
+</li><li><p>Comprehensive proofreading and documentation update for CLI, features, pages, and i18n (<a href="https://github.com/biyuehu/mbdoc/commit/ae9c6a8" target="_blank"  rel="noopener noreferrer">ae9c6a8</a>)</p>
+</li><li><p><strong>i18n:</strong> Add English documentation, language switcher, and en navigation (<a href="https://github.com/biyuehu/mbdoc/commit/07b879f" target="_blank"  rel="noopener noreferrer">07b879f</a>)</p>
+</li></ul>
+<h3 id="🏡-chore"><a href="#🏡-chore" aria-hidden="true">🏡 Chore</a></h3>
+<ul><li><p>Add development roadmap to TODO (<a href="https://github.com/biyuehu/mbdoc/commit/11c3d56" target="_blank"  rel="noopener noreferrer">11c3d56</a>)</p>
+</li><li><p>Stage generated artifacts via lefthook fallback (<a href="https://github.com/biyuehu/mbdoc/commit/cd0f775" target="_blank"  rel="noopener noreferrer">cd0f775</a>)</p>
+</li><li><p>Migrate chalk dependency to moonbit-community (<a href="https://github.com/biyuehu/mbdoc/commit/4d5ed82" target="_blank"  rel="noopener noreferrer">4d5ed82</a>)</p>
+</li><li><p>Exclude bridge test fixture from linguist stats (<a href="https://github.com/biyuehu/mbdoc/commit/f8658b9" target="_blank"  rel="noopener noreferrer">f8658b9</a>)</p>
+</li><li><p>Include generated mbti files in lefthook stage-generated (<a href="https://github.com/biyuehu/mbdoc/commit/35eeeae" target="_blank"  rel="noopener noreferrer">35eeeae</a>)</p>
+</li><li><p>Update lefthook.yml (<a href="https://github.com/biyuehu/mbdoc/commit/ed21e3e" target="_blank"  rel="noopener noreferrer">ed21e3e</a>)</p>
+</li></ul>
+<h3 id="✅-tests"><a href="#✅-tests" aria-hidden="true">✅ Tests</a></h3>
+<ul><li><p>Expand and strengthen unit test coverage (<a href="https://github.com/biyuehu/mbdoc/commit/8ea105f" target="_blank"  rel="noopener noreferrer">8ea105f</a>)</p>
+</li><li><p><strong>glob:</strong> Cover tokenizer, scanner, and wildcard edge cases (<a href="https://github.com/biyuehu/mbdoc/commit/609b97b" target="_blank"  rel="noopener noreferrer">609b97b</a>)</p>
+</li><li><p>Expand coverage and mark test roadmap items done (<a href="https://github.com/biyuehu/mbdoc/commit/e75f926" target="_blank"  rel="noopener noreferrer">e75f926</a>)</p>
+</li><li><p><strong>template:</strong> Add comprehensive tests for loop variables, negation, and partials (<a href="https://github.com/biyuehu/mbdoc/commit/7fa4648" target="_blank"  rel="noopener noreferrer">7fa4648</a>)</p>
+</li><li><p><strong>mod:</strong> Add test verifying embedded search template and script assets integrity (<a href="https://github.com/biyuehu/mbdoc/commit/7c61bf7" target="_blank"  rel="noopener noreferrer">7c61bf7</a>)</p>
+</li></ul>
+<h3 id="❤️-contributors"><a href="#❤️-contributors" aria-hidden="true">❤️ Contributors</a></h3>
+<ul><li><p>Romi (<a href="https://github.com/biyuehu" target="_blank"  rel="noopener noreferrer">@biyuehu</a>)</p>
+</li><li><p>D47bc67 (<a href="https://github.com/romi" target="_blank"  rel="noopener noreferrer">@romi</a>)</p>
+</li></ul>
+
+<script>
+  globalThis.console.log(`%c Mo %c Press`, "color: #fff; background: #ffba9c; padding:5px 0;font-size: 3em;font-weight: bold;", "color: #eaccbf; background: #333; padding:5px;font-size: 3em;font-weight: bold;")
+  globalThis.console.log("%c Made With Love By Arimura Sena", "color: #e7acb4;background: #333; padding:5px;font-size: 2em;font-weight: bold;")
+  globalThis.console.log("%cOpen Source on Codeberg: https://codeberg.org/lomi/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+  globalThis.console.log("%cOpen Source on GitHub: https://github.com/biyuehu/mopress", "color: red; font-size: 1.7em; font-weight: bold;")
+</script>
+        <div class="page-nav">
+          
+          <a class="page-nav-btn" href="/en/contributing.html">
+            <div class="page-nav-dir">← Prev</div>
+            <div class="page-nav-title">Contributing</div>
+          </a>
+          
+          
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="search-overlay" id="searchOverlay" hidden>
+    <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchDialogTitle">
+      <div class="search-head">
+        <div class="search-head-left">
+          <div class="search-head-title" id="searchDialogTitle">Search</div>
+          <div class="search-head-hint">Ctrl / ⌘ + K</div>
+        </div>
+
+        <button type="button" title="Close Search" class="search-close" id="searchClose"
+          aria-label="Close search">Esc</button>
+      </div>
+
+      <div class="search-input-row">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.6" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <input id="searchInput" class="search-input" type="search"
+          placeholder="Search documentation..." autocomplete="off"
+          spellcheck="false" />
+      </div>
+
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <script src="/scripts/main.js"></script>
+<script src="/plugins/runtime/bili-video.js"></script>
+<script src="/plugins/runtime/moonbit-playground.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Kaida-Amethyst/highlightjs-moonbit/dist/moonbit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/haskell.min.js"></script>
+<script>console.log('Hello, MoPress!');</script>
+<script>hljs.highlightAll()</script>
+</body>
+
+</html>
