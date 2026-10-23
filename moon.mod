@@ -3,7 +3,7 @@ name = "himeno/mopress"
 version = "0.4.0"
 
 import {
-  "moonbit-community/toml@0.4.3",
+  "moonbit-community/toml@0.4.4",
   "moonbitlang/x@0.5.5",
   "moonbitlang/async@0.22.4",
   "moonbit-community/chalk@0.0.1",
