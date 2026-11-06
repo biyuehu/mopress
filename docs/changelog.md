@@ -51,6 +51,7 @@ title: Changelog
 - **summary:** Maintain linear chapter order and reset chapter numbers per part ([deb7b5f](https://github.com/biyuehu/mbdoc/commit/deb7b5f))
 - **summary:** Maintain document order for sections, separators and prefix/suffix chapters ([6d0970c](https://github.com/biyuehu/mbdoc/commit/6d0970c))
 - **ci:** Remove redundant checkout and improve mobile responsiveness for topbars ([7843e3b](https://github.com/biyuehu/mbdoc/commit/7843e3b))
+- **deps:** Bump moonbit-community/toml to 0.4.4 ([86c3ffe](https://github.com/biyuehu/mbdoc/commit/86c3ffe))
 
 ### 📖 Documentation
 
