@@ -6,6 +6,7 @@
 /// entire build pipeline (see `himeno/mopress`'s `run` and
 /// `process_markdown_page`, and `himeno/mopress/bridge`'s processor-running
 /// functions) as shared, read-only context.
+#derive(Eq, ToJson, @debug.Debug)
 pub(all) struct BookConfig {
   /// The site's title, used both for `<title>`/template variables and as
   /// the default display name of the book.
@@ -59,7 +60,7 @@ pub(all) struct BookConfig {
   /// injection, and the external preprocessor/transformer command
   /// pipelines.
   extensions : ExtensionsConfig
-} derive(Eq, ToJson, @debug.Debug)
+}
 
 ///|
 pub extend BookConfig with Eq::{not_equal, equal}
@@ -72,6 +73,7 @@ pub extend BookConfig with @debug.Debug::{to_repr}
 
 ///|
 /// Toggles for optional, built-in rendering features.
+#derive(Eq, ToJson, @debug.Debug)
 pub(all) struct FeaturesConfig {
   /// Whether syntax highlighting of fenced code blocks is enabled.
   highlight_enabled : Bool
@@ -86,7 +88,7 @@ pub(all) struct FeaturesConfig {
   twitter_card_enabled : Bool
   /// Whether robots.txt is generated when sitemap is enabled.
   robots_txt_enabled : Bool
-} derive(Eq, ToJson, @debug.Debug)
+}
 
 ///|
 pub extend FeaturesConfig with Eq::{not_equal, equal}
@@ -102,6 +104,7 @@ pub extend FeaturesConfig with @debug.Debug::{to_repr}
 /// which template to render pages with, which static assets to copy
 /// verbatim, which CSS/JS to inject or import, and which external
 /// preprocessor/transformer commands to run over Markdown content.
+#derive(Eq, ToJson, @debug.Debug)
 pub(all) struct ExtensionsConfig {
   /// Path to the HTML template file used to render every page (see
   /// `@core.load_and_apply_template` as used by `process_markdown_page`).
@@ -139,7 +142,7 @@ pub(all) struct ExtensionsConfig {
   /// Path (relative to the site root) to the structured data directory,
   /// loaded as template variables under `$data.*$`.
   data_dir : String
-} derive(Eq, ToJson, @debug.Debug)
+}
 
 ///|
 pub extend ExtensionsConfig with Eq::{not_equal, equal}
@@ -154,9 +157,10 @@ pub extend ExtensionsConfig with @debug.Debug::{to_repr}
 /// Error raised when a configuration file's contents cannot be parsed into
 /// a `BookConfig`. The associated `String` carries a human-readable
 /// description of the parse failure.
+#derive(Eq, Debug)
 pub suberror ConfigParseError {
   ConfigParseError(String)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend ConfigParseError with Eq::{not_equal, equal}

@@ -1902,7 +1902,7 @@ let site_styles_default_css : String =
   #|
 
 ///|
-pub let version : String = "0.5.0"
+pub let version : String = "0.5.1"
 
 ///|
-let build_time : String = "2026/11/6 13:25:39"
+let build_time : String = "2026/11/6 15:26:48"

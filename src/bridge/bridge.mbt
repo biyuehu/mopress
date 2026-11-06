@@ -4,11 +4,12 @@
 /// Error type describing why an external preprocessor/transformer command
 /// failed while running through `run_markdown_preprocessors` or
 /// `run_markdown_transformers`.
+#derive(Debug, Eq)
 pub suberror ProcessorError {
   NonZeroExit(command~ : String, exit_code~ : Int32, stderr~ : String)
   StderrReported(command~ : String, message~ : String)
   InvalidStdout(command~ : String, raw~ : String, reason~ : String)
-} derive(Debug, Eq)
+}
 
 ///|
 pub extend ProcessorError with @debug.Debug::{to_repr}
@@ -33,39 +34,43 @@ pub impl Show for ProcessorError with fn to_string(self : ProcessorError) -> Str
 pub extend ProcessorError with Show::{to_string, output}
 
 ///|
+#derive(ToJson(fields(type_(rename="type"))))
 struct MarkdownRequest {
   config : @config.BookConfig
   type_ : String
   target : String
   data : @markdown.Markdown
-} derive(ToJson(fields(type_(rename="type"))))
+}
 
 ///|
 pub extend MarkdownRequest with ToJson::{to_json}
 
 ///|
+#derive(FromJson)
 struct MarkdownResponse {
   data : @markdown.Markdown
-} derive(FromJson)
+}
 
 ///|
 pub extend MarkdownResponse with @json.FromJson::{from_json}
 
 ///|
+#derive(ToJson(fields(type_(rename="type"))))
 struct TextRequest {
   config : @config.BookConfig
   type_ : String
   data : String
   target : String
-} derive(ToJson(fields(type_(rename="type"))))
+}
 
 ///|
 pub extend TextRequest with ToJson::{to_json}
 
 ///|
+#derive(FromJson)
 struct TextResponse {
   data : String
-} derive(FromJson)
+}
 
 ///|
 pub extend TextResponse with @json.FromJson::{from_json}

@@ -6,6 +6,7 @@ pub type Template = Array[TemplateNode]
 
 ///|
 /// A single node in a parsed template's AST.
+#derive(Eq, Debug)
 pub(all) enum TemplateNode {
   /// A literal, verbatim text fragment.
   Text(String)
@@ -21,7 +22,7 @@ pub(all) enum TemplateNode {
   /// A reference to another template file to be rendered inline at this
   /// position, optionally passing arguments.
   Partial(String, Array[(String, String)])
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend TemplateNode with Eq::{not_equal, equal}
@@ -36,9 +37,10 @@ pub extend TemplateNode with @debug.Debug::{to_repr}
 /// Error raised when a template's source cannot be parsed into a valid
 /// template AST. The associated `String` carries a human-readable
 /// description of the parse failure.
+#derive(Eq, Debug)
 pub suberror TemplateParseError {
   TemplateParseError(String)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend TemplateParseError with Eq::{not_equal, equal}
@@ -69,13 +71,14 @@ pub type Context = Map[String, Value]
 ///|
 /// A dynamically-typed value available to templates as part of their
 /// rendering context.
+#derive(Eq, Debug)
 pub(all) enum Value {
   String(String)
   Number(Double)
   Bool(Bool)
   Array(Array[Value])
   Object(Map[String, Value])
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Value with Eq::{not_equal, equal}
@@ -493,6 +496,7 @@ fn char_at(input : String, index : Int32) -> Char {
 ///|
 /// Errors that can occur while rendering a parsed template against a
 /// variable context, as raised by `apply_template_strict`.
+#derive(Eq, Debug)
 pub suberror TemplateRenderError {
   /// A variable referenced by the template was not present in the
   /// rendering context.
@@ -507,7 +511,7 @@ pub suberror TemplateRenderError {
   /// A partial template referenced itself, directly or transitively,
   /// resulting in unbounded recursion.
   RecursivePartialError(String)
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend TemplateRenderError with Eq::{not_equal, equal}

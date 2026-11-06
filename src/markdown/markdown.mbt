@@ -6,6 +6,7 @@ pub type Markdown = Array[Block]
 
 ///|
 /// An ordered or unordered list block.
+#derive(Eq, Debug, FromJson, ToJson)
 pub(all) struct ListBlock {
   /// Whether this is an ordered (numbered) list.
   ordered : Bool
@@ -14,7 +15,7 @@ pub(all) struct ListBlock {
   /// The list's items, each itself a sequence of blocks (allowing items
   /// to contain multiple paragraphs, nested lists, etc.).
   items : Array[Array[Block]]
-} derive(Eq, Debug, FromJson, ToJson)
+}
 
 ///|
 pub extend ListBlock with Eq::{not_equal, equal}
@@ -32,6 +33,7 @@ pub extend ListBlock with ToJson::{to_json}
 
 ///|
 /// A single block-level Markdown element.
+#derive(Eq, ToJson, Debug, FromJson)
 pub(all) enum Block {
   /// A heading, with its level (1–6) and inline content.
   Heading(Int32, Array[Inline])
@@ -50,7 +52,7 @@ pub(all) enum Block {
   HtmlBlock(String)
   /// A table.
   Table(TableBlock)
-} derive(Eq, ToJson, Debug, FromJson)
+}
 
 ///|
 pub extend Block with Eq::{not_equal, equal}
@@ -67,6 +69,7 @@ pub extend Block with @json.FromJson::{from_json}
 
 ///|
 /// A single inline-level Markdown element.
+#derive(Eq, Debug, FromJson, ToJson)
 pub(all) enum Inline {
   /// Plain text content.
   Text(String)
@@ -86,7 +89,7 @@ pub(all) enum Inline {
   SoftBreak
   /// A hard line break (rendered as an explicit line break, e.g. `<br>`).
   HardBreak
-} derive(Eq, Debug, FromJson, ToJson)
+}
 
 ///|
 pub extend Inline with Eq::{not_equal, equal}
@@ -103,10 +106,11 @@ pub extend Inline with ToJson::{to_json}
 ///|
 /// A table block, with its header row and body rows, each cell holding
 /// inline content.
+#derive(Eq, Debug, FromJson, ToJson)
 pub(all) struct TableBlock {
   headers : Array[Array[Inline]]
   rows : Array[Array[Array[Inline]]]
-} derive(Eq, Debug, FromJson, ToJson)
+}
 
 ///|
 pub extend TableBlock with Eq::{not_equal, equal}

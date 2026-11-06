@@ -4,6 +4,7 @@ package "himeno/mopress/renderer"
 import {
   "himeno/mopress/markdown",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -12,37 +13,41 @@ pub fn render_markdown(Array[@markdown.Block], opt? : RenderOptions) -> Rendered
 // Errors
 
 // Types and methods
-type RenderContext derive(Eq, @debug.Debug)
+#derive(Eq, @debug.Debug)
+type RenderContext
 pub fn RenderContext::equal(Self, Self) -> Bool
 pub fn RenderContext::not_equal(Self, Self) -> Bool
 pub fn RenderContext::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct RenderOptions {
   heading_anchor_prefix : String
   allow_raw_html : Bool
-} derive(Eq, @debug.Debug)
+}
 pub fn RenderOptions::default() -> Self
 pub fn RenderOptions::equal(Self, Self) -> Bool
 pub fn RenderOptions::not_equal(Self, Self) -> Bool
 pub fn RenderOptions::to_repr(Self) -> @debug.Repr
 pub impl Default for RenderOptions
 
+#derive(Eq, @debug.Debug)
 pub(all) struct RenderedMarkdown {
   html : String
   toc : Array[TocItem]
-} derive(Eq, @debug.Debug)
+}
 pub fn RenderedMarkdown::equal(Self, Self) -> Bool
 pub fn RenderedMarkdown::not_equal(Self, Self) -> Bool
 pub fn RenderedMarkdown::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct TocItem {
   level : Int32
   title : String
   anchor : String
-} derive(Eq, ToJson, @debug.Debug)
+}
 pub fn TocItem::equal(Self, Self) -> Bool
 pub fn TocItem::not_equal(Self, Self) -> Bool
-pub fn TocItem::to_json(Self) -> Json
+pub fn TocItem::to_json(Self) -> @json.Json
 pub fn TocItem::to_repr(Self) -> @debug.Repr
 
 // Type aliases

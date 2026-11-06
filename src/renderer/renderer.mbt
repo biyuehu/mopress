@@ -1,5 +1,6 @@
 ///|
 /// Options controlling how a Markdown AST is rendered to HTML.
+#derive(Eq, Debug)
 pub(all) struct RenderOptions {
   /// A prefix prepended to the generated `id`/anchor attribute of
   /// rendered headings, e.g. to namespace anchors when embedding rendered
@@ -9,7 +10,7 @@ pub(all) struct RenderOptions {
   /// `@markdown.Inline::Html`) are emitted as-is in the output, or
   /// stripped/escaped.
   allow_raw_html : Bool
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend RenderOptions with Eq::{not_equal, equal}
@@ -20,11 +21,12 @@ pub extend RenderOptions with @debug.Debug::{to_repr}
 ///|
 /// An entry in a document's table of contents, corresponding to a
 /// rendered heading.
+#derive(Eq, Debug, ToJson)
 pub(all) struct TocItem {
   level : Int32
   title : String
   anchor : String
-} derive(Eq, Debug, ToJson)
+}
 
 ///|
 pub extend TocItem with Eq::{not_equal, equal}
@@ -36,11 +38,12 @@ pub extend TocItem with @debug.Debug::{to_repr}
 pub extend TocItem with ToJson::{to_json}
 
 ///|
+#derive(Eq, Debug)
 struct RenderContext {
   slug_counts : Map[String, Int32]
   toc : Toc
   opt : RenderOptions
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend RenderContext with Eq::{not_equal, equal}
@@ -50,10 +53,11 @@ pub extend RenderContext with @debug.Debug::{to_repr}
 
 ///|
 /// The result of rendering a Markdown AST to HTML.
+#derive(Eq, Debug)
 pub(all) struct RenderedMarkdown {
   html : String
   toc : Toc
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend RenderedMarkdown with Eq::{not_equal, equal}

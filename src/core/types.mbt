@@ -1,10 +1,11 @@
 ///|
 /// The source and destination directories for a build, relative to the
 /// project root.
+#derive(Eq, Debug)
 pub(all) struct Options {
   src : String
   dest : String
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Options with Eq::{not_equal, equal}
@@ -37,6 +38,7 @@ pub type Rules = Array[Rule]
 ///|
 /// A single rule describing how files matching a pattern should be
 /// processed during a build.
+#derive(Debug)
 pub(all) enum Rule {
   /// Matches files by glob pattern (see `@glob.glob_match`) alone.
   Glob(String, Handler)
@@ -45,7 +47,7 @@ pub(all) enum Rule {
   /// pattern *and* the predicate returns `true` when called with the
   /// file's full relative path (consistent with `@glob.glob_match_with`).
   Guard(String, (String) -> Bool, Handler)
-} derive(Debug)
+}
 
 ///|
 pub extend Rule with @debug.Debug::{to_repr}
@@ -128,6 +130,7 @@ pub fn Rule::match_paths(
 ///|
 /// How a single rule matched against a source directory, as produced by
 /// `compute_explain_report`.
+#derive(Eq, Debug)
 pub(all) struct RuleMatch {
   /// The rule's index within the `Rules` array it came from.
   index : Int32
@@ -141,7 +144,7 @@ pub(all) struct RuleMatch {
   /// predicate. Always empty for `Glob` rules; non-empty only for `Guard`
   /// rules.
   rejected : Array[String]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend RuleMatch with Eq::{not_equal, equal}
@@ -152,6 +155,7 @@ pub extend RuleMatch with @debug.Debug::{to_repr}
 ///|
 /// A full report of how a set of `Rules` matches against a source
 /// directory, as produced by `compute_explain_report`.
+#derive(Eq, Debug)
 pub(all) struct ExplainReport {
   /// The source directory the rules were matched against.
   src : String
@@ -164,7 +168,7 @@ pub(all) struct ExplainReport {
   /// `conflicts` list means a build would process those files more than
   /// once.
   conflicts : Array[(String, Array[Int32])]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend ExplainReport with Eq::{not_equal, equal}
@@ -189,12 +193,13 @@ pub extend ExplainReport with @debug.Debug::{to_repr}
 /// a page's content can flow through a chain of transformations —
 /// parsing, preprocessing, transforming, rendering, and templating — as a
 /// pipeline of `Item` values.
+#derive(Eq, Debug)
 pub struct Item[T] {
   data : T
   priv extension : String
   vars : Vars
   target : String
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Item with Eq::{not_equal, equal}
@@ -363,6 +368,7 @@ pub fn[T] Item::clear_var(self : Item[T], key : String) -> Item[T] {
 
 ///|
 /// The final, writable output produced for a build item.
+#derive(Eq, Debug)
 pub(all) enum Thing {
   /// A text document, e.g. rendered HTML.
   Doc(String)
@@ -375,7 +381,7 @@ pub(all) enum Thing {
   Multiple(Array[(String, Thing)])
   /// No output should be written for this item.
   Empty
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Thing with Eq::{not_equal, equal}
@@ -462,6 +468,7 @@ pub type Step[T, R] = async (Item[T]) -> Item[R]
 
 ///|
 /// The processing handler applied to files matched by a `Rule`.
+#derive(Debug)
 pub(all) enum Handler {
   /// Reads the matched file as text and processes it with the given
   /// step, producing the final `Item[Thing]` to be written to disk.
@@ -472,7 +479,7 @@ pub(all) enum Handler {
   /// Copies the matched file to the output directory unchanged, without
   /// any processing.
   Copy
-} derive(Debug)
+}
 
 ///|
 pub extend Handler with @debug.Debug::{to_repr}
@@ -521,6 +528,7 @@ pub type Vars = Map[String, @template.Value]
 
 ///|
 /// Options for generating Open Graph metadata tags (`<meta property="og:*">`).
+#derive(Eq, @debug.Debug)
 pub(all) struct OpenGraphOptions {
   title : String?
   description : String?
@@ -529,7 +537,7 @@ pub(all) struct OpenGraphOptions {
   site_name : String?
   og_type : String?
   locale : String?
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 pub extend OpenGraphOptions with Eq::{not_equal, equal}
@@ -552,13 +560,14 @@ pub fn OpenGraphOptions::default() -> OpenGraphOptions {
 
 ///|
 /// Options for generating Twitter Card metadata tags (`<meta name="twitter:*">`).
+#derive(Eq, @debug.Debug)
 pub(all) struct TwitterCardOptions {
   card : String?
   title : String?
   description : String?
   image : String?
   creator : String?
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 pub extend TwitterCardOptions with Eq::{not_equal, equal}
@@ -573,6 +582,7 @@ pub fn TwitterCardOptions::default() -> TwitterCardOptions {
 
 ///|
 /// A summary of a page or post used for list rendering and pagination.
+#derive(Eq, @debug.Debug)
 pub(all) struct PaginatedItem {
   title : String
   url : String
@@ -580,7 +590,7 @@ pub(all) struct PaginatedItem {
   description : String?
   excerpt : String?
   vars : Map[String, @template.Value]
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 pub extend PaginatedItem with Eq::{not_equal, equal}
@@ -631,6 +641,7 @@ pub fn PaginatedItem::to_template_value(
 
 ///|
 /// Configuration for site-mode pagination.
+#derive(Eq, @debug.Debug)
 pub(all) struct PaginationConfig {
   /// Number of items per page.
   page_size : Int32
@@ -638,7 +649,7 @@ pub(all) struct PaginationConfig {
   base_path : String
   /// Template file path used to render each page.
   template_path : String
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 pub extend PaginationConfig with Eq::{not_equal, equal}

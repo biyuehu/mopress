@@ -1,12 +1,13 @@
 ///|
 /// A single chapter link in a table of contents.
+#derive(Eq, Debug)
 pub(all) struct SummaryLink {
   title : String
   location : String
   source : String
   /// Nested sub-chapters under this chapter, if any.
   nested_items : Array[SummaryItem]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend SummaryLink with Eq::{not_equal, equal}
@@ -16,6 +17,7 @@ pub extend SummaryLink with @debug.Debug::{to_repr}
 
 ///|
 /// A single entry in a table of contents.
+#derive(Eq, Debug)
 pub(all) enum SummaryItem {
   /// A link to a chapter.
   Link(SummaryLink)
@@ -23,7 +25,7 @@ pub(all) enum SummaryItem {
   PartTitle(String)
   /// A visual separator between groups of chapters.
   Separator
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend SummaryItem with Eq::{not_equal, equal}
@@ -32,10 +34,11 @@ pub extend SummaryItem with Eq::{not_equal, equal}
 pub extend SummaryItem with @debug.Debug::{to_repr}
 
 ///|
+#derive(Eq, Debug)
 pub(all) struct SummarySectionItem {
   item : SummaryItem
   numbered : Bool
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend SummarySectionItem with Eq::{not_equal, equal}
@@ -48,13 +51,14 @@ pub extend SummarySectionItem with @debug.Debug::{to_repr}
 /// split into an optional prefix section, the main numbered chapters, and
 /// an optional suffix section — mirroring the conventional structure of
 /// an mdBook-style summary file.
+#derive(Eq, Debug)
 pub(all) struct Summary {
   title : String
   prefix_chapters : Array[SummaryItem]
   numbered_chapters : Array[SummaryItem]
   suffix_chapters : Array[SummaryItem]
   ordered_items : Array[SummarySectionItem]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend Summary with Eq::{not_equal, equal}
@@ -65,11 +69,12 @@ pub extend Summary with @debug.Debug::{to_repr}
 ///|
 /// A single article's indexed content, e.g. for building a client-side
 /// search index over the site's pages.
+#derive(Eq, Debug, ToJson)
 pub(all) struct ArticleIndex {
   title : String
   location : String
   content : String
-} derive(Eq, Debug, ToJson)
+}
 
 ///|
 pub extend ArticleIndex with Eq::{not_equal, equal}
@@ -676,6 +681,7 @@ pub fn Summary::prev_next(
 /// from the generated output or fall back to site-level config. The
 /// recognized fields are `description`, `keywords`, `authors`, `language`
 /// and `date`; `title` is taken from the summary link's own title.
+#derive(Eq, Debug)
 pub(all) struct PageMeta {
   title : String
   location : String
@@ -684,7 +690,7 @@ pub(all) struct PageMeta {
   authors : String?
   language : String?
   date : String?
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend PageMeta with Eq::{not_equal, equal}

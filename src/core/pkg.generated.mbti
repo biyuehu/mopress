@@ -6,6 +6,7 @@ import {
   "himeno/mopress/markdown",
   "himeno/mopress/template",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
   "moonbitlang/x/fs",
 }
 
@@ -99,43 +100,47 @@ pub async fn[T] with_page_trace(Array[StepTrace], async () -> T) -> T
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub(all) struct BuildAnalysisReport {
   pages : Array[PageAnalysis]
   steps : Array[StepSummary]
   total_pages : Int32
   total_size_bytes : Int32
   total_build_ms : Int64
-} derive(Eq, @debug.Debug)
+}
 pub fn BuildAnalysisReport::equal(Self, Self) -> Bool
 pub fn BuildAnalysisReport::not_equal(Self, Self) -> Bool
-pub fn BuildAnalysisReport::to_json(Self) -> Json
+pub fn BuildAnalysisReport::to_json(Self) -> @json.Json
 pub fn BuildAnalysisReport::to_repr(Self) -> @debug.Repr
-pub impl ToJson for BuildAnalysisReport
+pub impl @json.ToJson for BuildAnalysisReport
 
+#derive(Eq, @debug.Debug)
 pub(all) struct ExplainReport {
   src : String
   rules : Array[RuleMatch]
   unmatched : Array[String]
   conflicts : Array[(String, Array[Int32])]
-} derive(Eq, @debug.Debug)
+}
 pub fn ExplainReport::equal(Self, Self) -> Bool
 pub fn ExplainReport::not_equal(Self, Self) -> Bool
 pub fn ExplainReport::to_repr(Self) -> @debug.Repr
 
+#derive(@debug.Debug)
 pub(all) enum Handler {
   Text(async (Item[String]) -> Item[Thing])
   Binary(async (Item[Bytes]) -> Item[Thing])
   Copy
-} derive(@debug.Debug)
+}
 pub async fn Handler::run(Self, Options, String, read_string? : (String) -> String raise, read_bytes? : (String) -> Bytes raise) -> Item[Thing]
 pub fn Handler::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub struct Item[T] {
   data : T
   vars : Map[String, @template.Value]
   target : String
   // private fields
-} derive(Eq, @debug.Debug)
+}
 pub fn[T] Item::add_vars(Self[T], Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::base(Self[T], target? : String, extension? : String, vars? : Map[String, @template.Value]) -> Self[T]
 pub fn[T] Item::clear_var(Self[T], String) -> Self[T]
@@ -149,6 +154,7 @@ pub fn[T] Item::set_var(Self[T], String, @template.Value) -> Self[T]
 pub fn[T] Item::to_paginated_item(Self[T], url? : String?) -> PaginatedItem
 pub fn[T : @debug.Debug] Item::to_repr(Self[T]) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct OpenGraphOptions {
   title : String?
   description : String?
@@ -157,16 +163,17 @@ pub(all) struct OpenGraphOptions {
   site_name : String?
   og_type : String?
   locale : String?
-} derive(Eq, @debug.Debug)
+}
 pub fn OpenGraphOptions::default() -> Self
 pub fn OpenGraphOptions::equal(Self, Self) -> Bool
 pub fn OpenGraphOptions::not_equal(Self, Self) -> Bool
 pub fn OpenGraphOptions::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct Options {
   src : String
   dest : String
-} derive(Eq, @debug.Debug)
+}
 pub fn Options::default() -> Self
 pub fn Options::equal(Self, Self) -> Bool
 pub fn Options::from_config(@config.BookConfig) -> Self
@@ -174,6 +181,7 @@ pub fn Options::not_equal(Self, Self) -> Bool
 pub fn Options::to_repr(Self) -> @debug.Repr
 pub impl Default for Options
 
+#derive(Eq, @debug.Debug)
 pub(all) struct PageAnalysis {
   path : String
   size_bytes : Int32
@@ -182,13 +190,14 @@ pub(all) struct PageAnalysis {
   slowest_step : String
   slowest_step_ms : Int64
   step_traces : Array[StepTrace]
-} derive(Eq, @debug.Debug)
+}
 pub fn PageAnalysis::equal(Self, Self) -> Bool
 pub fn PageAnalysis::not_equal(Self, Self) -> Bool
-pub fn PageAnalysis::to_json(Self) -> Json
+pub fn PageAnalysis::to_json(Self) -> @json.Json
 pub fn PageAnalysis::to_repr(Self) -> @debug.Repr
-pub impl ToJson for PageAnalysis
+pub impl @json.ToJson for PageAnalysis
 
+#derive(Eq, @debug.Debug)
 pub(all) struct PaginatedItem {
   title : String
   url : String
@@ -196,27 +205,29 @@ pub(all) struct PaginatedItem {
   description : String?
   excerpt : String?
   vars : Map[String, @template.Value]
-} derive(Eq, @debug.Debug)
+}
 pub fn PaginatedItem::default() -> Self
 pub fn PaginatedItem::equal(Self, Self) -> Bool
 pub fn PaginatedItem::not_equal(Self, Self) -> Bool
 pub fn PaginatedItem::to_repr(Self) -> @debug.Repr
 pub fn PaginatedItem::to_template_value(Self) -> @template.Value
 
+#derive(Eq, @debug.Debug)
 pub(all) struct PaginationConfig {
   page_size : Int32
   base_path : String
   template_path : String
-} derive(Eq, @debug.Debug)
+}
 pub fn PaginationConfig::default() -> Self
 pub fn PaginationConfig::equal(Self, Self) -> Bool
 pub fn PaginationConfig::not_equal(Self, Self) -> Bool
 pub fn PaginationConfig::to_repr(Self) -> @debug.Repr
 
+#derive(@debug.Debug)
 pub(all) enum Rule {
   Glob(String, Handler)
   Guard(String, (String) -> Bool, Handler)
-} derive(@debug.Debug)
+}
 pub fn Rule::check(Self, String) -> Bool
 pub fn Rule::handler(Self) -> Handler
 pub fn Rule::handler_kind(Self) -> String
@@ -224,45 +235,49 @@ pub fn Rule::match_paths(Self, String) -> (Array[String], Array[String]) raise @
 pub fn Rule::pattern(Self) -> String
 pub fn Rule::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct RuleMatch {
   index : Int32
   pattern : String
   handler_kind : String
   matched : Array[String]
   rejected : Array[String]
-} derive(Eq, @debug.Debug)
+}
 pub fn RuleMatch::equal(Self, Self) -> Bool
 pub fn RuleMatch::not_equal(Self, Self) -> Bool
 pub fn RuleMatch::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) struct StepSummary {
   name : String
   total_ms : Int64
   call_count : Int32
   max_ms : Int64
-} derive(Eq, @debug.Debug)
+}
 pub fn StepSummary::equal(Self, Self) -> Bool
 pub fn StepSummary::not_equal(Self, Self) -> Bool
-pub fn StepSummary::to_json(Self) -> Json
+pub fn StepSummary::to_json(Self) -> @json.Json
 pub fn StepSummary::to_repr(Self) -> @debug.Repr
-pub impl ToJson for StepSummary
+pub impl @json.ToJson for StepSummary
 
+#derive(Eq, @debug.Debug)
 pub(all) struct StepTrace {
   name : String
   duration_ms : Int64
-} derive(Eq, @debug.Debug)
+}
 pub fn StepTrace::equal(Self, Self) -> Bool
 pub fn StepTrace::not_equal(Self, Self) -> Bool
-pub fn StepTrace::to_json(Self) -> Json
+pub fn StepTrace::to_json(Self) -> @json.Json
 pub fn StepTrace::to_repr(Self) -> @debug.Repr
-pub impl ToJson for StepTrace
+pub impl @json.ToJson for StepTrace
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Thing {
   Doc(String)
   Asset(Bytes)
   Multiple(Array[(String, Thing)])
   Empty
-} derive(Eq, @debug.Debug)
+}
 pub fn Thing::byte_size(Self) -> Int32
 pub fn Thing::equal(Self, Self) -> Bool
 pub fn Thing::not_equal(Self, Self) -> Bool
@@ -270,13 +285,14 @@ pub fn Thing::to_repr(Self) -> @debug.Repr
 pub fn Thing::write(Self, String, String) -> Unit raise @fs.IOError
 pub fn Thing::write_if_changed(Self, String, String) -> Bool raise @fs.IOError
 
+#derive(Eq, @debug.Debug)
 pub(all) struct TwitterCardOptions {
   card : String?
   title : String?
   description : String?
   image : String?
   creator : String?
-} derive(Eq, @debug.Debug)
+}
 pub fn TwitterCardOptions::default() -> Self
 pub fn TwitterCardOptions::equal(Self, Self) -> Bool
 pub fn TwitterCardOptions::not_equal(Self, Self) -> Bool
@@ -299,4 +315,4 @@ pub trait Thingable {
 }
 pub impl Thingable for String
 pub impl Thingable for Bytes
-pub impl Thingable for Json
+pub impl Thingable for @json.Json

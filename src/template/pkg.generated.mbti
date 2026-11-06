@@ -3,6 +3,7 @@ package "himeno/mopress/template"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
   "moonbitlang/core/ref",
 }
 
@@ -16,9 +17,10 @@ pub fn[T : Show] parse_template(T) -> Array[TemplateNode] raise TemplateParseErr
 pub async fn[T] with_render_counter(@ref.Ref[Int32], async () -> T) -> T
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub suberror TemplateParseError {
   TemplateParseError(String)
-} derive(Eq, @debug.Debug)
+}
 pub fn TemplateParseError::equal(Self, Self) -> Bool
 pub fn TemplateParseError::not_equal(Self, Self) -> Bool
 pub fn TemplateParseError::output(Self, &Logger) -> Unit
@@ -26,13 +28,14 @@ pub fn TemplateParseError::to_repr(Self) -> @debug.Repr
 pub fn TemplateParseError::to_string(Self) -> String
 pub impl Show for TemplateParseError
 
+#derive(Eq, @debug.Debug)
 pub suberror TemplateRenderError {
   UndefinedVariableError(String)
   NonArrayForLoopError(String)
   PartialLoadError(String)
   PartialParseError(String)
   RecursivePartialError(String)
-} derive(Eq, @debug.Debug)
+}
 pub fn TemplateRenderError::equal(Self, Self) -> Bool
 pub fn TemplateRenderError::not_equal(Self, Self) -> Bool
 pub fn TemplateRenderError::output(Self, &Logger) -> Unit
@@ -41,26 +44,28 @@ pub fn TemplateRenderError::to_string(Self) -> String
 pub impl Show for TemplateRenderError
 
 // Types and methods
+#derive(Eq, @debug.Debug)
 pub(all) enum TemplateNode {
   Text(String)
   Variable(String)
   If(String, Array[TemplateNode], Array[TemplateNode])
   For(String, Array[TemplateNode])
   Partial(String, Array[(String, String)])
-} derive(Eq, @debug.Debug)
+}
 pub fn TemplateNode::equal(Self, Self) -> Bool
 pub fn TemplateNode::not_equal(Self, Self) -> Bool
 pub fn TemplateNode::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug)
 pub(all) enum Value {
   String(String)
   Number(Double)
   Bool(Bool)
   Array(Array[Value])
   Object(Map[String, Value])
-} derive(Eq, @debug.Debug)
+}
 pub fn Value::equal(Self, Self) -> Bool
-pub fn Value::from_json(Json) -> Self
+pub fn Value::from_json(@json.Json) -> Self
 pub fn Value::not_equal(Self, Self) -> Bool
 pub fn Value::output(Self, &Logger) -> Unit
 pub fn Value::to_repr(Self) -> @debug.Repr

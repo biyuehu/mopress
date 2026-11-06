@@ -14,11 +14,12 @@ pub async fn run_markdown_preprocessors(@config.BookConfig, String, String) -> S
 pub async fn run_markdown_transformers(@config.BookConfig, Array[@markdown.Block], String) -> Array[@markdown.Block]
 
 // Errors
+#derive(Eq, @debug.Debug)
 pub suberror ProcessorError {
   NonZeroExit(command~ : String, exit_code~ : Int32, stderr~ : String)
   StderrReported(command~ : String, message~ : String)
   InvalidStdout(command~ : String, raw~ : String, reason~ : String)
-} derive(Eq, @debug.Debug)
+}
 pub fn ProcessorError::equal(Self, Self) -> Bool
 pub fn ProcessorError::not_equal(Self, Self) -> Bool
 pub fn ProcessorError::output(Self, &Logger) -> Unit
@@ -27,17 +28,21 @@ pub fn ProcessorError::to_string(Self) -> String
 pub impl Show for ProcessorError
 
 // Types and methods
-type MarkdownRequest derive(ToJson)
-pub fn MarkdownRequest::to_json(Self) -> Json
+#derive(@json.ToJson)
+type MarkdownRequest
+pub fn MarkdownRequest::to_json(Self) -> @json.Json
 
-type MarkdownResponse derive(@json.FromJson)
-pub fn MarkdownResponse::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+#derive(@json.FromJson)
+type MarkdownResponse
+pub fn MarkdownResponse::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
 
-type TextRequest derive(ToJson)
-pub fn TextRequest::to_json(Self) -> Json
+#derive(@json.ToJson)
+type TextRequest
+pub fn TextRequest::to_json(Self) -> @json.Json
 
-type TextResponse derive(@json.FromJson)
-pub fn TextResponse::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+#derive(@json.FromJson)
+type TextResponse
+pub fn TextResponse::from_json(@json.Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
 
 // Type aliases
 

@@ -1,9 +1,10 @@
 ///|
 /// A trace of a single step during item processing.
+#derive(Eq, Debug)
 pub(all) struct StepTrace {
   name : String
   duration_ms : Int64
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend StepTrace with Eq::{not_equal, equal}
@@ -13,6 +14,7 @@ pub extend StepTrace with @debug.Debug::{to_repr}
 
 ///|
 /// Performance report for a single built file/page.
+#derive(Eq, Debug)
 pub(all) struct PageAnalysis {
   path : String
   size_bytes : Int32
@@ -21,7 +23,7 @@ pub(all) struct PageAnalysis {
   slowest_step : String
   slowest_step_ms : Int64
   step_traces : Array[StepTrace]
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend PageAnalysis with Eq::{not_equal, equal}
@@ -31,12 +33,13 @@ pub extend PageAnalysis with @debug.Debug::{to_repr}
 
 ///|
 /// Summary of a step across all processed pages.
+#derive(Eq, Debug)
 pub(all) struct StepSummary {
   name : String
   total_ms : Int64
   call_count : Int32
   max_ms : Int64
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend StepSummary with Eq::{not_equal, equal}
@@ -46,13 +49,14 @@ pub extend StepSummary with @debug.Debug::{to_repr}
 
 ///|
 /// Overall build analysis report.
+#derive(Eq, Debug)
 pub(all) struct BuildAnalysisReport {
   pages : Array[PageAnalysis]
   steps : Array[StepSummary]
   total_pages : Int32
   total_size_bytes : Int32
   total_build_ms : Int64
-} derive(Eq, Debug)
+}
 
 ///|
 pub extend BuildAnalysisReport with Eq::{not_equal, equal}
