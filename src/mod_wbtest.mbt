@@ -115,6 +115,15 @@ test "generate_feed_xml respects feed_limit" {
 }
 
 ///|
+test "generate_feed_xml formats single-digit day build_time to RFC3339" {
+  let config = { ..feed_config(Some("https://example.com")), feed_limit: 20, }
+  let metas = feed_summary().collect_page_meta(feed_fixture)
+  let xml = @summary.generate_feed_xml(config, metas, "2026/11/6 15:34:36")
+  assert_true(xml.contains("<updated>2026-11-06T15:34:36Z</updated>"))
+  assert_false(xml.contains("2026-11-6T"))
+}
+
+///|
 test "generate_sitemap_xml emits urlset with both pages" {
   let metas = feed_summary().collect_page_meta(feed_fixture)
   let xml = @summary.generate_sitemap_xml(

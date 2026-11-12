@@ -757,10 +757,126 @@ fn xml_escape(s : String) -> String {
 }
 
 ///|
-/// Converts a `YYYY/MM/DD HH:MM:SS` timestamp into RFC 3339 by
-/// substituting separators and appending `Z`.
+fn pad_2(s : String) -> String {
+  if s.length() == 0 {
+    "00"
+  } else if s.length() == 1 {
+    "0" + s
+  } else {
+    s
+  }
+}
+
+///|
+fn pad_4(s : String) -> String {
+  let len = s.length()
+  if len >= 4 {
+    s
+  } else if len == 3 {
+    "0" + s
+  } else if len == 2 {
+    "00" + s
+  } else if len == 1 {
+    "000" + s
+  } else {
+    "0000"
+  }
+}
+
+///|
+/// Converts a timestamp into RFC 3339 `YYYY-MM-DDTHH:MM:SSZ` structurally.
+/// Normalizes separators (`/` or `-`), zero-pads single-digit components
+/// (month, day, hours, minutes, seconds), and ensures a valid RFC 3339 timezone.
 fn to_rfc3339(build_time : String) -> String {
-  build_time.replace_all(old="/", new="-").replace_all(old=" ", new="T") + "Z"
+  let s = Show::to_string(build_time.trim())
+  if s.length() == 0 {
+    return ""
+  }
+  let sep_idx = match s.find("T") {
+    Some(i) => Some(i)
+    None =>
+      match s.find("t") {
+        Some(i) => Some(i)
+        None => s.find(" ")
+      }
+  }
+  let (date_part, time_and_tz) = match sep_idx {
+    Some(i) => (Show::to_string(s[:i]), Show::to_string(s[i + 1:].trim()))
+    None => (s, "")
+  }
+  let norm_date = date_part.replace_all(old="/", new="-")
+  let date_components = norm_date
+    .split("-")
+    .map(p => Show::to_string(p.trim()))
+    .to_array()
+  if date_components.length() < 3 {
+    return s.replace_all(old="/", new="-").replace_all(old=" ", new="T") +
+      (if s.has_suffix("Z") { "" } else { "Z" })
+  }
+  let year = pad_4(date_components[0])
+  let month = pad_2(date_components[1])
+  let day = pad_2(date_components[2])
+  let formatted_date = "\{year}-\{month}-\{day}"
+
+  if time_and_tz.length() == 0 {
+    return "\{formatted_date}T00:00:00Z"
+  }
+
+  let (time_part, tz_part) = if time_and_tz.has_suffix("Z") ||
+    time_and_tz.has_suffix("z") {
+    (Show::to_string(time_and_tz[:time_and_tz.length() - 1]), "Z")
+  } else {
+    match time_and_tz.find("+") {
+      Some(plus_idx) =>
+        (
+          Show::to_string(time_and_tz[:plus_idx]),
+          Show::to_string(time_and_tz[plus_idx:]),
+        )
+      None =>
+        match time_and_tz.rev_find("-") {
+          Some(minus_idx) =>
+            if minus_idx > 0 {
+              (
+                Show::to_string(time_and_tz[:minus_idx]),
+                Show::to_string(time_and_tz[minus_idx:]),
+              )
+            } else {
+              (time_and_tz, "Z")
+            }
+          None => (time_and_tz, "Z")
+        }
+    }
+  }
+
+  let time_components = time_part
+    .split(":")
+    .map(p => Show::to_string(p.trim()))
+    .to_array()
+  let hour = if time_components.length() > 0 {
+    pad_2(time_components[0])
+  } else {
+    "00"
+  }
+  let minute = if time_components.length() > 1 {
+    pad_2(time_components[1])
+  } else {
+    "00"
+  }
+  let second = if time_components.length() > 2 {
+    let sec_str = time_components[2]
+    match sec_str.find(".") {
+      Some(dot_idx) => {
+        let sec_int = Show::to_string(sec_str[:dot_idx])
+        let sec_frac = Show::to_string(sec_str[dot_idx:])
+        pad_2(sec_int) + sec_frac
+      }
+      None => pad_2(sec_str)
+    }
+  } else {
+    "00"
+  }
+  let formatted_time = "\{hour}:\{minute}:\{second}"
+  "\{formatted_date}T\{formatted_time}\{tz_part}"
 }
 
 ///|
