@@ -1,6 +1,6 @@
 name = "himeno/mopress"
 
-version = "0.5.1"
+version = "0.5.2"
 
 import {
   "moonbit-community/toml@0.4.4",
